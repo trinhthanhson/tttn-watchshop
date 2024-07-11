@@ -1,7 +1,7 @@
 package ptithcm.tttn.entity;
 
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "bill")
+@Table(name = "staff")
 public class Staff {
 
     @Id

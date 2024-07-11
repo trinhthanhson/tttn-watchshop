@@ -1,12 +1,16 @@
 package ptithcm.tttn.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "role")
 public class Role {
 

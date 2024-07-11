@@ -17,11 +17,10 @@ const CartComponent = () => {
                 </span>
                 <WrapperStyleTextSell>| Đã bán 10000+</WrapperStyleTextSell>
             </WrapperReportText>
-            <WrapperPriceText>1.000.000
+            <WrapperPriceText><span style={{ marginRight: '8px' }} > 1.000.000</span>
                 <WrapperDiscoutText>-5%</WrapperDiscoutText>
-
             </WrapperPriceText>
-        </WrapperCartStyle>
+        </WrapperCartStyle >
     )
 }
 

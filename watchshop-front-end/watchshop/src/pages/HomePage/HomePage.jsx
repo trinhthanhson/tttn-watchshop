@@ -12,13 +12,13 @@ import CartComponent from '../../components/CartComponent/CartComponent'
 const HomePage = () => {
     const arr = ['TV', 'TL', 'LAP']
     return (
-        <>
-            <div style={{ padding: '0 120px ' }}>
-                <WrapperTypeProduct>
-                    {arr.map((item) =>
-                        <TypeProduct name={item} key={item} />)}
-                </WrapperTypeProduct>
-                <div id="contener" style={{ backgroundColor: '#efefef', padding: '0 120px', height: '1000px', width: '100%' }}>
+        <div style={{ width: '1270px', margin: '0 auto' }}>
+            <WrapperTypeProduct>
+                {arr.map((item) =>
+                    <TypeProduct name={item} key={item} />)}
+            </WrapperTypeProduct>
+            <div className="body" style={{ width: '100%', backgroundColor: '#efefef' }}>
+                <div id="container" style={{ height: '1000px', width: '1270px', margin: '0 auto' }}>
                     <SlideComponent arrImages={[silde1, silde2, silde3, silde4]} />
                     <WrapperProducts>
                         <CartComponent />
@@ -42,7 +42,8 @@ const HomePage = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
+
     )
 }
 

@@ -1,20 +1,25 @@
 package ptithcm.tttn.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
 @Data
 @Entity
 @Table(name = "user")
-public class User {
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Long staff_id;
+    private Long user_id;
 
     @Column
     private String username;
@@ -34,7 +39,19 @@ public class User {
     @Column
     private Long role_id;
 
-    @ManyToOne
+    @Column
+    private  String accessToken;
+
+    @Column
+    private  String refreshToken;
+
+    @Column
+    private Timestamp expiredAccessToken;
+
+    @Column
+    private  Timestamp expiredRefresh;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id",insertable = false, updatable = false)
     private Role role;
 

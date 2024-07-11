@@ -1,7 +1,7 @@
 package ptithcm.tttn.entity;
 
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
