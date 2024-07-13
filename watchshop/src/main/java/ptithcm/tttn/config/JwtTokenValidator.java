@@ -44,13 +44,13 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
                 Claims claims = claimsJws.getBody();
                 System.err.println("claims: " + claims);
-                String email = String.valueOf(claims.get("user_id"));
+                String username = String.valueOf(claims.get("user_id"));
 
                 String authorities = String.valueOf(claims.get("authorities"));
                 System.out.println("Authorities from claims: " + authorities);
 
                 List<GrantedAuthority> auths = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auths);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, auths);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 

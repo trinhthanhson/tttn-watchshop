@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -32,16 +34,16 @@ public class Brand {
     private Long updated_by;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Staff created_brand;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
     private Staff updated_brand;
 
     @OneToMany(mappedBy = "brand")
-    private List<Product> brands;
-
-
-
+    @JsonIgnore
+    private List<Product> product;
 }

@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+
 import lombok.Data;
 
 import java.time.LocalDateTime;

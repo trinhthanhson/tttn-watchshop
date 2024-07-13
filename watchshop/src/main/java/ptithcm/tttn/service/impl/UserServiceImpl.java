@@ -2,6 +2,7 @@ package ptithcm.tttn.service.impl;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ptithcm.tttn.config.JwtTokenProvider;
 import ptithcm.tttn.entity.*;
 import ptithcm.tttn.repository.*;
 import ptithcm.tttn.request.SignUpRequest;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService
 {
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserRepo userRepo;
     private final StaffRepo staffRepo;
     private final PasswordEncoder passwordEncoder;
@@ -22,7 +24,8 @@ public class UserServiceImpl implements UserService
     private final CustomerRepo customerRepo;
     private final CartRepo cartRepo;
 
-    public UserServiceImpl(UserRepo userRepo, StaffRepo staffRepo,PasswordEncoder passwordEncoder, RoleRepo roleRepo, CustomerRepo customerRepo, CartRepo cartRepo) {
+    public UserServiceImpl(JwtTokenProvider jwtTokenProvider, UserRepo userRepo, StaffRepo staffRepo, PasswordEncoder passwordEncoder, RoleRepo roleRepo, CustomerRepo customerRepo, CartRepo cartRepo) {
+        this.jwtTokenProvider = jwtTokenProvider;
         this.userRepo = userRepo;
         this.staffRepo = staffRepo;
         this.passwordEncoder = passwordEncoder;
@@ -45,7 +48,7 @@ public class UserServiceImpl implements UserService
         user.setUsername(rq.getUsername());
         User saveUser = userRepo.save(user);
         if(saveUser != null ) {
-            if (role.getRole_id() == 3) {
+            if (role.getRole_name() == "CUSTOMER") {
                 Customer customer = new Customer();
                 customer.setCreated_at(LocalDateTime.now());
                 customer.setEmail(rq.getEmail());
@@ -64,7 +67,7 @@ public class UserServiceImpl implements UserService
                     cart.setTotal_quantity(0);
                     Cart saveCart = cartRepo.save(cart);
                 }
-            } else if (role.getRole_id() == 2) {
+            } else if (role.getRole_name() == "STAFF") {
                 Staff staff = new Staff();
                 staff.setUser_id(saveUser.getUser_id());
                 staff.setCreated_at(LocalDateTime.now());
@@ -87,6 +90,16 @@ public class UserServiceImpl implements UserService
     @Override
     public User signIn(User user) {
         return userRepo.save(user);
+    }
+
+    @Override
+    public User findUserByJwt(String jwt) throws Exception {
+        String username = jwtTokenProvider.getUsernameFromJwtToken(jwt);
+        User user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new Exception("user not exist with username " + username);
+        }
+        return user;
     }
 
 }

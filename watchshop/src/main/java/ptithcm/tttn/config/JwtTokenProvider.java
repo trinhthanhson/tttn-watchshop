@@ -99,11 +99,10 @@ public class JwtTokenProvider {
 
     public String getUsernameFromJwtToken(String jwt) {
         jwt = jwt.substring(7);
-
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-        String email = String.valueOf(claims.get("username"));
-        System.err.println("username get by jwt " + email);
-        return email;
+        String username = String.valueOf(claims.get("username"));
+        System.err.println("username get by jwt " + username);
+        return username;
     }
 
     public String populateAuthorities(Collection<? extends GrantedAuthority> collection) {

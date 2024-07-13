@@ -6,4 +6,5 @@ public interface UserService {
     User createUser(SignUpRequest rq);
     User findByUsername(String username);
     User signIn(User user);
+    User findUserByJwt(String jwt) throws Exception;
 }
