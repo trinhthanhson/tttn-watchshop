@@ -14,4 +14,6 @@ public interface CategoryService {
     Category findById(Long id) throws Exception;
 
     Category findCategoryByName(String name) throws Exception;
+
+    boolean checkExitsCategory(String name);
 }

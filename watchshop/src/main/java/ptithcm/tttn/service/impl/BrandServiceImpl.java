@@ -45,8 +45,8 @@ public class BrandServiceImpl implements BrandService {
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Brand saveBrand = new Brand();
-        Brand checkExist = findByBrandName(brand.getBrand_name());
-        if(!brand.getBrand_name().equals(checkExist.getBrand_name())) {
+        boolean checkExist = checkExistBrand(brand.getBrand_name());
+        if(!checkExist) {
             try {
                 create.setCreated_at(LocalDateTime.now());
                 create.setCreated_by(staff.getStaff_id());
@@ -72,8 +72,8 @@ public class BrandServiceImpl implements BrandService {
     @Transactional
     public Brand updateBrand(Long id, Brand brand, String jwt) throws Exception {
         Brand findBrand = findBrandById(id);
-        Brand checkExist = findByBrandName(brand.getBrand_name());
-    if(!findBrand.getBrand_name().equals(checkExist.getBrand_name())) {
+        boolean checkExist = checkExistBrand(brand.getBrand_name());
+    if(!checkExist) {
         try {
             User user = userService.findUserByJwt(jwt);
             Staff staff = staffRepo.findByUserId(user.getUser_id());
@@ -96,5 +96,15 @@ public class BrandServiceImpl implements BrandService {
             return findBrand;
         }
         throw new Exception("not found brand with brand name  " + brandName);
+    }
+
+    @Override
+    public boolean checkExistBrand(String name) {
+        Brand brand = brandRepo.findByBrandName(name);
+        if(brand != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

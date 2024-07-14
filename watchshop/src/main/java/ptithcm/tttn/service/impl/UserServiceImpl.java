@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService
     public User createUser(SignUpRequest rq) {
         User user = new User();
         Role role = roleRepo.findByName(rq.getRole_name());
-
         user.setCreated_at(LocalDateTime.now());
         user.setStatus("Active");
         user.setUpdated_at(LocalDateTime.now());
@@ -48,7 +47,7 @@ public class UserServiceImpl implements UserService
         user.setUsername(rq.getUsername());
         User saveUser = userRepo.save(user);
         if(saveUser != null ) {
-            if (role.getRole_name() == "CUSTOMER") {
+            if (role.getRole_name().equals("CUSTOMER")) {
                 Customer customer = new Customer();
                 customer.setCreated_at(LocalDateTime.now());
                 customer.setEmail(rq.getEmail());
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService
                     cart.setTotal_quantity(0);
                     Cart saveCart = cartRepo.save(cart);
                 }
-            } else if (role.getRole_name() == "STAFF") {
+            } else if (role.getRole_name().equals("STAFF")) {
                 Staff staff = new Staff();
                 staff.setUser_id(saveUser.getUser_id());
                 staff.setCreated_at(LocalDateTime.now());

@@ -1,19 +1,23 @@
 package ptithcm.tttn.service;
 
 import ptithcm.tttn.entity.Product;
+import ptithcm.tttn.request.ProductRequest;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ProductService {
     List<Product> findAll();
 
-    Product findByName(String name);
+    Product findByName(String name) throws Exception;
 
-    Product findById(Long id);
+    Product findById(String id) throws Exception;
 
     List<Product> findByDetail(String desc);
 
-    List<Product> findByCategoryName(String name);
+    List<Product> findByCategoryId(Long id);
 
-    List<Product> findByBrandName(String name);
+    List<Product> findByBrandId(Long id);
+
+    Product createProduct(ProductRequest product, String jwt) throws Exception;
 }

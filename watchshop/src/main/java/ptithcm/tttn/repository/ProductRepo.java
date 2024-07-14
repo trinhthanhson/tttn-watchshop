@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface ProductRepo extends JpaRepository<Product, String> {
 
-    @Query(value = "SELECT * FROM product WHERE product_name = ?1  ", nativeQuery = true)
+    @Query(value = "SELECT * FROM product WHERE LOWER(product_name) = ?1  ", nativeQuery = true)
     Product findByName(String product_name);
 
     @Query("SELECT p FROM Product p WHERE " +

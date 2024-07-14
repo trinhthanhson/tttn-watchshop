@@ -13,4 +13,6 @@ public interface BrandService {
     Brand updateBrand(Long id, Brand brand, String jwt) throws Exception;
     Brand findByBrandName(String brandName) throws Exception;
 
+    boolean checkExistBrand(String name);
+
 }

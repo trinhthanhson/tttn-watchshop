@@ -34,8 +34,8 @@ public class CategoryServiceImpl implements CategoryService
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Category saveCategory = new Category();
-        Category checkExist = findCategoryByName(category.getCategory_name());
-        if(!category.getCategory_name().equals(checkExist.getCategory_name())) {
+        boolean checkExist = checkExitsCategory(category.getCategory_name());
+        if(!checkExist){
             try {
                 create.setCreated_at(LocalDateTime.now());
                 create.setCreated_by(staff.getStaff_id());
@@ -60,8 +60,8 @@ public class CategoryServiceImpl implements CategoryService
     @Override
     public Category updateCategory(Long id, Category category, String jwt) throws Exception {
         Category find = findById(id);
-        Category checkExist = findCategoryByName(category.getCategory_name());
-        if(!find.getCategory_name().equals(checkExist.getCategory_name())){
+        boolean checkExist = checkExitsCategory(category.getCategory_name());
+        if(!checkExist){
         try{
             User user = userService.findUserByJwt(jwt);
             Staff staff = staffRepo.findByUserId(user.getUser_id());
@@ -93,5 +93,15 @@ public class CategoryServiceImpl implements CategoryService
             return category;
         }
         throw new Exception("not found category by name " + name);
+    }
+
+    @Override
+    public boolean checkExitsCategory(String name) {
+        Category category = categoryRepo.findCategoryByName(name);
+        if(category != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
