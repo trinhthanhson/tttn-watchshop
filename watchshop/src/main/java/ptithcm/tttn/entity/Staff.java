@@ -77,8 +77,10 @@ public class Staff {
     private List<Coupon> updated_coupon;
 
     @OneToMany(mappedBy = "created_updated_price")
-    private List<PriceUpdateDetail> priceUpdateDetails;
+    private List<PriceUpdateDetail> priceCreateDetails;
 
+    @OneToMany(mappedBy = "updated_updated_price")
+    private List<PriceUpdateDetail> priceUpdateDetails;
     @OneToMany(mappedBy = "created_product")
     private List<Product> created_product;
 

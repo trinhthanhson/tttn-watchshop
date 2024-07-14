@@ -20,4 +20,8 @@ public interface ProductService {
     List<Product> findByBrandId(Long id);
 
     Product createProduct(ProductRequest product, String jwt) throws Exception;
+
+    Product updateProduct(String id, ProductRequest product, String jwt) throws Exception;
+
+    boolean checkExistProductName(String name) throws Exception;
 }

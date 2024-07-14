@@ -33,6 +33,9 @@ public class PriceUpdateDetail {
     @Column
     private Long created_by;
 
+    @Column
+    private Long updated_by;
+
     @ManyToOne
     @JoinColumn(name = "product_id",insertable = false, updatable = false)
     private Product product;
@@ -40,6 +43,10 @@ public class PriceUpdateDetail {
     @ManyToOne
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Staff created_updated_price;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by",insertable = false, updatable = false)
+    private Staff updated_updated_price;
 
 
 
