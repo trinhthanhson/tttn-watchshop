@@ -3,6 +3,7 @@ package ptithcm.tttn.entity;
 import javax.persistence.*;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -75,33 +76,44 @@ public class Product {
     private Long created_by;
 
     @Column
+    private String status;
+
+    @Column
     private Long updated_by;
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<CouponDetail> couponDetails;
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<CartDetail> cartDetails;
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<OrderDetail> orderDetails;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "brand_id",insertable = false, updatable = false)
     private Brand brand;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "category_id",insertable = false, updatable = false)
     private Category category;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Staff created_product;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
     private Staff updated_product;
 }

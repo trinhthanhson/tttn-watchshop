@@ -25,6 +25,9 @@ public class StaffCategoryController {
         EntityResponse res = new EntityResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         try{
+            if(category.getCategory_name().equals("")){
+                throw new Exception("Please enter complete information");
+            }
             Category saveCategory = categoryService.createCategory(category,jwt);
             res.setData(saveCategory);
             res.setMessage("Success");
@@ -44,6 +47,7 @@ public class StaffCategoryController {
         ListEntityResponse res = new ListEntityResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         try{
+
             List<Category> categoryList = categoryService.findAll();
             res.setData(categoryList);
             res.setMessage("Success");
@@ -64,6 +68,9 @@ public class StaffCategoryController {
         EntityResponse res = new EntityResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         try{
+            if(category.getCategory_name().equals("")){
+                throw new Exception("Please enter complete information");
+            }
             Category saveCategory = categoryService.updateCategory(id,category,jwt);
             res.setData(category);
             res.setMessage("Success");

@@ -87,6 +87,10 @@ public class Staff {
     @OneToMany(mappedBy = "updated_product")
     private List<Product> updated_product;
 
+
+    @OneToMany(mappedBy = "update_staff")
+    private List<User> update_staff;
+
     @ManyToOne
     @JoinColumn(name = "user_id",insertable = false, updatable = false)
     private User user;

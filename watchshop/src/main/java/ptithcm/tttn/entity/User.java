@@ -51,12 +51,19 @@ public class User{
     @Column
     private  Timestamp expiredRefresh;
 
+    @Column
+    private Long updated_by;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id",insertable = false, updatable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Staff> staffs;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by",insertable = false, updatable = false)
+    private Staff update_staff;
 
     @OneToMany(mappedBy = "user")
     private List<Customer> customers;

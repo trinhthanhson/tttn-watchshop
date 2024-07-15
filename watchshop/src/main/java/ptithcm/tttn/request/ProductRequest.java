@@ -43,4 +43,6 @@ public class ProductRequest
      
     private String category_name;
 
+    private String status;
+
 }

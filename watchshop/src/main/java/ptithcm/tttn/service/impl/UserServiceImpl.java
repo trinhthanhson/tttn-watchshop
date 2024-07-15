@@ -101,4 +101,30 @@ public class UserServiceImpl implements UserService
         return user;
     }
 
+    @Override
+    @Transactional
+    public User updateStatus(Long id, String status, String jwt) throws Exception {
+        User user = findUserByJwt(jwt);
+        Staff staff = staffRepo.findByUserId(user.getUser_id());
+        User update = findById(id);
+        User save = new User();
+        if(update != null && user.getRole().getRole_name().equals("MANAGER")){
+            update.setStatus(status);
+            update.setUpdated_by(staff.getStaff_id());
+            save = userRepo.save(update);
+        }else{
+            throw new Exception("Can't update user of staff");
+        }
+        return user;
+    }
+
+    @Override
+    public User findById(Long id) throws Exception {
+        Optional<User> user = userRepo.findById(id);
+        if(user.isPresent()){
+            return user.get();
+        }
+        throw new Exception("Not found User by id " + id);
+    }
+
 }

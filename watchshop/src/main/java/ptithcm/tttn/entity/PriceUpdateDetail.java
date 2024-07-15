@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -37,14 +39,17 @@ public class PriceUpdateDetail {
     private Long updated_by;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "product_id",insertable = false, updatable = false)
     private Product product;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Staff created_updated_price;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
     private Staff updated_updated_price;
 

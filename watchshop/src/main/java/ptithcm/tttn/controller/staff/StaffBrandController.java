@@ -27,6 +27,10 @@ public class StaffBrandController {
         EntityResponse res = new EntityResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         try{
+            if(brand.getBrand_name().equals("")){
+                throw new Exception("Please enter complete information");
+            }
+
             Brand saveBrand = brandService.createBrand(brand,jwt);
             res.setData(saveBrand);
             res.setMessage("Success");
@@ -67,6 +71,9 @@ public class StaffBrandController {
         EntityResponse res = new EntityResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         try{
+            if(brand.getBrand_name().equals("")){
+                throw new Exception("Please enter complete information");
+            }
             Brand saveBrand = brandService.updateBrand(id,brand,jwt);
             res.setData(saveBrand);
             res.setMessage("Success");
@@ -86,8 +93,8 @@ public class StaffBrandController {
     @GetMapping("/find")
     public ResponseEntity<EntityResponse> findBrandByName(@RequestParam String name,@RequestHeader("Authorization") String jwt) throws Exception {
         EntityResponse res = new EntityResponse();
-        Brand brand = brandService.findByBrandName(name);
         HttpStatus httpStatus = HttpStatus.CONFLICT;
+        Brand brand = brandService.findByBrandName(name);
         res.setData(brand);
         res.setMessage("Success");
         res.setStatus(HttpStatus.CREATED);
@@ -95,5 +102,6 @@ public class StaffBrandController {
         httpStatus = HttpStatus.CREATED;
         return new ResponseEntity<>(res,httpStatus);
     }
+
 
 }

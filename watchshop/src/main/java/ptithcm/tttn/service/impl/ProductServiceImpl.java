@@ -64,6 +64,8 @@ public class ProductServiceImpl implements ProductService {
             create.setGlass(product.getGlass());
             create.setUpdated_at(LocalDateTime.now());
             create.setUpdated_by(staff.getStaff_id());
+            create.setOther_features(product.getOther_features());
+            create.setStatus("Active");
             save = productRepo.save(create);
             if (save != null) {
                 PriceUpdateDetail priceUpdateDetail = new PriceUpdateDetail();
@@ -90,9 +92,8 @@ public class ProductServiceImpl implements ProductService {
         Brand brand = brandService.findByBrandName(product.getBrand_name());
         Category category = categoryService.findCategoryByName(product.getCategory_name());
         Product save = new Product();
-
         if(find != null){
-        if(find.getProduct_name().equals(product.getProduct_name()) && !checkExistProductName(product.getProduct_name())) {
+        if(checkExistProductName(product.getProduct_name())) {
             find.setProduct_name(product.getProduct_name());
             find.setProduct_id(id);
             find.setBattery_life(product.getBattery_life());
@@ -111,10 +112,13 @@ public class ProductServiceImpl implements ProductService {
             find.setGlass(product.getGlass());
             find.setUpdated_at(LocalDateTime.now());
             find.setUpdated_by(staff.getStaff_id());
-            save = productRepo.save(find);
+            find.setOther_features(product.getOther_features());
+            find.setStatus(product.getStatus());
+        }else{
+            find.setProduct_name(product.getProduct_name());
         }
         }
-        return save;
+       return save = productRepo.save(find);
     }
 
     @Override
