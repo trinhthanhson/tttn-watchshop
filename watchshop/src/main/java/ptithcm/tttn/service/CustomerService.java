@@ -13,4 +13,7 @@ public interface CustomerService {
     Customer findById(Long id) throws Exception;
 
     Customer findByUserId(Long id) throws Exception;
+
+    boolean checkEmailExist(String email);
+
 }

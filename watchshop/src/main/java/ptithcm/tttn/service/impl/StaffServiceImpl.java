@@ -25,4 +25,14 @@ public class StaffServiceImpl implements StaffService {
            throw new SQLException("Error finding staff by user ID: " + user_id, e);
        }
     }
+
+
+    @Override
+    public boolean checkEmailExist(String email) {
+        Staff user = staffRepo.findByEmail(email);
+        if(user != null){
+            return true;
+        }
+        return false;
+    }
 }

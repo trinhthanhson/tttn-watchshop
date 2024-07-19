@@ -71,4 +71,14 @@ public class CustomerServiceImpl implements CustomerService {
         }
         throw new Exception("not found customer by user id " + id);
     }
+
+
+    @Override
+    public boolean checkEmailExist(String email) {
+        Customer user = customerRepo.findByEmail(email);
+        if(user != null){
+            return true;
+        }
+        return false;
+    }
 }

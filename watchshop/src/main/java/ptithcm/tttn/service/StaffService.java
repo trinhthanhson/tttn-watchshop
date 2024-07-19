@@ -7,4 +7,7 @@ import java.sql.SQLException;
 public interface StaffService {
 
     Staff findByUserId(Long user_id) throws SQLException;
+
+    boolean checkEmailExist(String email);
+
 }

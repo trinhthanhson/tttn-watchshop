@@ -13,6 +13,8 @@ public class ProductRequest
      
     private int quantity;
 
+    private String image;
+
     private int price;
      
     private String detail;

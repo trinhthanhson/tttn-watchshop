@@ -46,6 +46,7 @@ public class ProductServiceImpl implements ProductService {
         if(!checkExistProductName(product.getProduct_name())) {
             create.setProduct_name(product.getProduct_name());
             create.setProduct_id(id);
+            create.setImage(product.getImage());
             create.setCreated_at(LocalDateTime.now());
             create.setCreated_by(staff.getStaff_id());
             create.setBattery_life(product.getBattery_life());
@@ -95,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
         if(find != null){
         if(checkExistProductName(product.getProduct_name())) {
             find.setProduct_name(product.getProduct_name());
-            find.setProduct_id(id);
+            find.setImage(product.getImage());
             find.setBattery_life(product.getBattery_life());
             find.setAccuracy(product.getAccuracy());
             find.setBrand_id(brand.getBrand_id());

@@ -9,4 +9,8 @@ import ptithcm.tttn.entity.Customer;
 public interface CustomerRepo extends JpaRepository<Customer, Long> {
     @Query(value = "SELECT * FROM customer WHERE user_id = ?1  ", nativeQuery = true)
     Customer findByUserId(Long user_id);
+
+
+    @Query(value = "SELECT * FROM customer WHERE email = ?1  ", nativeQuery = true)
+    Customer findByEmail(String email);
 }

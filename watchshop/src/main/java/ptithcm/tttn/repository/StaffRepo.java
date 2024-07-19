@@ -9,4 +9,7 @@ import ptithcm.tttn.entity.Staff;
 public interface StaffRepo extends JpaRepository<Staff, Long> {
     @Query(value = "SELECT * FROM staff WHERE user_id = ?1  ", nativeQuery = true)
     Staff findByUserId(Long user_id);
+
+    @Query(value = "SELECT * FROM staff WHERE email = ?1  ", nativeQuery = true)
+    Staff findByEmail(String email);
 }

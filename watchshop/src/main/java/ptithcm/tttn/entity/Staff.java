@@ -3,6 +3,7 @@ package ptithcm.tttn.entity;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -56,42 +57,56 @@ public class Staff {
     private Long user_id;
 
     @OneToMany(mappedBy = "staff_created")
+    @JsonIgnore
     private List<Bill> bills;
 
     @OneToMany(mappedBy = "created_brand")
+    @JsonIgnore
     private List<Brand> created_brand;
 
     @OneToMany(mappedBy = "updated_brand")
+    @JsonIgnore
     private List<Brand> updated_brand;
 
     @OneToMany(mappedBy = "created_category")
+    @JsonIgnore
     private List<Category> created_category;
 
     @OneToMany(mappedBy = "updated_category")
+    @JsonIgnore
     private List<Category> updated_category;
 
     @OneToMany(mappedBy = "created_coupon")
+    @JsonIgnore
     private List<Coupon> created_coupon;
 
     @OneToMany(mappedBy = "updated_coupon")
+    @JsonIgnore
     private List<Coupon> updated_coupon;
 
     @OneToMany(mappedBy = "created_updated_price")
+    @JsonIgnore
     private List<PriceUpdateDetail> priceCreateDetails;
 
     @OneToMany(mappedBy = "updated_updated_price")
+    @JsonIgnore
     private List<PriceUpdateDetail> priceUpdateDetails;
+
     @OneToMany(mappedBy = "created_product")
+    @JsonIgnore
     private List<Product> created_product;
 
     @OneToMany(mappedBy = "updated_product")
+    @JsonIgnore
     private List<Product> updated_product;
 
 
     @OneToMany(mappedBy = "update_staff")
+    @JsonIgnore
     private List<User> update_staff;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id",insertable = false, updatable = false)
     private User user;
 

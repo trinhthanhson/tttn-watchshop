@@ -25,6 +25,9 @@ public class Product {
     private int quantity;
 
     @Column
+    private String image;
+
+    @Column
     private String detail;
 
     @Column
@@ -98,22 +101,21 @@ public class Product {
     private List<OrderDetail> orderDetails;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "brand_id",insertable = false, updatable = false)
     private Brand brand;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "category_id",insertable = false, updatable = false)
     private Category category;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Staff created_product;
 
+    @OneToMany(mappedBy = "product")
+    private List<PriceUpdateDetail> priceUpdateDetails;
+
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
     private Staff updated_product;
 }

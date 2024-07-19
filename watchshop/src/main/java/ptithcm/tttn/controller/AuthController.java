@@ -1,5 +1,7 @@
 package ptithcm.tttn.controller;
 
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,19 +10,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.config.JwtTokenProvider;
+import ptithcm.tttn.entity.Product;
 import ptithcm.tttn.entity.User;
+import ptithcm.tttn.request.ProductRequest;
 import ptithcm.tttn.request.SignInRequest;
 import ptithcm.tttn.request.SignUpRequest;
 import ptithcm.tttn.response.ApiResponse;
 import ptithcm.tttn.response.AuthResponse;
+import ptithcm.tttn.service.CustomerService;
+import ptithcm.tttn.service.StaffService;
 import ptithcm.tttn.service.UserService;
 import ptithcm.tttn.service.impl.UserDetailsServiceImpl;
 
+import javax.mail.MessagingException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -32,27 +36,27 @@ public class AuthController {
     private final UserDetailsServiceImpl userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomerService customerService;
 
-    public AuthController(UserService userService, UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder, 	JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService, UserDetailsServiceImpl userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, CustomerService customerService) {
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.customerService = customerService;
     }
 
     @PostMapping("/sign-up")
     public ResponseEntity<ApiResponse> signUp(@RequestBody SignUpRequest rq){
         ApiResponse res = new ApiResponse();
         HttpStatus httpStatus = null;
-        if(!rq.getEmail().equals("") && !rq.getPhone().equals("")  && !rq.getLastname().equals("") && !rq.getFirstname().equals("") && !rq.getPassword().equals("") && !rq.getUsername().equals("") && !rq.getRole_name().equals("")) {
+        if(!rq.getEmail().equals("") && !rq.getLastname().equals("") && !rq.getFirstname().equals("") && !rq.getPassword().equals("") && !rq.getUsername().equals("") && !rq.getRole_name().equals("")) {
         try{
-           
-                User user = userService.createUser(rq);
-                res.setCode(HttpStatus.CREATED.value());
-                res.setMessage("Create user success");
-                res.setStatus(HttpStatus.CREATED);
-                httpStatus = HttpStatus.CREATED;
-            
+            User user = userService.createUser(rq);
+            res.setCode(HttpStatus.CREATED.value());
+            res.setMessage("Create user success");
+            res.setStatus(HttpStatus.CREATED);
+            httpStatus = HttpStatus.CREATED;
         }catch (Exception e){
             System.out.println("error" + e.getMessage());
             res.setCode(HttpStatus.CONFLICT.value());
@@ -102,6 +106,34 @@ public class AuthController {
         }
 
         return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @PostMapping("/sent-otp")
+    public ResponseEntity<ApiResponse> sentOptByEmail(@RequestBody SignUpRequest rq) {
+        ApiResponse res = new ApiResponse();
+        User existUsername = userService.findByUsername(rq.getUsername());
+        boolean checkEmail = customerService.checkEmailExist(rq.getEmail());
+        if(existUsername != null){
+            res.setMessage("username exist");
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
+//        }else if(checkEmail){
+//            res.setMessage("email exist");
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
+        }else {
+            try {
+                userService.sendMail(rq.getEmail(), rq.getUsername());
+                res.setMessage("success");
+                res.setStatus(HttpStatus.OK);
+                res.setCode(HttpStatus.OK.value());
+            } catch (Exception e) {
+                res.setMessage("fail");
+                res.setStatus(HttpStatus.CONFLICT);
+                res.setCode(HttpStatus.CONFLICT.value());
+            }
+        }
+        return new ResponseEntity<>(res,res.getStatus());
     }
 
     private Authentication authenticate(String username, String password) {
