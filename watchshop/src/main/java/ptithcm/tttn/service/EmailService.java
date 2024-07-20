@@ -2,8 +2,12 @@ package ptithcm.tttn.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 
 @Service
@@ -14,14 +18,15 @@ public class EmailService {
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
-    public void sentEmail(String to, String subject, String body){
-        SimpleMailMessage message = new SimpleMailMessage();
+    public void sendMail(String toEmail, String subject, String content) throws MessagingException, MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-        message.setTo(to);
-        message.setFrom("sontrinh2507@gmail.com");
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
+        helper.setFrom("sontrinh2507@gmail.com");
+        helper.setTo(toEmail);
+        helper.setSubject(subject);
+        helper.setText(content, true);
 
+        mailSender.send(mimeMessage);
     }
 }

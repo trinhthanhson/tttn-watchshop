@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
@@ -27,6 +29,7 @@ public class CartDetail {
     private String product_id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "cart_id",insertable = false, updatable = false)
     private Cart cart;
 

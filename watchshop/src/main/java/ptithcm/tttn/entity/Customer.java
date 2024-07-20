@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -51,15 +53,19 @@ public class Customer {
     private Long user_id;
 
     @OneToMany(mappedBy = "customer_created")
+    @JsonIgnore
     private List<Orders> order_created;
 
     @OneToMany(mappedBy = "customer_updated")
+    @JsonIgnore
     private List<Orders> order_updated;
 
     @OneToMany(mappedBy = "review_created")
+    @JsonIgnore
     private List<Review> review_created;
 
     @OneToMany(mappedBy = "review_update")
+    @JsonIgnore
     private List<Review> review_update;
 
     @ManyToOne
@@ -67,6 +73,8 @@ public class Customer {
     private User user;
 
     @OneToOne(mappedBy = "customer")
+    @JsonIgnore
+
     private Cart cart;
 
 

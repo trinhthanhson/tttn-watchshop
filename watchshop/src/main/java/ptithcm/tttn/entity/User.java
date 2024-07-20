@@ -1,6 +1,7 @@
 package ptithcm.tttn.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,6 +60,7 @@ public class User{
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Staff> staffs;
 
     @ManyToOne
@@ -66,6 +68,7 @@ public class User{
     private Staff update_staff;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Customer> customers;
 
 

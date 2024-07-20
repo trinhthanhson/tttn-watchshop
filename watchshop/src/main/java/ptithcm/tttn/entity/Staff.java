@@ -106,7 +106,6 @@ public class Staff {
     private List<User> update_staff;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "user_id",insertable = false, updatable = false)
     private User user;
 

@@ -16,4 +16,6 @@ public interface CustomerService {
 
     boolean checkEmailExist(String email);
 
+    Customer findByEmail(String email) throws Exception;
+
 }

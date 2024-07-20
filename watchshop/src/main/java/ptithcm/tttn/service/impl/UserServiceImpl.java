@@ -92,6 +92,21 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
+    @Transactional
+    public User updatePassword(String passWord,String email ) throws Exception {
+        Customer customer = customerRepo.findByEmail(email);
+        User update = findById(customer.getUser_id());
+        update.setPassword(passwordEncoder.encode(passWord));
+        update.setUpdated_at(LocalDateTime.now());
+        User save = userRepo.save(update);
+        if(save != null){
+            return save;
+        }
+        throw new Exception("update fail");
+
+    }
+
+    @Override
     public User findByUsername(String username) {
         return userRepo.findByUsername(username);
     }
@@ -138,18 +153,14 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public String sendMail(String email, String username) {
-        String otp = generateOTP();
-        emailService.sentEmail(email, "Your registration verification code is", otp);
+    public String sendMail(String email,String subject ,String content, String otp) throws MessagingException {
+
+        emailService.sendMail(email, subject,content);
         otpAccept = otp;
         return otpAccept;
     }
 
 
-    public static String generateOTP() {
-        Random random = new Random();
-        int otp = 100000 + random.nextInt(900000); // Generate a random number between 100000 and 999999
-        return String.valueOf(otp);
-    }
+
 
 }

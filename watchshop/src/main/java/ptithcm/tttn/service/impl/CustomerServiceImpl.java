@@ -81,4 +81,13 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return false;
     }
+
+    @Override
+    public Customer findByEmail(String email) throws Exception {
+        Customer customer = customerRepo.findByEmail(email);
+        if(customer != null){
+            return customer;
+        }
+        throw new Exception("not found customer by email " +email);
+    }
 }

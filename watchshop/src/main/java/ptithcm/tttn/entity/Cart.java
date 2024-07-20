@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -36,6 +38,7 @@ public class Cart {
     private List<CartDetail> cartDetails;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "customer_id",insertable = false, updatable = false)
     private Customer customer;
 

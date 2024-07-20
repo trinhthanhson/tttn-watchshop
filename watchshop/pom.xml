@@ -11,7 +11,7 @@
     <groupId>ptithcm.tttn</groupId>
     <artifactId>watchshop</artifactId>
     <version>1.0-SNAPSHOT</version>
-<name>watchshop</name>
+    <name>watchshop</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
