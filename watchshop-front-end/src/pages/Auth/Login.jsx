@@ -1,147 +1,160 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import './authStyle.css';
-import Helmet from "../../components/Helmet/Helmet";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { getUserProfileRequest } from "../../redux/actions/actions";
-import CoffeeCanvas from "../../components/Canvas/Coffee";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { auth } from "../../firebase/config";
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import './authStyle.css'
+import Helmet from '../../components/Helmet/Helmet'
+import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { getUserProfileRequest } from '../../redux/actions/actions'
+import CoffeeCanvas from '../../components/Canvas/Coffee'
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
+import { auth } from '../../firebase/config'
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const user = useSelector(state => state.user.user.data);
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [result, setResult] = useState(null);
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
+  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.user.data)
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [result, setResult] = useState(null)
+  const [otp, setOtp] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmNewPassword, setConfirmNewPassword] = useState('')
+  const [otpVerified, setOtpVerified] = useState(false)
 
   useEffect(() => {
     if (user) {
-      if (user.user.role && (user.user.role.role_name === "ADMIN" || user.user.role.role_name === "STAFF")) {
-        console.log("for admin and staff");
+      if (
+        user.user.role &&
+        (user.user.role.role_name === 'ADMIN' ||
+          user.user.role.role_name === 'STAFF')
+      ) {
+        console.log('for admin and staff')
       } else {
-        navigate("/home");
+        navigate('/home')
       }
     }
-  }, [user, navigate]);
+  }, [user, navigate])
 
   const handleGoHome = () => {
-    navigate("/");
-  };
+    navigate('/')
+  }
 
   const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
+    setUsername(event.target.value)
+  }
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+    setPassword(event.target.value)
+  }
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:9999/api/auth/sign-in', {
-        username,
-        password
-      });
-      const { token, status } = response.data;
+      const response = await axios.post(
+        'http://localhost:9999/api/auth/sign-in',
+        {
+          username,
+          password
+        }
+      )
+      const { token, status } = response.data
       if (status && token) {
-        localStorage.setItem('token', token);
-        dispatch(getUserProfileRequest());
-        console.log("Đăng nhập thành công");
+        localStorage.setItem('token', token)
+        dispatch(getUserProfileRequest())
+        console.log('Đăng nhập thành công')
       } else {
-        console.log("Đăng nhập không thành công");
+        console.log('Đăng nhập không thành công')
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error)
     }
-  };
+  }
 
   const handleForgotPassword = async () => {
     try {
-      const response = await axios.get(`http://localhost:9999/auth/check/${username}`);
-      console.log(response);
+      const response = await axios.get(
+        `http://localhost:9999/auth/check/${username}`
+      )
+      console.log(response)
       if (response.data.code === 200) {
-        handleSendOTP();
+        handleSendOTP()
       } else {
-        console.error("Tài khoản không tồn tại");
+        console.error('Tài khoản không tồn tại')
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error)
     }
   }
 
   const handleSendOTP = async () => {
     try {
-      const recaptcha = new RecaptchaVerifier(auth, "recaptcha", {});
-      const result = await signInWithPhoneNumber(auth, username, recaptcha);
-      setResult(result);
+      const recaptcha = new RecaptchaVerifier(auth, 'recaptcha', {})
+      const result = await signInWithPhoneNumber(auth, username, recaptcha)
+      setResult(result)
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error)
     }
   }
 
   const verifyOTP = async () => {
     try {
-      const data = await result.confirm(otp);
-      console.log("data", data);
-      setOtpVerified(true);
+      const data = await result.confirm(otp)
+      console.log('data', data)
+      setOtpVerified(true)
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error)
     }
   }
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmNewPassword) {
-      console.error("Mật khẩu mới và xác nhận mật khẩu không khớp");
-      return;
+      console.error('Mật khẩu mới và xác nhận mật khẩu không khớp')
+      return
     }
 
     try {
       await axios.put(`http://localhost:9999/auth/change/${username}`, {
         password: newPassword
-      });
-      console.log("Thay đổi mật khẩu thành công");
+      })
+      console.log('Thay đổi mật khẩu thành công')
       window.location.reload()
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error)
     }
   }
 
   return (
     <Helmet title="Login">
-      <div className="full-screen relative z-[-1]" >
+      <div className="full-screen relative z-[-1]">
         <img
           className="fixed h-full w-full hover:cursor-none"
-          src="https://www.highlandscoffee.com.vn/vnt_upload/cake/SPECIALTYCOFFEE/Untitled-1-01.png"
+          src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Fbackground.jpg?alt=media&token=edae71b6-7155-4d79-b78c-636c0a929ce6"
           alt="Background"
         />
 
         <img
           onClick={handleGoHome}
           className="absolute cursor-pointer w-[100px] h-[80px] ml-3 py-[10px] pl-3"
-          src="https://www.highlandscoffee.com.vn/vnt_upload/File/11_2023/Red_logo800.png"
+          src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea"
           alt="Logo"
         />
 
-        <div className="layout_login absolute flex justify-center items-center mt-[8%] ml-[8%] w-[75%] rounded-[15px]">
+        <div
+          className="layout_login absolute flex justify-center items-center mt-[8%] ml-[8%] w-[75%] rounded-[15px]"
+          style={{ backgroundColor: 'rgba(128, 128, 128, 0.5)' }}
+        >
           <div className="flex-col col-span-1 w-1/3 h-full object-contain border-r-2 border-neutral-400">
+            {' '}
             <CoffeeCanvas />
           </div>
 
           <div className="flex-col col-span-1 w-2/3">
             {!result && !otpVerified && (
               <>
-                <h1 className="font-RobotoSemibold text-center mb-8 text-main text-[25px] uppercase">
+                <h1 className="font-RobotoSemibold text-center mb-8 text-main text-[25px] uppercase text-white">
                   Đăng Nhập
                 </h1>
                 <div className="input">
-                  <label className="">Số Điện Thoại</label>
+                  <label className=" text-white">Username</label>
                   <input
                     type="text"
                     value={username}
@@ -150,7 +163,7 @@ const Login = () => {
                   />
                 </div>
                 <div className="input">
-                  <label className="">Mật Khẩu</label>
+                  <label className=" text-white">Mật Khẩu</label>
                   <input
                     type="password"
                     value={password}
@@ -160,17 +173,21 @@ const Login = () => {
                 </div>
                 <a
                   onClick={() => handleForgotPassword()}
-                  className="link_forgotPass"
+                  className="link_forgotPass  text-white"
                 >
                   Quên Mật Khẩu
                 </a>
 
                 <div className="btn_submit">
-                  <button className="uppercase" type="button" onClick={handleLogin}>
+                  <button
+                    className="uppercase"
+                    type="button"
+                    onClick={handleLogin}
+                  >
                     Đăng nhập
                   </button>
                 </div>
-                <div className="ml-[26%]">
+                <div className="ml-[26%] text-white">
                   <span>Bạn chưa có tài khoản? </span>
                   <a className="link_signup" href="/signup">
                     Đăng Ký Ngay
@@ -180,9 +197,7 @@ const Login = () => {
             )}
 
             {!otpVerified && !result && (
-              <div id="recaptcha" className="mx-20 input">
-
-              </div>
+              <div id="recaptcha" className="mx-20 input"></div>
             )}
             {result && !otpVerified && (
               <>
@@ -245,7 +260,7 @@ const Login = () => {
         </div>
       </div>
     </Helmet>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

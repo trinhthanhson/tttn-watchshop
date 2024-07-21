@@ -1,5 +1,3 @@
-
-
 const Page404 = () => {
   return (
     <>
@@ -7,7 +5,7 @@ const Page404 = () => {
         <div className="">
           <a href="/">
             <img
-              src="https://www.highlandscoffee.com.vn/vnt_upload/File/11_2023/Red_logo800.png"
+              src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea"
               alt="logo"
               className="w-[200px] h-[200px] mx-auto"
             />
@@ -16,7 +14,7 @@ const Page404 = () => {
             404 - Page Not Found
           </h1>
         </div>
-      </section >
+      </section>
     </>
   )
 }

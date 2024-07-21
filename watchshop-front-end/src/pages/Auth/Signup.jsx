@@ -1,47 +1,46 @@
-import { useNavigate } from "react-router-dom";
-import './authStyle.css';
-import Helmet from "../../components/Helmet/Helmet";
-import axios from "axios";
-import { useState } from "react";
+import { useNavigate } from 'react-router-dom'
+import './authStyle.css'
+import Helmet from '../../components/Helmet/Helmet'
+import axios from 'axios'
+import { useState } from 'react'
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleGoBack = () => {
-    navigate("/login");
-  };
+    navigate('/login')
+  }
 
   const handleGoHome = () => {
-    navigate("/");
-  };
+    navigate('/')
+  }
 
   const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
+    setUsername(event.target.value)
+  }
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+    setPassword(event.target.value)
+  }
 
   const handleSignup = async () => {
     try {
       const response = await axios.post('http://localhost:9999/auth/signup', {
         username,
         password,
-        role_name: "CUSTOMER",
-      });
-      const { message, code } = response.data;
+        role_name: 'CUSTOMER'
+      })
+      const { message, code } = response.data
       if (code === 201) {
-        navigate("/login");
-        console.log(message);
-
+        navigate('/login')
+        console.log(message)
       } else {
-        console.log("Đăng ký không thành công");
+        console.log('Đăng ký không thành công')
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error)
     }
   }
 
@@ -55,12 +54,10 @@ const Signup = () => {
         <img
           onClick={handleGoHome}
           className="absolute cursor-pointer w-[100px] h-[80px] ml-3 py-[10px] pl-3"
-          src="https://www.highlandscoffee.com.vn/vnt_upload/File/11_2023/Red_logo800.png"
+          src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea"
           alt="Logo"
         />
-        <div
-          className="cursor-pointer layout_login absolute flex-col justify-center items-center mt-[10%] ml-[30%] w-[40%] rounded-[15px]"
-        >
+        <div className="cursor-pointer layout_login absolute flex-col justify-center items-center mt-[10%] ml-[30%] w-[40%] rounded-[15px]">
           <img
             onClick={handleGoBack}
             className="w-[24px] h-[24px] ml-4"
@@ -96,7 +93,7 @@ const Signup = () => {
         </div>
       </body>
     </Helmet>
-  );
-};
+  )
+}
 
-export default Signup;
+export default Signup
