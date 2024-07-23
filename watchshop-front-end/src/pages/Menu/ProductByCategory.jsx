@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import CardProductItem from '../../components/Products/CardProductItem'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,15 +8,18 @@ import {
 } from '../../redux/actions/actions'
 
 const ProductByCategory = () => {
-  const [categoryFilter, setCategoryFilter] = useState('')
+  const { category_id } = useParams() // Lấy category_id từ URL
+  const [categoryFilter, setCategoryFilter] = useState(category_id || '') // Sử dụng category_id nếu có
   const [priceRangeFilter, setPriceRangeFilter] = useState('')
   const [sortOrder, setSortOrder] = useState('desc')
   const dispatch = useDispatch()
-  const categories = useSelector((state) => state.categories.categories.data)
+  const categories = useSelector(
+    (state) => state.categories.categories?.data || []
+  )
   const loadingCategories = useSelector((state) => state.categories.loading)
   const errorCategories = useSelector((state) => state.categories.error)
   const productsCustomer = useSelector(
-    (state) => state.productsCustomer.productsCustomer.data
+    (state) => state.productsCustomer.productsCustomer?.data || []
   )
 
   useEffect(() => {
@@ -23,30 +27,31 @@ const ProductByCategory = () => {
     dispatch(getAllProductsCustomerRequest())
   }, [dispatch])
 
-  const filterProducts = (productsCustomer) => {
+  useEffect(() => {
+    if (category_id) {
+      setCategoryFilter(category_id)
+    }
+  }, [category_id])
+
+  const filterProducts = (product) => {
     if (
       categoryFilter &&
-      productsCustomer?.category?.category_id !== parseInt(categoryFilter)
+      product?.category?.category_id !== parseInt(categoryFilter)
     ) {
       return false
     }
     if (priceRangeFilter) {
-      const [min, max] = priceRangeFilter.split('-')
-      const productPrice = parseInt(
-        productsCustomer?.priceUpdateDetails[0]?.price_new
-      )
-      if (
-        (min && productPrice < parseInt(min)) ||
-        (max && productPrice > parseInt(max))
-      ) {
+      const [min, max] = priceRangeFilter.split('-').map(Number)
+      const productPrice = parseInt(product?.priceUpdateDetails[0]?.price_new)
+      if ((min && productPrice < min) || (max && productPrice > max)) {
         return false
       }
     }
     return true
   }
 
-  const sortProducts = (productsCustomer) => {
-    return productsCustomer.sort((a, b) => {
+  const sortProducts = (products) => {
+    return products.sort((a, b) => {
       const priceA = parseInt(a.priceUpdateDetails[0]?.price_new)
       const priceB = parseInt(b.priceUpdateDetails[0]?.price_new)
       return sortOrder === 'asc' ? priceA - priceB : priceB - priceA
@@ -54,7 +59,7 @@ const ProductByCategory = () => {
   }
 
   const filteredAndSortedProducts = sortProducts(
-    productsCustomer?.filter(filterProducts) || []
+    productsCustomer.filter(filterProducts)
   )
 
   const handleReset = () => {
@@ -89,16 +94,14 @@ const ProductByCategory = () => {
                 ) : errorCategories ? (
                   <option>Lỗi tải danh mục</option>
                 ) : (
-                  (Array.isArray(categories) ? categories : []).map(
-                    (category) => (
-                      <option
-                        key={category.category_id}
-                        value={category.category_id}
-                      >
-                        {category.category_name}
-                      </option>
-                    )
-                  )
+                  categories.map((category) => (
+                    <option
+                      key={category.category_id}
+                      value={category.category_id}
+                    >
+                      {category.category_name}
+                    </option>
+                  ))
                 )}
               </select>
             </div>
@@ -144,9 +147,9 @@ const ProductByCategory = () => {
               />
             </div>
             <div className="font-RobotoSemibold text-main">
-              {filteredAndSortedProducts?.length}{' '}
+              {filteredAndSortedProducts.length}{' '}
               <span className="text-black font-RobotoMedium">
-                project found
+                sản phẩm tìm thấy
               </span>
             </div>
           </div>
@@ -156,8 +159,8 @@ const ProductByCategory = () => {
               onChange={(e) => setSortOrder(e.target.value)}
               className="font-RobotoMedium block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
             >
-              <option value="desc">Price high to low</option>
-              <option value="asc">Price low to high</option>
+              <option value="desc">Giá từ cao đến thấp</option>
+              <option value="asc">Giá từ thấp đến cao</option>
             </select>
           </div>
         </div>

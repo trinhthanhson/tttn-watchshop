@@ -29,17 +29,17 @@ public class CategoryServiceImpl implements CategoryService
 
     @Override
     @Transactional
-    public Category createCategory(Category category, String jwt) throws Exception {
+    public Category createCategory(String category_name, String jwt) throws Exception {
         Category create = new Category();
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Category saveCategory = new Category();
-        boolean checkExist = checkExitsCategory(category.getCategory_name());
+        boolean checkExist = checkExitsCategory(category_name);
         if(!checkExist){
             try {
                 create.setCreated_at(LocalDateTime.now());
                 create.setCreated_by(staff.getStaff_id());
-                create.setCategory_name(category.getCategory_name());
+                create.setCategory_name(category_name);
                 create.setUpdated_at(LocalDateTime.now());
                 create.setUpdated_by(staff.getStaff_id());
                 saveCategory = categoryRepo.save(create);
@@ -47,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService
                 System.out.println(e.getMessage());
             }
         }else{
-            throw new Exception("exist category name " + category.getCategory_name());
+            throw new Exception("exist category name " + category_name);
         }
         return saveCategory;
     }

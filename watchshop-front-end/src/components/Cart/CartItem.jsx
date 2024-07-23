@@ -1,68 +1,63 @@
-import axios from "axios";
-import PropTypes from "prop-types";
-import { useState } from "react";
+import axios from 'axios'
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 
 const CartItem = ({ cart, onQuantityChange, onDeleteSuccess }) => {
-  const { product, price, size } = cart;
-  const [quantity, setQuantity] = useState(cart.quantity);
+  const { product, price, size } = cart
+  const [quantity, setQuantity] = useState(cart.quantity)
 
   const handleQuantityChange = async (newQuantity) => {
     if (newQuantity >= 1) {
       try {
-        const apiUrl = 'http://localhost:9999/api/cart/update/quantity';
+        const apiUrl = 'http://localhost:9999/api/customer/cart/update/quantity'
         const requestBody = {
           product_id: product?.product_id,
-          size: size,
           quantity: newQuantity
-        };
-        const token = localStorage.getItem('token');
+        }
+        const token = localStorage.getItem('token')
 
         const response = await axios.put(apiUrl, requestBody, {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
-        });
+        })
 
-        console.log('Cart updated successfully:', response.data);
-        setQuantity(newQuantity);
+        console.log('Cart updated successfully:', response.data)
+        setQuantity(newQuantity)
       } catch (error) {
-        console.error('Failed to update cart quantity:', error);
+        console.error('Failed to update cart quantity:', error)
       }
-      onQuantityChange(product?.product_id, newQuantity);
+      onQuantityChange(product?.product_id, newQuantity)
     }
-  };
+  }
 
   const handleDelete = async () => {
     try {
-      const apiUrl = 'http://localhost:9999/api/cart/delete/item';
+      const apiUrl = 'http://localhost:9999/api/customer/cart/delete/item'
       const requestBody = {
-        product_id: product?.product_id,
-        size: size
-      };
-      const token = localStorage.getItem('token');
+        product_id: product?.product_id
+      }
+      const token = localStorage.getItem('token')
 
       const response = await axios.post(apiUrl, requestBody, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
-      });
+      })
 
-      console.log('Delete items successfully:', response.data);
-
+      console.log('Delete items successfully:', response.data)
     } catch (error) {
-      console.error('Failed to delete cart items:', error);
+      console.error('Failed to delete cart items:', error)
     }
 
-    onDeleteSuccess();
+    onDeleteSuccess()
   }
 
   return (
     <>
-      <div
-        className="p-3 shadow-lg rounded-md border-neutral-200 border-2"
-      >
+      <div className="p-3 shadow-lg rounded-md border-neutral-200 border-2">
         <div className="flex items-center mt-2">
           <div className="w-[12rem] h-[12rem] ml-5">
             <img
@@ -73,15 +68,13 @@ const CartItem = ({ cart, onQuantityChange, onDeleteSuccess }) => {
             />
           </div>
           <div className="ml-8 space-y-1">
-            <p className="font-bold text-lg">
-              {product?.product_name}
-            </p>
+            <p className="font-bold text-lg">{product?.product_name}</p>
             <p className="opacity-80 text-sm mt-3">{size}</p>
             <p className="opacity-80 mt-3 text-sm">
               Category: {product?.category?.category_name}
             </p>
             <p className="text-main font-semibold text-lg">
-              {price.toLocaleString("en")} VNĐ
+              {price.toLocaleString('en')} VNĐ
             </p>
           </div>
           <div className="lg:flex items-center lg:space-x-5 pt-2 ml-[30%]">
@@ -99,7 +92,7 @@ const CartItem = ({ cart, onQuantityChange, onDeleteSuccess }) => {
 
               <div className="">
                 <input
-                  type={"text"}
+                  type={'text'}
                   className="input-small w-10 mx-2 text-center"
                   step={null}
                   min={1}
@@ -143,7 +136,7 @@ const CartItem = ({ cart, onQuantityChange, onDeleteSuccess }) => {
 CartItem.propTypes = {
   cart: PropTypes.object.isRequired,
   onQuantityChange: PropTypes.func.isRequired,
-  onDeleteSuccess: PropTypes.func.isRequired,
-};
+  onDeleteSuccess: PropTypes.func.isRequired
+}
 
 export default CartItem

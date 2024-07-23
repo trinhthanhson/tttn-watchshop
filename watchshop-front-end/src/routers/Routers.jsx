@@ -1,37 +1,39 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "../pages/Home";
-import About from "../pages/About/About";
-import Origin from "../pages/About/Origin";
-import Services from "../pages/About/Services";
-import Jobs from "../pages/About/Jobs";
-import News from "../pages/News/News";
-import Menu from "../pages/Menu/Menu";
-import Products from "../pages/Menu/Products";
-import Page404 from "../pages/Page404";
-import Contact from "../pages/Contact";
-import ProductDetail from "../pages/Menu/ProductDetail";
-import NewDetail from "../pages/News/NewDetail";
-import Discover from "../pages/Discover";
-import Cart from "../pages/Cart";
-import Layout from "../Admin/components/Layout";
-import Dashboard from "../Admin/pages/Dashboard";
-import AllProducts from "../Admin/pages/AllProducts";
-import AllOrder from "../Admin/pages/AllOrder";
-import AllCustomers from "../Admin/pages/AllCustomer";
-import AllCategory from "../Admin/pages/AllCategory";
-import AdminOrderDetail from "../Admin/pages/AdminOrderDetail";
-import AdminProductDetail from "../Admin/pages/AdminProductDetail";
-import CreateProduct from "../Admin/pages/CreateProduct";
-import UpdateProduct from "../Admin/pages/UpdateProduct";
-import Login from "../pages/Auth/Login";
-import Signup from "../pages/Auth/Signup";
-import CustomerProfile from "../pages/Auth/CustomerProfile";
-import StaffProfile from "../Admin/pages/StaffProfile";
-import OrdersHistory from "../pages/Order/OrdersHistory";
-import OrderDetail from "../pages/Order/OrderDetail";
-import AllCoupons from "../Admin/pages/AllCoupons";
-import CreateCoupon from "../Admin/pages/CreateCoupon";
-import Checkout from "../pages/Order/Checkout";
+import { Routes, Route } from 'react-router-dom'
+import Home from '../pages/Home'
+import About from '../pages/About/About'
+import Origin from '../pages/About/Origin'
+import Services from '../pages/About/Services'
+import Jobs from '../pages/About/Jobs'
+import News from '../pages/News/News'
+import Menu from '../pages/Menu/Menu'
+import Products from '../pages/Menu/Products'
+import Page404 from '../pages/Page404'
+import Contact from '../pages/Contact'
+import ProductDetail from '../pages/Menu/ProductDetail'
+import NewDetail from '../pages/News/NewDetail'
+import Discover from '../pages/Discover'
+import Cart from '../pages/Cart'
+import Layout from '../Admin/components/Layout'
+import Dashboard from '../Admin/pages/Dashboard'
+import AllProducts from '../Admin/pages/AllProducts'
+import AllOrder from '../Admin/pages/AllOrder'
+import AllCustomers from '../Admin/pages/AllCustomer'
+import AllCategory from '../Admin/pages/AllCategory'
+import AdminOrderDetail from '../Admin/pages/AdminOrderDetail'
+import AdminProductDetail from '../Admin/pages/AdminProductDetail'
+import CreateProduct from '../Admin/pages/CreateProduct'
+import UpdateProduct from '../Admin/pages/UpdateProduct'
+import Login from '../pages/Auth/Login'
+import Signup from '../pages/Auth/Signup'
+import CustomerProfile from '../pages/Auth/CustomerProfile'
+import StaffProfile from '../Admin/pages/StaffProfile'
+import OrdersHistory from '../pages/Order/OrdersHistory'
+import OrderDetail from '../pages/Order/OrderDetail'
+import AllCoupons from '../Admin/pages/AllCoupons'
+import CreateCoupon from '../Admin/pages/CreateCoupon'
+import Checkout from '../pages/Order/Checkout'
+import ProductDetailByCategory from '../pages/Menu/ProductByCategory'
+import OrderBuyNow from '../pages/Order/OrderBuyNow'
 
 const Routers = () => {
   return (
@@ -51,6 +53,12 @@ const Routers = () => {
       <Route path="/menu" element={<Menu />} />
       <Route path="/products" element={<Products />} />
       <Route path="/products/:id" element={<ProductDetail />} />
+      <Route path="/buynow" element={<OrderBuyNow />} />
+
+      <Route
+        path="/products/:category_id/category"
+        element={<ProductDetailByCategory />}
+      />
       <Route path="/contact" element={<Contact />} />
       <Route path="/discover" element={<Discover />} />
       <Route path="/cart" element={<Cart />} />

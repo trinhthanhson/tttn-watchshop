@@ -5,7 +5,7 @@ import ptithcm.tttn.entity.Category;
 import java.util.List;
 
 public interface CategoryService {
-    Category createCategory(Category category, String jwt) throws Exception;
+    Category createCategory(String category_name, String jwt) throws Exception;
 
     List<Category> findAll();
 

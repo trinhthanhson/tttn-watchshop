@@ -72,9 +72,7 @@ public class Customer {
     @JoinColumn(name = "user_id",insertable = false, updatable = false)
     private User user;
 
-    @OneToOne(mappedBy = "customer")
-    @JsonIgnore
-
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Cart cart;
 
 

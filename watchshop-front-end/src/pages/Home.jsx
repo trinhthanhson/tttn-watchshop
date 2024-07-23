@@ -1,7 +1,7 @@
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { menu } from '../apis/mock-data'
+//import { menu } from '../apis/mock-data'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { getAllProductsCustomerRequest } from '../redux/actions/actions'
@@ -70,7 +70,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="bg-white flex justify-around p-6 my-6">
+      {/* <div className="bg-white flex justify-around p-6 my-6">
         {menu.map((item) => (
           <div className="flex flex-col items-center" key={item.id}>
             <div className="w-14 h-14 flex justify-center items-center shadow-md rounded-md border border-neutral-100">
@@ -85,7 +85,7 @@ const Home = () => {
             <p className="mt-2">{item.title}</p>
           </div>
         ))}
-      </div>
+      </div> */}
       <h1 className="font-RobotoSemibold text-center uppercase text-[24px] text-main mt-20 mb-10">
         Gợi Ý Hôm Nay
       </h1>

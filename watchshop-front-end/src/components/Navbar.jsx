@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { FaShoppingCart } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllCartRequest } from '../redux/actions/actions'
+import axios from 'axios'
 
 const Navbar = () => {
   const dispatch = useDispatch()
@@ -14,11 +15,30 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
+  const [categories, setCategories] = useState([])
 
   useEffect(() => {
     dispatch(getAllCartRequest())
   }, [dispatch])
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:9999/api/user/category/all'
+        )
+        // Giả sử response.data.categories là mảng danh mục
+        if (response.data && Array.isArray(response.data.data)) {
+          setCategories(response.data.data.slice(0, 12))
+        } else {
+          console.error('Unexpected response format:', response.data)
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error)
+      }
+    }
 
+    fetchCategories()
+  }, [])
   const toggleAboutMenu = () => {
     setShowAboutMenu(!showAboutMenu)
   }
@@ -107,7 +127,7 @@ const Navbar = () => {
                   {showAboutMenu && (
                     <div
                       className="hidden sm:block w-[90%] lg:w-[70%] left-[15%] absolute mx-auto bg-primary mt-[10px] border-2 border-black"
-                      style={{ backgroundColor: 'rgb(0 0 0 / 35%)' }}
+                      style={{ backgroundColor: 'rgb(183 183 183)' }}
                     >
                       <div className="flex">
                         <div className="w-[50%] text-white p-[60px]">
@@ -170,7 +190,7 @@ const Navbar = () => {
                 <div className="border-b-2 border-main hover:border-b-2 hover:border-white">
                   <p className="font-RobotoMedium uppercase text-[20px] md:text-[17px] xl:text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 text-white border-none sm:border-b border-gray-100 hover:bg-transparent lg:hover:bg-transparent lg:border-0 lg:hover:text-white md:py-4 lg:py-6 flex justify-center items-center cursor-pointer">
                     <a href="/menu" style={{ color: 'black' }}>
-                      Thực Đơn
+                      Loại Sản phẩm
                     </a>
                     <svg
                       onClick={toggleMenu}
@@ -192,100 +212,36 @@ const Navbar = () => {
                   {showMenu && (
                     <div className="hidden sm:block w-[90%] left-[5%] absolute mx-auto bg-primary mt-[10px]">
                       <div className="flex">
-                        <div className="w-[30%] text-white p-[60px]">
+                        <div
+                          className="w-[30%] text-white p-[60px]"
+                          style={{ backgroundColor: 'rgb(183, 183, 183)' }}
+                        >
                           <img
-                            src="https://www.highlandscoffee.com.vn/vnt_upload/product/04_2023/PHIN_SUA_DA_5.1.png"
+                            style={{ marginLeft: '60px' }}
+                            src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Fproducts%2Fmens-le-locle-leather-silver-dial-watch-tissot-tist0064071603300_1-removebg-preview.png?alt=media&token=f7b24148-ec6a-4cdb-9665-51a17419ba7d"
                             alt="coffee"
                           />
                         </div>
                         <div className="w-[70%] bg-white p-[60px]">
-                          <div className="flex">
-                            <div className="w-[35%]">
-                              <a
-                                className="font-RobotoMedium text-[30px] hover:text-red"
-                                href="/products"
-                              >
-                                Cà Phê
-                              </a>
-                              <ul>
-                                <li>
+                          <div className="flex flex-wrap">
+                            {Array.isArray(categories) &&
+                            categories.length > 0 ? (
+                              categories.map((category) => (
+                                <div
+                                  key={category.category_id}
+                                  className="w-[30%] mb-6"
+                                >
                                   <a
-                                    className="text-[20px] font-RobotoMedium hover:text-red"
-                                    href="/products"
+                                    className="font-RobotoMedium text-[30px] hover:text-red"
+                                    href={`/products/${category.category_id}/category`}
                                   >
-                                    Cà Phê Phin
+                                    {category.category_name}
                                   </a>
-                                </li>
-                                <li>
-                                  <a
-                                    className="text-[20px] font-RobotoMedium hover:text-red"
-                                    href="/products"
-                                  >
-                                    Phindi
-                                  </a>
-                                </li>
-                                <li>
-                                  <a
-                                    className="text-[20px] font-RobotoMedium hover:text-red"
-                                    href="/products"
-                                  >
-                                    Cà Phê Espresso
-                                  </a>
-                                </li>
-                              </ul>
-                            </div>
-                            <div className="w-[35%]">
-                              <a
-                                className="font-RobotoMedium text-[30px] hover:text-red"
-                                href="/products"
-                              >
-                                FREEZE
-                              </a>
-                              <ul>
-                                <li>
-                                  <a
-                                    className="text-[20px] font-RobotoMedium hover:text-red"
-                                    href="/products"
-                                  >
-                                    Freeze Cà Phê Phin
-                                  </a>
-                                </li>
-                                <li>
-                                  <a
-                                    className="text-[20px] font-RobotoMedium hover:text-red"
-                                    href="/products"
-                                  >
-                                    Freeze Không Cà Phê
-                                  </a>
-                                </li>
-                              </ul>
-                            </div>
-                            <div className="w-[30%]">
-                              <a
-                                className="font-RobotoMedium text-[30px] hover:text-red"
-                                href="/products"
-                              >
-                                Trà
-                              </a>
-                              <ul>
-                                <li>
-                                  <a
-                                    className="text-[20px] font-RobotoMedium hover:text-red"
-                                    href="/products"
-                                  >
-                                    Trà Sen Vàng Mới
-                                  </a>
-                                </li>
-                                <li>
-                                  <a
-                                    className="text-[20px] font-RobotoMedium hover:text-red"
-                                    href="/products"
-                                  >
-                                    Trà Thanh Đào
-                                  </a>
-                                </li>
-                              </ul>
-                            </div>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No categories found</p>
+                            )}
                           </div>
                         </div>
                       </div>

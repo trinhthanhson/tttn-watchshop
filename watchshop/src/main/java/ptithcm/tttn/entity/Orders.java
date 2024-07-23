@@ -2,6 +2,8 @@ package ptithcm.tttn.entity;
 
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,10 +20,7 @@ public class Orders {
     private Long order_id;
 
     @Column
-    private String first_name;
-
-    @Column
-    private String last_name;
+     private String recipient_name;
 
     @Column
     private int total_quantity;
@@ -31,6 +30,9 @@ public class Orders {
 
     @Column
     private String address;
+
+    @Column
+    private String recipient_phone;
 
     @Column
     private String note;
@@ -50,6 +52,9 @@ public class Orders {
     @Column
     private Long updated_by;
 
+    @Column
+    private Long updated_staff;
+
     @OneToOne(mappedBy = "order")
     private Bill bill;
 
@@ -58,7 +63,13 @@ public class Orders {
     private Customer customer_created;
 
     @ManyToOne
+    @JoinColumn(name = "updated_staff",insertable = false, updatable = false)
+    @JsonIgnore
+    private Staff staff_updated;
+
+    @ManyToOne
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
+    @JsonIgnore
     private Customer customer_updated;
 
     @OneToMany(mappedBy = "order")

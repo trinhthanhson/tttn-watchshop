@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
@@ -27,6 +29,7 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "order_id",insertable = false, updatable = false)
+    @JsonIgnore
     private Orders order;
 
     @ManyToOne

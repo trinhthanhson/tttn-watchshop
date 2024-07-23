@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { getUserProfileRequest } from '../../redux/actions/actions'
 import CoffeeCanvas from '../../components/Canvas/Coffee'
-import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
-import { auth } from '../../firebase/config'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -15,11 +13,9 @@ const Login = () => {
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [result, setResult] = useState(null)
-  const [otp, setOtp] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmNewPassword, setConfirmNewPassword] = useState('')
-  const [otpVerified, setOtpVerified] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     if (user) {
@@ -62,6 +58,9 @@ const Login = () => {
         dispatch(getUserProfileRequest())
         console.log('Đăng nhập thành công')
       } else {
+        setMessage(
+          'Đăng nhập không thành công! Vui lòng kiểm tra lại username hoặc password'
+        )
         console.log('Đăng nhập không thành công')
       }
     } catch (error) {
@@ -69,56 +68,35 @@ const Login = () => {
     }
   }
 
-  const handleForgotPassword = async () => {
+  const handleForgotPassword = () => {
+    setShowForgotPassword(true)
+  }
+
+  const handleCloseForgotPassword = () => {
+    setShowForgotPassword(false)
+  }
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value)
+  }
+
+  const handleForgotPasswordSubmit = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:9999/auth/check/${username}`
+      const response = await axios.post(
+        'http://localhost:9999/api/auth/forgot-password',
+        { email }
       )
-      console.log(response)
-      if (response.data.code === 200) {
-        handleSendOTP()
+      const { code } = response.data
+      if (code === 200) {
+        setMessage(
+          'The password reset password has been sent to your email. Please go to your email to get the password to log in'
+        )
       } else {
-        console.error('Tài khoản không tồn tại')
+        setMessage('Incorrect email please enter the correct registered email')
       }
     } catch (error) {
       console.error('Error:', error)
-    }
-  }
-
-  const handleSendOTP = async () => {
-    try {
-      const recaptcha = new RecaptchaVerifier(auth, 'recaptcha', {})
-      const result = await signInWithPhoneNumber(auth, username, recaptcha)
-      setResult(result)
-    } catch (error) {
-      console.error('Error:', error)
-    }
-  }
-
-  const verifyOTP = async () => {
-    try {
-      const data = await result.confirm(otp)
-      console.log('data', data)
-      setOtpVerified(true)
-    } catch (error) {
-      console.error('Error:', error)
-    }
-  }
-
-  const handleChangePassword = async () => {
-    if (newPassword !== confirmNewPassword) {
-      console.error('Mật khẩu mới và xác nhận mật khẩu không khớp')
-      return
-    }
-
-    try {
-      await axios.put(`http://localhost:9999/auth/change/${username}`, {
-        password: newPassword
-      })
-      console.log('Thay đổi mật khẩu thành công')
-      window.location.reload()
-    } catch (error) {
-      console.error('Error:', error)
+      setMessage('Failed to send reset password. Please try again.')
     }
   }
 
@@ -140,21 +118,62 @@ const Login = () => {
 
         <div
           className="layout_login absolute flex justify-center items-center mt-[8%] ml-[8%] w-[75%] rounded-[15px]"
-          style={{ backgroundColor: 'rgba(128, 128, 128, 0.5)' }}
+          style={{ backgroundColor: 'rgb(6 6 6 / 50%)' }}
         >
           <div className="flex-col col-span-1 w-1/3 h-full object-contain border-r-2 border-neutral-400">
-            {' '}
             <CoffeeCanvas />
           </div>
 
           <div className="flex-col col-span-1 w-2/3">
-            {!result && !otpVerified && (
+            {showForgotPassword ? (
+              <div className="forgot-password-form flex flex-col items-center justify-center">
+                <h1 className="text-center mb-8 text-main text-[25px] uppercase text-white">
+                  Forgot Password
+                </h1>
+                <div className="input">
+                  <label className="text-white">Email</label>
+                  <input
+                    type="text"
+                    value={email}
+                    onChange={handleEmailChange}
+                    className="h-8 w-[45%] outline-0 bg-[#ebebeb] p-2 rounded"
+                    style={{ width: '300px' }}
+                  />
+                </div>
+                <div className="btn_submit" style={{ width: '300px' }}>
+                  <button
+                    className="uppercase"
+                    type="button"
+                    onClick={handleForgotPasswordSubmit}
+                  >
+                    Send Reset Link
+                  </button>
+                </div>
+                {message && <p className="text-white mt-4">{message}</p>}
+                <div className="btn_submit" style={{ width: '300px' }}>
+                  <button
+                    className="text-white mt-4 underline"
+                    onClick={handleCloseForgotPassword}
+                  >
+                    Back to Login
+                  </button>
+                </div>
+              </div>
+            ) : (
               <>
                 <h1 className="font-RobotoSemibold text-center mb-8 text-main text-[25px] uppercase text-white">
                   Đăng Nhập
                 </h1>
+                {message && (
+                  <p
+                    className="text-white mt-4"
+                    style={{ color: 'rgb(255 191 124)', marginLeft: '200px' }}
+                  >
+                    {message}
+                  </p>
+                )}
                 <div className="input">
-                  <label className=" text-white">Username</label>
+                  <label className="text-white">Username</label>
                   <input
                     type="text"
                     value={username}
@@ -163,7 +182,7 @@ const Login = () => {
                   />
                 </div>
                 <div className="input">
-                  <label className=" text-white">Mật Khẩu</label>
+                  <label className="text-white">Mật Khẩu</label>
                   <input
                     type="password"
                     value={password}
@@ -172,8 +191,8 @@ const Login = () => {
                   />
                 </div>
                 <a
-                  onClick={() => handleForgotPassword()}
-                  className="link_forgotPass  text-white"
+                  onClick={handleForgotPassword}
+                  className="link_forgotPass text-white"
                 >
                   Quên Mật Khẩu
                 </a>
@@ -192,67 +211,6 @@ const Login = () => {
                   <a className="link_signup" href="/signup">
                     Đăng Ký Ngay
                   </a>
-                </div>
-              </>
-            )}
-
-            {!otpVerified && !result && (
-              <div id="recaptcha" className="mx-20 input"></div>
-            )}
-            {result && !otpVerified && (
-              <>
-                <div className="input">
-                  <label className="">Input OTP</label>
-                  <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="Enter the OTP"
-                    required
-                    className="h-8 !w-[50%] text-center outline-0 bg-[#ebebeb] p-2 rounded"
-                  />
-                  <button
-                    onClick={verifyOTP}
-                    className="rounded-md bg-main text-white px-3 py-1.5"
-                  >
-                    Verify OTP
-                  </button>
-                </div>
-              </>
-            )}
-
-            {otpVerified && (
-              <>
-                <div className="input">
-                  <label className="">Mật khẩu mới</label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Nhập mật khẩu mới"
-                    required
-                    className="h-8 w-[45%] outline-0 bg-[#ebebeb] p-2 rounded mb-2"
-                  />
-                </div>
-                <div className="input">
-                  <label className="">Xác nhận mật khẩu mới</label>
-                  <input
-                    type="password"
-                    value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    placeholder="Xác nhận mật khẩu mới"
-                    required
-                    className="h-8 w-[45%] outline-0 bg-[#ebebeb] p-2 rounded mb-2"
-                  />
-                </div>
-                <div className="btn_submit">
-                  <button
-                    onClick={handleChangePassword}
-                    className="rounded-md bg-main text-white px-2 py-1.5 mb-1.5"
-                    type="submit"
-                  >
-                    Đổi mật khẩu
-                  </button>
                 </div>
               </>
             )}

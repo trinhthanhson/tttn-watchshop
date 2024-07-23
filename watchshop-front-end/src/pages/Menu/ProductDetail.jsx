@@ -1,61 +1,56 @@
-import { useParams } from "react-router-dom";
-import CardProductSimilar from "../../components/Products/CardProductSimilar";
-import CardSizeItem from "../../components/Products/CardSizeItem";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { addCartRequest, getAllProductsCustomerRequest } from "../../redux/actions/actions";
-import axios from "axios";
+import { useParams, useNavigate } from 'react-router-dom'
+import CardProductSimilar from '../../components/Products/CardProductSimilar'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import {
+  addCartRequest,
+  getAllProductsCustomerRequest
+} from '../../redux/actions/actions'
 
 const ProductDetail = () => {
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  const productsCustomer = useSelector(state => state.productsCustomer.productsCustomer.data);
-  const selectedProduct = productsCustomer ? productsCustomer.find((item) => item.product_id === id) : null;
-  const currentProduct = productsCustomer ? productsCustomer.filter((item) => item.product_id !== id) : [];
-  const category_id = selectedProduct?.category?.category_id;
-  const [sizeData, setSizeData] = useState([]);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const { id } = useParams()
+  const dispatch = useDispatch()
+  const [quantity, setQuantity] = useState(1)
+  const navigate = useNavigate()
+
+  const productsCustomer = useSelector(
+    (state) => state.productsCustomer.productsCustomer.data
+  )
+  const selectedProduct = productsCustomer
+    ? productsCustomer.find((item) => item.product_id === id)
+    : null
+  const currentProduct = productsCustomer
+    ? productsCustomer.filter((item) => item.product_id !== id)
+    : []
 
   useEffect(() => {
-    dispatch(getAllProductsCustomerRequest());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (category_id) {
-      fetchData();
-    }
-  }, [selectedProduct]);
-
-  const fetchData = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-
-      const response = await axios.get(`http://localhost:9999/api/order/size/category?category_id=${category_id}`, config);
-      const data = response.data.data;
-
-      setSizeData(data);
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
-
-  const handleSizeClick = (selectedSize) => {
-    setSelectedSize(selectedSize);
-  };
+    dispatch(getAllProductsCustomerRequest())
+  }, [dispatch])
 
   const handleAddToCart = () => {
-    if (selectedSize) {
-      dispatch(addCartRequest({ product_name: `${selectedProduct?.product_name}`, size: selectedSize }));
-    } else {
-      console.log("Vui lòng chọn size trước khi thêm vào giỏ hàng");
+    dispatch(
+      addCartRequest({
+        product_name: `${selectedProduct?.product_name}`,
+        price: `${selectedProduct.priceUpdateDetails[0].price_new}`,
+        quantity: quantity
+      })
+    )
+  }
+
+  const handleQuantityChange = (e) => {
+    const value = parseInt(e.target.value, 10)
+    if (value >= 1) {
+      setQuantity(value)
     }
-  };
+  }
+  const handleBuyNow = () => {
+    navigate('/buynow', {
+      state: {
+        product: selectedProduct,
+        quantity: quantity
+      }
+    })
+  }
 
   return (
     <div className="pt-[120px]">
@@ -75,14 +70,6 @@ const ProductDetail = () => {
               <h1 className="leading-tight font-RobotoMedium text-primary text-3xl md:text-4xl lg:text-[26px] 3xl:text-[35px] mb-[10px] 3xl:mb-3">
                 {selectedProduct?.product_name}
               </h1>
-              <p className="font-medium text-[16px] lg:text-[16px] 3xl:text-[20px] mb-5 flex text-borderDarkGray">
-                <img
-                  className="object-contain object-center w-[18px] h-auto mr-3"
-                  src="https://www.gamudaland.com.my/_next/image?url=%2Fimages%2Flanding%2Flocation.png&w=48&q=75"
-                  alt="locate-icon"
-                />
-                không biết
-              </p>
               <hr className="mb-5 w-full" />
               <div className="grid grid-cols-12 items-center justify-between w-full mb-5">
                 <div className="col-span-12 sm:col-span-6 mb-2 sm:mb-0 pr-[10px] mr-[10px]">
@@ -90,7 +77,10 @@ const ProductDetail = () => {
                     Giá
                   </p>
                   <p className="text-main font-RobotoMedium text-[18px] lg:text-[17px] 3xl:text-[20px]">
-                    {selectedProduct?.priceUpdateDetails[0]?.price_new.toLocaleString("en")} VNĐ
+                    {selectedProduct?.priceUpdateDetails[0]?.price_new.toLocaleString(
+                      'en'
+                    )}{' '}
+                    VNĐ
                   </p>
                 </div>
                 <div className="col-span-12 sm:col-span-6 mb-2 sm:mb-0 pr-[10px] mr-[10px]">
@@ -103,20 +93,6 @@ const ProductDetail = () => {
                 </div>
               </div>
               <hr className="mb-5 w-full" />
-              <p className="font-serif text-sub text-[18px] 3xl:text-[17px]">
-                Size
-              </p>
-              <div className="flex items-center justify-center gap-4 mt-1">
-                {sizeData && sizeData.map((item, index) => (
-                  <CardSizeItem
-                    key={index}
-                    size={item?.size?.size_name}
-                    isSelected={selectedSize === item?.size?.size_name}
-                    onClick={handleSizeClick}
-                  />
-                ))}
-
-              </div>
               {selectedProduct?.description && (
                 <>
                   <hr className="mb-5 w-full" />
@@ -130,11 +106,29 @@ const ProductDetail = () => {
                 </>
               )}
               <hr className="mb-5 w-full" />
+
+              <div className="mb-5 w-full">
+                <label
+                  htmlFor="quantity"
+                  className="font-serif text-sub text-[18px] 3xl:text-[17px]"
+                >
+                  Số lượng
+                </label>
+                <input
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  min="1"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  className="w-[10%] mt-2 p-2 border border-grey rounded-lg "
+                  style={{ marginLeft: '20px' }}
+                />
+              </div>
+
               <div className="grid sm:grid-cols-2 gap-4 items-center sm:justify-between w-full">
                 <div className="w-full">
-                  <div
-                    className="flex justify-center items-center p-3 text-center border border-grey text-primary hover:text-white hover:bg-primary hover:border-none rounded-lg"
-                  >
+                  <div className="flex justify-center items-center p-3 text-center border border-grey text-primary hover:text-white hover:bg-primary hover:border-none rounded-lg">
                     <button
                       onClick={handleAddToCart}
                       className="font-serif text-[16px] lg:text-[17px] sm:text-lg text-inherit 3xl:text-[20px]"
@@ -159,11 +153,11 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="w-full">
-                  <a
-                    href="#buynow"
-                    className="block"
-                  >
-                    <div className="font-serif rounded-lg p-3 text-center border border-grey bg-primary text-white hover:bg-[#271A15] hover:text-white">
+                  <a href="" className="block">
+                    <div
+                      onClick={handleBuyNow}
+                      className="font-serif rounded-lg p-3 text-center border border-grey bg-primary text-white hover:bg-[#271A15] hover:text-white"
+                    >
                       <p className="text-[16px] lg:text-[17px] sm:text-lg text-inherit 3xl:text-[20px] hover:border-none">
                         Mua Ngay
                       </p>
@@ -171,6 +165,60 @@ const ProductDetail = () => {
                   </a>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="pt-[30px] pb-[50px] bg-gray-100 w-full">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-primary mb-6">
+            Thông Tin Chi Tiết
+          </h2>
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-12 md:col-span-6">
+              <h3 className="text-xl font-semibold text-primary mb-2">
+                Chi tiết sản phẩm
+              </h3>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Công nghệ: {selectedProduct?.technology}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Kính: {selectedProduct?.glass}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Chức năng: {selectedProduct?.func}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Màu sắc: {selectedProduct?.color}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Loại máy: {selectedProduct?.machine}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Giới tính: {selectedProduct?.sex}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Độ chính xác: {selectedProduct?.accuracy}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Tuổi thọ pin: {selectedProduct?.battery_life}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Khả năng chống nước: {selectedProduct?.water_resistance}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Trọng lương: {selectedProduct?.weight}
+              </p>
+              <p className="text-justify text-justify font-semibold text-primary mb-2">
+                Các tính năng khác: {selectedProduct?.other_features}
+              </p>
+            </div>
+            <div className="col-span-12 md:col-span-6">
+              <h3 className="text-xl font-semibold text-primary mb-2">Mô tả</h3>
+              <p className="text-justify font-semibold text-primary mb-2">
+                {selectedProduct?.detail}
+              </p>
             </div>
           </div>
         </div>

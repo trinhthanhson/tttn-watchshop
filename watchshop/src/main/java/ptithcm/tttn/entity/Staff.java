@@ -68,6 +68,10 @@ public class Staff {
     @JsonIgnore
     private List<Brand> updated_brand;
 
+    @OneToMany(mappedBy = "staff_updated")
+    @JsonIgnore
+    private List<Orders> staff_updated;
+
     @OneToMany(mappedBy = "created_category")
     @JsonIgnore
     private List<Category> created_category;

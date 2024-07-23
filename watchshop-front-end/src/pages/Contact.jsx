@@ -1,26 +1,28 @@
 const Contact = () => {
-
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    const form = event.target;
-    const formData = new FormData(form);
+    const form = event.target
+    const formData = new FormData(form)
 
     try {
-      const response = await fetch(import.meta.env.VITE_SCRIPT_GG_SHEET_ACTION, {
-        method: 'POST',
-        body: formData
-      });
+      const response = await fetch(
+        import.meta.env.VITE_SCRIPT_GG_SHEET_ACTION,
+        {
+          method: 'POST',
+          body: formData
+        }
+      )
 
       if (response.ok) {
-        console.log('Biểu mẫu đã được gửi thành công!');
+        console.log('Biểu mẫu đã được gửi thành công!')
       } else {
-        throw new Error('Có lỗi xảy ra khi gửi biểu mẫu.');
+        throw new Error('Có lỗi xảy ra khi gửi biểu mẫu.')
       }
     } catch (error) {
-      console.error('Lỗi khi gửi biểu mẫu:', error);
+      console.error('Lỗi khi gửi biểu mẫu:', error)
     }
-  };
+  }
 
   return (
     <>
@@ -35,13 +37,17 @@ const Contact = () => {
               Liên Hệ
             </h1>
             <p className="font-normal text-center sm:text-left text-black text-[16px] lg:text-[18px] lg:w-[100%]">
-              Highland Coffee Luôn Sẵn Sàng Lắng Nghe Và Hỗ Trợ Bạn
+              Tại S-WATCH, chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn trong
+              mọi tình huống. Dù bạn cần tư vấn sản phẩm, hỗ trợ kỹ thuật, hay
+              giải đáp thắc mắc, đội ngũ chăm sóc khách hàng của chúng tôi luôn
+              sẵn lòng phục vụ bạn. Dưới đây là các cách để liên hệ với chúng
+              tôi:
             </p>
           </div>
         </div>
         <div className="relative md:w-[65%]">
           <img
-            src="https://www.highlandscoffee.com.vn/vnt_upload/about/Highlands_5557_R3_-_Copy.jpg"
+            src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Fbackground.jpg?alt=media&token=edae71b6-7155-4d79-b78c-636c0a929ce6"
             alt="banner"
             className="w-full object-cover object-bottom h-full lg:h-[500px]"
           />
@@ -53,10 +59,12 @@ const Contact = () => {
         <div className="w-full xl:w-10/12 mx-auto">
           <div className="grid grid-cols-12 gap-0 relative z-10">
             <div className="col-span-12 lg:col-span-7 relative z-10">
-              <div dangerouslySetInnerHTML={{
-                __html: `
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5330909250315!2d106.7213798745749!3d10.770422059305398!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317525f5f3c420d3%3A0xffe8026e14a677b8!2zMTIzLCAxMjUgTmd1eeG7hW4gQ8ahIFRo4bqhY2gsIEFuIEzhu6NpIMSQw7RuZywgUXXhuq1uIDIsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1711188504055!5m2!1svi!2s" width="710" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
-                ` }} />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: `
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.3236969634686!2d106.79536407586939!3d10.862966057589805!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317527eff9208091%3A0xd2f529966b7f3d8b!2zMTEgxJAuIE5hbSBDYW8sIFBoxrDhu51uZyBUw6JuIFBow7osIFF14bqtbiA5LCBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1721636329620!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>                `
+                }}
+              />
             </div>
             <div className="col-span-12 lg:col-span-5 bg-primary p-5 sm:p-10 lg:p-12 relative z-10">
               <h1 className="leading-tight text-white text-3xl md:text-3xl xl:text-[3rem] font-RobotoMedium relative">
@@ -66,7 +74,8 @@ const Contact = () => {
                 Địa Chỉ
               </p>
               <p className="text-sm sm:text-base text-white font-semibold">
-                123-125 Nguyễn Cơ Thạch, Phường An Lợi Đông, Quận 2, Thành phố Hồ Chí Minh, Việt Nam.
+                11/7A Đường Nam Cao, Phường Tân Phú, Thành phố Thủ Đức, Thành
+                phố Hồ Chí Minh
               </p>
               <div className="my-6">
                 <div className="grid grid-cols-2 gap-3">
@@ -84,20 +93,7 @@ const Contact = () => {
                         className="text-white font-normal text-sm sm:text-base"
                         href="#"
                       >
-                        +028 6288 3966
-                      </a>
-                    </div>
-                    <div className="flex flex-row items-center">
-                      <img
-                        className="w-[20px] h-[20px] mr-2"
-                        src="https://www.gamudaland.com.my/images/contact/fax.svg"
-                        alt=""
-                      />
-                      <a
-                        href="#"
-                        className="text-white font-normal text-sm sm:text-base"
-                      >
-                        +028 6288 3966
+                        +84 363000451
                       </a>
                     </div>
                   </div>
@@ -112,17 +108,7 @@ const Contact = () => {
                         alt="#"
                       />
                       <p className="text-sm sm:text-base text-white font-normal">
-                        Mon - Fri 10am - 7pm
-                      </p>
-                    </div>
-                    <div className="flex flex-row items-center">
-                      <img
-                        className="w-[20px] h-[20px] mr-2"
-                        src="https://www.gamudaland.com.my/_next/image?url=%2Fimages%2Fcontact%2Fdatetime.png&w=32&q=75"
-                        alt="#"
-                      />
-                      <p className="text-sm sm:text-base text-white font-normal">
-                        Sat - Sun 10am - 5pm
+                        Every day
                       </p>
                     </div>
                   </div>
@@ -184,7 +170,7 @@ const Contact = () => {
         </div>
       </section>
     </>
-  );
-};
+  )
+}
 
-export default Contact;
+export default Contact

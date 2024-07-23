@@ -1,29 +1,32 @@
-import { useCallback, useEffect } from 'react';
-import OrderTracker from '../../components/Order/OrderTraker';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import CartItem from '../../components/Cart/CartItem';
-import { addOrderRequest, getAllCartRequest, getUserProfileRequest } from '../../redux/actions/actions';
+import { useCallback, useEffect } from 'react'
+import OrderTracker from '../../components/Order/OrderTraker'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import CartItem from '../../components/Cart/CartItem'
+import {
+  addOrderRequest,
+  getAllCartRequest,
+  getUserProfileRequest
+} from '../../redux/actions/actions'
 
 const Checkout = () => {
-  const activeStep = -1;
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart.cart);
-  const user = useSelector(state => state.user.user.data);
+  const activeStep = -1
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const cart = useSelector((state) => state.cart.cart)
+  const user = useSelector((state) => state.user.user.data)
 
   useEffect(() => {
-    dispatch(getUserProfileRequest());
-
+    dispatch(getUserProfileRequest())
   }, [dispatch])
 
   const getAllCart = useCallback(() => {
-    dispatch(getAllCartRequest());
-  }, [dispatch]);
+    dispatch(getAllCartRequest())
+  }, [dispatch])
 
   useEffect(() => {
-    getAllCart();
-  }, [getAllCart]);
+    getAllCart()
+  }, [getAllCart])
 
   const handleOrderButtonClick = () => {
     dispatch(addOrderRequest())
@@ -42,30 +45,40 @@ const Checkout = () => {
         </div>
       </section>
 
-      <section className='p-6'>
-        <div className='p-10 flex'>
-          <div className='flex-[0.85] bg-white rounded-md shadow-lg p-10 mx-10 border'>
-            <h1 className='text-2xl font-RobotoSemibold text-main'>Thông Tin Nhận Hàng</h1>
-            <div className='mt-5'>
-              <span className='font-RobotoSemibold'>Người nhận: {user?.firstname} {user?.lastname}</span>
+      <section className="p-6">
+        <div className="p-10 flex">
+          <div className="flex-[0.85] bg-white rounded-md shadow-lg p-10 mx-10 border">
+            <h1 className="text-2xl font-RobotoSemibold text-main">
+              Thông Tin Nhận Hàng
+            </h1>
+            <div className="mt-5">
+              <span className="font-RobotoSemibold">
+                Người nhận: {user?.firstname} {user?.lastname}
+              </span>
             </div>
-            <div className='mt-5'>
-              <span className='font-RobotoSemibold'>SĐT: {user?.phone}</span>
+            <div className="mt-5">
+              <span className="font-RobotoSemibold">SĐT: {user?.phone}</span>
             </div>
-            <div className='mt-5'>
-              <span className='font-RobotoSemibold'>Địa chỉ: {user?.address}</span>
+            <div className="mt-5">
+              <span className="font-RobotoSemibold">
+                Địa chỉ: {user?.address}
+              </span>
             </div>
           </div>
 
-          <div className="flex-[0.5]" >
+          <div className="flex-[0.5]">
             <div className="border p-5 bg-white shadow-lg rounded-md">
-              <p className="font-bold opacity-60 pb-4 uppercase">Chi Tiết Hóa Đơn</p>
+              <p className="font-bold opacity-60 pb-4 uppercase">
+                Chi Tiết Hóa Đơn
+              </p>
               <hr />
 
               <div className="space-y-3 font-semibold">
                 <div className="flex justify-between pt-3 text-black ">
                   <span>Tổng</span>
-                  <span style={{ justifyContent: "flex-end" }}>{cart?.data?.total_price.toLocaleString('en')} VNĐ</span>
+                  <span style={{ justifyContent: 'flex-end' }}>
+                    {cart?.data?.total_price.toLocaleString('en')} VNĐ
+                  </span>
                 </div>
 
                 <div className="flex justify-between">
@@ -74,12 +87,16 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between">
                   <span>Phí Vận Chuyển</span>
-                  <span className="text-green-700">{(20000).toLocaleString('en')} VNĐ</span>
+                  <span className="text-green-700">
+                    {(20000).toLocaleString('en')} VNĐ
+                  </span>
                 </div>
                 <hr />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Thanh Toán</span>
-                  <span className="text-green-700">{(cart?.data?.total_price + 20000).toLocaleString('en')} VNĐ</span>
+                  <span className="text-green-700">
+                    {(cart?.data?.total_price + 20000).toLocaleString('en')} VNĐ
+                  </span>
                 </div>
               </div>
 
@@ -90,9 +107,7 @@ const Checkout = () => {
                 >
                   Đặt Hàng
                 </button>
-                <button
-                  className="w-[50%] bg-green-500 bg-primary text-white p-2 rounded-md mt-5 shadow-md hover:bg-main transition duration-300 ease-in-out"
-                >
+                <button className="w-[50%] bg-green-500 bg-primary text-white p-2 rounded-md mt-5 shadow-md hover:bg-main transition duration-300 ease-in-out">
                   Thanh Toán
                 </button>
               </div>
@@ -103,14 +118,11 @@ const Checkout = () => {
         <div className="lg:grid grid-cols-3 lg:px-16 relative">
           <div className="lg:col-span-2 lg:px-5 ">
             <div className="space-y-3">
-              {cart.data && cart?.data?.cart_detail.length > 0 && (
-                cart?.data?.cart_detail.map((item, index) =>
-                  <CartItem
-                    key={index}
-                    cart={item}
-                  />
-                )
-              )}
+              {cart.data &&
+                cart?.data?.cartDetails.length > 0 &&
+                cart?.data?.cartDetails.map((item, index) => (
+                  <CartItem key={index} cart={item} />
+                ))}
             </div>
           </div>
         </div>
@@ -122,7 +134,7 @@ const Checkout = () => {
         </button> */}
       </section>
     </>
-  );
-};
+  )
+}
 
-export default Checkout;
+export default Checkout

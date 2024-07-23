@@ -4,10 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.Cart;
+import ptithcm.tttn.entity.CartDetail;
 import ptithcm.tttn.entity.User;
 import ptithcm.tttn.request.AddItemRequest;
 import ptithcm.tttn.response.ApiResponse;
 import ptithcm.tttn.response.EntityResponse;
+import ptithcm.tttn.service.CartDetailService;
 import ptithcm.tttn.service.CartService;
 import ptithcm.tttn.service.UserService;
 
@@ -17,8 +19,11 @@ public class CartCustomerController {
 
     private final CartService cartService;
 
-    public CartCustomerController(CartService cartService) {
+    private final CartDetailService cartDetailService;
+
+    public CartCustomerController(CartService cartService, CartDetailService cartDetailService) {
         this.cartService = cartService;
+        this.cartDetailService = cartDetailService;
     }
 
     @GetMapping("/")
@@ -62,6 +67,38 @@ public class CartCustomerController {
             res.setMessage("error " + e.getMessage());
         }
         return new ResponseEntity<>(res,res.getStatus());
+    }
+
+    @PutMapping("/update/quantity")
+    public ResponseEntity<ApiResponse> updateQuantityCartByCustomer(@RequestHeader("Authorization") String jwt, @RequestBody CartDetail cartDetail){
+        ApiResponse res = new ApiResponse();
+        try{
+            cartDetailService.updateQuantity(jwt,cartDetail);
+            res.setMessage("success");
+            res.setCode(HttpStatus.OK.value());
+            res.setStatus(HttpStatus.OK);
+        }catch (Exception e){
+            res.setMessage("error " + e.getMessage());
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setStatus(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(res, res.getStatus());
+    }
+
+    @PostMapping("/delete/item")
+    public ResponseEntity<ApiResponse> deleteItemCartByCustomer(@RequestHeader("Authorization") String jwt, @RequestBody CartDetail cartDetail){
+        ApiResponse res = new ApiResponse();
+        try{
+            cartDetailService.deleteItemCartDetail(jwt,cartDetail);
+            res.setMessage("success");
+            res.setCode(HttpStatus.OK.value());
+            res.setStatus(HttpStatus.OK);
+        }catch (Exception e){
+            res.setMessage("error " + e.getMessage());
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setStatus(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(res, res.getStatus());
     }
 
 }
