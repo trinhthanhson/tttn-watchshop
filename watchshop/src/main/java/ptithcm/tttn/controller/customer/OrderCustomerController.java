@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.Orders;
-import ptithcm.tttn.request.BuyNowRequest;
+import ptithcm.tttn.request.OrderRequest;
 import ptithcm.tttn.response.ApiResponse;
 import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
@@ -25,7 +25,7 @@ public class OrderCustomerController {
     }
 
     @PostMapping("/buy-now")
-    public ResponseEntity<ApiResponse> buyNowByCustomer(@RequestHeader("Authorization") String jwt, @RequestBody BuyNowRequest rq){
+    public ResponseEntity<ApiResponse> buyNowByCustomer(@RequestHeader("Authorization") String jwt, @RequestBody OrderRequest rq){
         ApiResponse res = new ApiResponse();
         try{
             Orders orders = ordersService.orderBuyNow(rq,jwt);

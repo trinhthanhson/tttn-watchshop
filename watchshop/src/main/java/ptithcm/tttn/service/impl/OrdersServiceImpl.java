@@ -1,13 +1,11 @@
 package ptithcm.tttn.service.impl;
 
 import org.springframework.stereotype.Service;
-import ptithcm.tttn.entity.Customer;
-import ptithcm.tttn.entity.OrderDetail;
-import ptithcm.tttn.entity.Orders;
-import ptithcm.tttn.entity.User;
+import ptithcm.tttn.entity.*;
 import ptithcm.tttn.repository.OrderDetailRepo;
 import ptithcm.tttn.repository.OrdersRepo;
-import ptithcm.tttn.request.BuyNowRequest;
+import ptithcm.tttn.request.OrderRequest;
+import ptithcm.tttn.service.CartService;
 import ptithcm.tttn.service.CustomerService;
 import ptithcm.tttn.service.OrdersService;
 import ptithcm.tttn.service.UserService;
@@ -23,17 +21,19 @@ public class OrdersServiceImpl implements OrdersService {
     private final UserService userService;
     private final CustomerService   customerService;
     private final OrderDetailRepo orderDetailRepo;
+    private final CartService cartService;
 
-    public OrdersServiceImpl(OrdersRepo ordersRepo, UserService userService, CustomerService customerService, OrderDetailRepo orderDetailRepo) {
+    public OrdersServiceImpl(OrdersRepo ordersRepo, UserService userService, CustomerService customerService, OrderDetailRepo orderDetailRepo, CartService cartService) {
         this.ordersRepo = ordersRepo;
         this.userService = userService;
         this.customerService = customerService;
         this.orderDetailRepo = orderDetailRepo;
+        this.cartService = cartService;
     }
 
     @Override
     @Transactional
-    public Orders orderBuyNow(BuyNowRequest rq, String jwt) throws Exception {
+    public Orders orderBuyNow(OrderRequest rq, String jwt) throws Exception {
         User user = userService.findUserByJwt(jwt);
         Customer customer = customerService.findByUserId(user.getUser_id());
         Orders orders = new Orders();
@@ -92,5 +92,13 @@ public class OrdersServiceImpl implements OrdersService {
         return  ordersRepo.save(findOrder);
     }
     throw new Exception("Not found order by id " + id);
+    }
+
+    @Override
+    public Orders orderBuyCart(OrderRequest rq, String jwt) throws Exception {
+        User user = userService.findUserByJwt(jwt);
+        Customer customer = customerService.findByUserId(user.getUser_id());
+        Cart cart = cartService.findCartByJwtCustomer(jwt);
+
     }
 }

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class BuyNowRequest {
+public class OrderRequest {
     private String product_id;
     private int quantity;
     private int price;
