@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useState } from 'react'
 
 const CartItem = ({ cart, onQuantityChange, onDeleteSuccess }) => {
-  const { product, price, size } = cart
+  const { product, price } = cart
   const [quantity, setQuantity] = useState(cart.quantity)
 
   const handleQuantityChange = async (newQuantity) => {
@@ -51,7 +51,6 @@ const CartItem = ({ cart, onQuantityChange, onDeleteSuccess }) => {
     } catch (error) {
       console.error('Failed to delete cart items:', error)
     }
-
     onDeleteSuccess()
   }
 
@@ -69,7 +68,6 @@ const CartItem = ({ cart, onQuantityChange, onDeleteSuccess }) => {
           </div>
           <div className="ml-8 space-y-1">
             <p className="font-bold text-lg">{product?.product_name}</p>
-            <p className="opacity-80 text-sm mt-3">{size}</p>
             <p className="opacity-80 mt-3 text-sm">
               Category: {product?.category?.category_name}
             </p>

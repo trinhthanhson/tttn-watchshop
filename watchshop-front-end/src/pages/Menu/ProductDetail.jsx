@@ -153,7 +153,7 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="w-full">
-                  <a href="" className="block">
+                  <a className="block">
                     <div
                       onClick={handleBuyNow}
                       className="font-serif rounded-lg p-3 text-center border border-grey bg-primary text-white hover:bg-[#271A15] hover:text-white"

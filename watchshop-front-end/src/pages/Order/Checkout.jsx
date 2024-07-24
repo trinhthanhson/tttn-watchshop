@@ -1,10 +1,9 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import OrderTracker from '../../components/Order/OrderTraker'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import CartItem from '../../components/Cart/CartItem'
 import {
-  addOrderRequest,
   getAllCartRequest,
   getUserProfileRequest
 } from '../../redux/actions/actions'
@@ -14,7 +13,16 @@ const Checkout = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const cart = useSelector((state) => state.cart.cart)
-  const user = useSelector((state) => state.user.user.data)
+  // const user = useSelector((state) => state.user.user.data)
+
+  const [address, setAddress] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [recipientName, setRecipientName] = useState('')
+  const [recipientPhone, setRecipientPhone] = useState('')
+  const [shippingAddress, setShippingAddress] = useState('')
+  const [note, setNote] = useState('')
+  const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(null)
 
   useEffect(() => {
     dispatch(getUserProfileRequest())
@@ -28,9 +36,64 @@ const Checkout = () => {
     getAllCart()
   }, [getAllCart])
 
-  const handleOrderButtonClick = () => {
-    dispatch(addOrderRequest())
-    navigate('/orders-history')
+  // const handleOrderButtonClick = () => {
+  //   dispatch(addOrderRequest())
+  // }
+
+  const token = localStorage.getItem('token')
+
+  // Calculate total price
+  // const totalPrice = quantity * product.priceUpdateDetails[0].price_new
+
+  const handleOpenModal = () => setIsModalOpen(true)
+  const handleCloseModal = () => setIsModalOpen(false)
+
+  const handleAddressSave = () => {
+    if (recipientName && shippingAddress && recipientPhone) {
+      setAddress(`${recipientName}, ${recipientPhone}, ${shippingAddress}`)
+      handleCloseModal()
+    }
+  }
+
+  const handleOrder = async () => {
+    //setLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const response = await fetch(
+        'http://localhost:9999/api/customer/order/buy-now',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            address,
+            recipient_name: recipientName,
+            note,
+            recipient_phone: recipientPhone
+          })
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to place order')
+      }
+
+      const data = await response.json()
+      if (data.code === 201) {
+        setSuccess('Order placed successfully!')
+        navigate('/orders-history')
+      } else {
+        setSuccess('Order placed fail!')
+      }
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      //setLoading(false)
+    }
   }
 
   return (
@@ -47,30 +110,97 @@ const Checkout = () => {
 
       <section className="p-6">
         <div className="p-10 flex">
-          <div className="flex-[0.85] bg-white rounded-md shadow-lg p-10 mx-10 border">
-            <h1 className="text-2xl font-RobotoSemibold text-main">
-              Thông Tin Nhận Hàng
-            </h1>
-            <div className="mt-5">
-              <span className="font-RobotoSemibold">
-                Người nhận: {user?.firstname} {user?.lastname}
-              </span>
-            </div>
-            <div className="mt-5">
-              <span className="font-RobotoSemibold">SĐT: {user?.phone}</span>
-            </div>
-            <div className="mt-5">
-              <span className="font-RobotoSemibold">
-                Địa chỉ: {user?.address}
-              </span>
-            </div>
+          <div className="flex items-center mt-5">
+            <input
+              type="text"
+              value={address}
+              readOnly
+              placeholder="Enter shipping address"
+              className="border border-gray-300 p-2 rounded mr-2 w-[1000px]"
+            />
+            <button
+              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={handleOpenModal}
+            >
+              Enter Address
+            </button>
           </div>
+          {error && <p className="text-red-500 mt-4">{error}</p>}
+          {success && <p className="text-green-500 mt-4">{success}</p>}
+          {isModalOpen && (
+            <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50">
+              <div
+                className="bg-white border border-gray-200 p-5 rounded-lg shadow-lg w-80"
+                style={{ width: 600 }}
+              >
+                <h2 className="text-xl font-bold mb-4">
+                  Enter Shipping Address
+                </h2>
+                <div className="mb-4">
+                  <label className="block mb-2 font-semibold">
+                    Recipient Name
+                  </label>
+                  <input
+                    type="text"
+                    value={recipientName}
+                    onChange={(e) => setRecipientName(e.target.value)}
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block mb-2 font-semibold">
+                    Shipping Address
+                  </label>
+                  <input
+                    type="text"
+                    value={shippingAddress}
+                    onChange={(e) => setShippingAddress(e.target.value)}
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block mb-2 font-semibold">
+                    Recipient Phone{' '}
+                  </label>
+                  <input
+                    type="number"
+                    value={recipientPhone}
+                    onChange={(e) => setRecipientPhone(e.target.value)}
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block mb-2 font-semibold">Note</label>
+                  <input
+                    type="text"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className="border border-gray-300 p-2 rounded w-full"
+                  />
+                </div>
 
+                <div className="flex justify-end">
+                  <button
+                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2 "
+                    style={{ marginTop: 10 }}
+                    onClick={handleAddressSave}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="p-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                    style={{ marginTop: 10 }}
+                    onClick={handleCloseModal}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex-[0.5]">
             <div className="border p-5 bg-white shadow-lg rounded-md">
-              <p className="font-bold opacity-60 pb-4 uppercase">
-                Chi Tiết Hóa Đơn
-              </p>
+              <p className="font-bold  pb-4 uppercase">Chi Tiết Hóa Đơn</p>
               <hr />
 
               <div className="space-y-3 font-semibold">
@@ -102,7 +232,7 @@ const Checkout = () => {
 
               <div className="flex justify-center items-center gap-5">
                 <button
-                  onClick={() => handleOrderButtonClick()}
+                  onClick={() => handleOrder()}
                   className="w-[50%] bg-green-500 bg-primary text-white p-2 rounded-md mt-5 shadow-md hover:bg-main transition duration-300 ease-in-out"
                 >
                   Đặt Hàng
@@ -115,7 +245,7 @@ const Checkout = () => {
           </div>
         </div>
 
-        <div className="lg:grid grid-cols-3 lg:px-16 relative">
+        <div className="lg:grid grid-cols-3 lg:px-16">
           <div className="lg:col-span-2 lg:px-5 ">
             <div className="space-y-3">
               {cart.data &&
