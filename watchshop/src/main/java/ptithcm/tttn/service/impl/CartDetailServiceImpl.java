@@ -52,4 +52,10 @@ public class CartDetailServiceImpl implements CartDetailService {
         }
 
     }
+
+    @Override
+    @Transactional
+    public void deleteCartDetail(Long cart_id) {
+        cartDetailRepo.deleteCartDetail(cart_id);
+    }
 }

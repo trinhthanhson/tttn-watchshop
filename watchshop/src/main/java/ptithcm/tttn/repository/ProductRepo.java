@@ -35,4 +35,11 @@ public interface ProductRepo extends JpaRepository<Product, String> {
     @Query(value = "SELECT * FROM product WHERE brand_id = ?1  ", nativeQuery = true)
     List<Product> findByBrandId(Long brand_id);
 
+    @Query("SELECT p.product_id, p.product_name, SUM(od.quantity * od.price) as total_sold , SUM(od.quantity) AS total_quantity " +
+            "FROM Product p " +
+            "JOIN OrderDetail od ON p.product_id = od.product_id " +
+            "JOIN Orders o ON od.order_id = o.order_id AND o.status = 3 " +
+            "GROUP BY p.product_id, p.product_name " +
+            "ORDER BY total_sold DESC")
+    List<Object[]> getProductSales();
 }

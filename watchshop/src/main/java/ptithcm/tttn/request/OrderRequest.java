@@ -12,6 +12,7 @@ public class OrderRequest {
     private String product_id;
     private int quantity;
     private int price;
+    private int total_price;
     private String address;
     private String recipient_name;
     private String note;

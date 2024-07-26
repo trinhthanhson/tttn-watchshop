@@ -2,7 +2,11 @@ package ptithcm.tttn.service;
 
 import ptithcm.tttn.entity.Orders;
 import ptithcm.tttn.request.OrderRequest;
+import ptithcm.tttn.request.ProductSaleRequest;
+import ptithcm.tttn.request.StatisticRequest;
 
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 public interface OrdersService {
@@ -16,4 +20,12 @@ public interface OrdersService {
     Orders updateStatus(String status, Long id, String jwt) throws Exception;
 
     Orders orderBuyCart(OrderRequest rq,String jwt) throws Exception;
+
+    List<StatisticRequest> getTotalAmountByMonth(int year);
+
+    List<Orders> findAll();
+
+    List<ProductSaleRequest> getTotalAmountByDate(Date start, Date end);
+
+    Orders updateStatusOrderByStaff(String status, Long id, String jwt) throws Exception;
 }

@@ -4,15 +4,15 @@ import org.springframework.stereotype.Service;
 import ptithcm.tttn.entity.*;
 import ptithcm.tttn.repository.PriceUpdateDetailRepo;
 import ptithcm.tttn.repository.ProductRepo;
-import ptithcm.tttn.repository.StaffRepo;
 import ptithcm.tttn.request.ProductRequest;
+import ptithcm.tttn.request.ProductSaleRequest;
 import ptithcm.tttn.service.*;
 
 import javax.transaction.Transactional;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -93,6 +93,7 @@ public class ProductServiceImpl implements ProductService {
         Brand brand = brandService.findByBrandName(product.getBrand_name());
         Category category = categoryService.findCategoryByName(product.getCategory_name());
         Product save = new Product();
+
         if(find != null){
         if(checkExistProductName(product.getProduct_name())) {
             find.setProduct_name(product.getProduct_name());
@@ -115,6 +116,14 @@ public class ProductServiceImpl implements ProductService {
             find.setUpdated_by(staff.getStaff_id());
             find.setOther_features(product.getOther_features());
             find.setStatus(product.getStatus());
+            PriceUpdateDetail priceUpdateDetail = priceUpdateDetailRepo.findByProductId(id);
+            if(product.getPrice() != priceUpdateDetail.getPrice_new()){
+                priceUpdateDetail.setPrice_old(priceUpdateDetail.getPrice_new());
+                priceUpdateDetail.setPrice_new(product.getPrice());
+                priceUpdateDetail.setUpdated_by(staff.getStaff_id());
+                priceUpdateDetail.setUpdated_at(LocalDateTime.now());
+                priceUpdateDetailRepo.save(priceUpdateDetail);
+            }
         }else{
             find.setProduct_name(product.getProduct_name());
         }
@@ -129,6 +138,17 @@ public class ProductServiceImpl implements ProductService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public Product deleteProduct(String product_id, String jwt) throws Exception {
+        User user = userService.findUserByJwt(jwt);
+        Staff staff = staffService.findByUserId(user.getUser_id());
+        Product product = findById(product_id);
+        product.setStatus("Inactive");
+        product.setUpdated_by(staff.getStaff_id());
+        return productRepo.save(product);
     }
 
     @Override
@@ -182,5 +202,19 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         return String.format("DH%08d", maxId + 1);
+    }
+    @Override
+    public List<ProductSaleRequest> getProductSales() {
+        List<Object[]> results = productRepo.getProductSales();
+        return results.stream()
+                .map(this::mapToProductSaleRequest)
+                .collect(Collectors.toList());
+    }
+    private ProductSaleRequest mapToProductSaleRequest(Object[] result) {
+        String productId = (String) result[0];
+        String productName = (String) result[1];
+        long totalSoldQuantity = (long) result[2];
+        long totalQuanity = (long) result[3];
+        return new ProductSaleRequest(productId, productName, totalSoldQuantity,totalQuanity);
     }
 }

@@ -46,25 +46,7 @@ public class StaffBrandController {
         return new ResponseEntity<>(res,httpStatus);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<ListEntityResponse> findAllBrand(@RequestHeader("Authorization") String jwt){
-        ListEntityResponse res = new ListEntityResponse();
-        HttpStatus httpStatus = HttpStatus.CONFLICT;
-        try{
-            List<Brand> listBrand = brandService.findAll();
-            res.setData(listBrand);
-            res.setMessage("Success");
-            res.setStatus(HttpStatus.OK);
-            res.setCode(HttpStatus.OK.value());
-            httpStatus = HttpStatus.OK;
-        }catch (Exception e){
-            res.setStatus(HttpStatus.CONFLICT);
-            res.setCode(HttpStatus.CONFLICT.value());
-            res.setMessage("erorr " + e.getMessage());
-            res.setData(null);
-        }
-        return new ResponseEntity<>(res,httpStatus);
-    }
+
 
     @PutMapping("/{id}/update")
     public ResponseEntity<EntityResponse> updatedBrandByStaff(@RequestBody Brand brand, @RequestHeader("Authorization") String jwt,@PathVariable Long id) throws Exception{

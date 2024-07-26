@@ -2,6 +2,7 @@ package ptithcm.tttn.service;
 
 import ptithcm.tttn.entity.Product;
 import ptithcm.tttn.request.ProductRequest;
+import ptithcm.tttn.request.ProductSaleRequest;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,5 +26,7 @@ public interface ProductService {
 
     boolean checkExistProductName(String name) throws Exception;
 
+    Product deleteProduct(String product_id, String jwt) throws Exception;
 
+    List<ProductSaleRequest> getProductSales();
 }

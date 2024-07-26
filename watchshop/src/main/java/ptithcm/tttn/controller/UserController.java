@@ -8,18 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ptithcm.tttn.entity.Customer;
-import ptithcm.tttn.entity.Product;
-import ptithcm.tttn.entity.Staff;
-import ptithcm.tttn.entity.User;
+import ptithcm.tttn.entity.*;
 import ptithcm.tttn.repository.ProductRepo;
 import ptithcm.tttn.response.EntityResponse;
-import ptithcm.tttn.service.CustomerService;
-import ptithcm.tttn.service.EmailService;
-import ptithcm.tttn.service.StaffService;
-import ptithcm.tttn.service.UserService;
+import ptithcm.tttn.response.ListEntityResponse;
+import ptithcm.tttn.service.*;
 
 import javax.mail.MessagingException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,7 +32,33 @@ public class UserController {
         this.staffService = staffService;
     }
 
-    @GetMapping("/find")
+    @GetMapping("/customer/all")
+    public ResponseEntity<ListEntityResponse> findAllUser(@RequestHeader("Authorization") String jwt) throws Exception {
+        ListEntityResponse res = new ListEntityResponse();
+        try{
+            List<User> getAllUer = userService.findAll();
+            List<User> userCustomer = new ArrayList<>();
+            for(User u : getAllUer){
+                if(!(u.getRole().getRole_name().equals("STAFF")) && (!(u.getRole().getRole_name().equals("ADMIN")))){
+                    userCustomer.add(u);
+                }
+            }
+
+            res.setData(userCustomer);
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
+            res.setMessage("success");
+        }catch (Exception e){
+            res.setData(null);
+            res.setStatus(HttpStatus.CONFLICT);
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setMessage("error " + e.getMessage());
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+
+
+        @GetMapping("/find")
     public ResponseEntity<EntityResponse> findCustomerAndStaffProfileByJwt(@RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserByJwt(jwt);
         EntityResponse res = new EntityResponse();

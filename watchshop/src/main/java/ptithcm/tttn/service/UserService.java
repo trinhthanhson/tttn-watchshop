@@ -3,10 +3,12 @@ import ptithcm.tttn.entity.User;
 import ptithcm.tttn.request.SignUpRequest;
 
 import javax.mail.MessagingException;
+import java.util.List;
 
 public interface UserService {
     User createUser(SignUpRequest rq) throws Exception;
     User updatePassword(String passWord,String email) throws Exception;
+    List<User> findAll();
     User findByUsername(String username);
     User signIn(User user);
     User findUserByJwt(String jwt) throws Exception;

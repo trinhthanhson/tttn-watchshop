@@ -24,6 +24,28 @@ public class OrderCustomerController {
         this.orderDetailService = orderDetailService;
     }
 
+    @PostMapping("/buy-cart")
+    public ResponseEntity<ApiResponse> buyCartByCustomer(@RequestHeader("Authorization") String jwt, @RequestBody OrderRequest rq){
+        ApiResponse res = new ApiResponse();
+        try{
+            Orders orders = ordersService.orderBuyCart(rq,jwt);
+            if(orders != null){
+                res.setStatus(HttpStatus.CREATED);
+                res.setCode(HttpStatus.CREATED.value());
+                res.setMessage("create order buy now success");
+            }else{
+                res.setStatus(HttpStatus.OK);
+                res.setCode(HttpStatus.OK.value());
+                res.setMessage("create order buy now fail");
+            }
+        }catch (Exception e){
+            res.setStatus(HttpStatus.CONFLICT);
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setMessage("error " + e.getMessage());
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+
     @PostMapping("/buy-now")
     public ResponseEntity<ApiResponse> buyNowByCustomer(@RequestHeader("Authorization") String jwt, @RequestBody OrderRequest rq){
         ApiResponse res = new ApiResponse();
