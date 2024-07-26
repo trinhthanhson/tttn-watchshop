@@ -1,43 +1,65 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts';
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts'
 
 const RADIAN = Math.PI / 180
-const COLORS = ['#880e0e', '#3a241b', '#fb923c', '#006400', '#38bdf8', '#396264'];
+const COLORS = [
+  '#880e0e',
+  '#3a241b',
+  '#fb923c',
+  '#006400',
+  '#38bdf8',
+  '#396264'
+]
 
 const PieChartStatistics = () => {
-  const [mostSoldProducts, setMostSoldProducts] = useState([]);
+  const [mostSoldProducts, setMostSoldProducts] = useState([])
 
   useEffect(() => {
     async function fetchMostSoldProducts() {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:9999/api/admin/statistic/product', {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const token = localStorage.getItem('token')
+        const response = await axios.get(
+          'http://localhost:9999/api/staff/statistic/product',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        });
-        setMostSoldProducts(response.data.data);
-
+        )
+        setMostSoldProducts(response.data.data)
       } catch (error) {
-        console.error('Error fetching most sold products:', error);
+        console.error('Error fetching most sold products:', error)
       }
     }
 
-    fetchMostSoldProducts();
-  }, []);
+    fetchMostSoldProducts()
+  }, [])
 
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent
+  }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5
+    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+    const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
     return (
-      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+      >
         {`${(percent * 100).toFixed(0)}%`}
       </text>
-    );
-  };
+    )
+  }
 
   return (
     <div className="bg-white p-4 rounded-md border border-gray-200 flex flex-col flex-[0.45]">
@@ -55,22 +77,27 @@ const PieChartStatistics = () => {
               dataKey="total_quantity"
             >
               {mostSoldProducts.map((entry, index) => (
-                <Cell key={`cell-${entry.product_id}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${entry.product_id}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
-            <Legend layout="horizontal" verticalAlign="bottom" align="center"
-              payload=
-              {mostSoldProducts.map((entry, index) => ({
+            <Legend
+              layout="horizontal"
+              verticalAlign="bottom"
+              align="center"
+              payload={mostSoldProducts.map((entry, index) => ({
                 value: entry.product_name,
-                type: 'circle', color: COLORS[index % COLORS.length],
+                type: 'circle',
+                color: COLORS[index % COLORS.length]
               }))}
             />
           </PieChart>
         </ResponsiveContainer>
-
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PieChartStatistics;
+export default PieChartStatistics

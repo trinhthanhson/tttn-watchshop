@@ -9,7 +9,7 @@ const OrderDetail = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
   const orderDetail = useSelector((state) => state.orderDetail.orderDetail)
-  console.log(orderDetail?.customer_created)
+  console.log(orderDetail)
   useEffect(() => {
     try {
       dispatch(getOrderDetailRequest(id))
@@ -147,7 +147,6 @@ const OrderDetail = () => {
               <td>Sản Phẩm</td>
               <td>Số Lượng</td>
               <td>Đơn Giá</td>
-              <td>Tổng Tiền</td>
               <td className="rounded-e-md">Ngày Đặt</td>
             </tr>
           </thead>
@@ -174,7 +173,6 @@ const OrderDetail = () => {
                     )}{' '}
                     VNĐ
                   </td>
-                  <td>{orderDetail.total_price.toLocaleString('en')} VNĐ</td>
                   <td>
                     {new Date(orderDetail.created_at).toLocaleDateString()}
                   </td>

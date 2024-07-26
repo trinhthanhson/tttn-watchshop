@@ -101,10 +101,9 @@ const OrdersHistory = () => {
               <option value="">Tất cả</option>
               <option value="0">Chờ xác nhận</option>
               <option value="1">Đã xác nhận</option>
-              <option value="2">Đang thực hiện</option>
-              <option value="3">Đang giao</option>
-              <option value="4">Đã giao</option>
-              <option value="5">Đã hủy</option>
+              <option value="2">Đang giao</option>
+              <option value="3">Đã giao</option>
+              <option value="4">Đã hủy</option>
             </select>
           </div>
 

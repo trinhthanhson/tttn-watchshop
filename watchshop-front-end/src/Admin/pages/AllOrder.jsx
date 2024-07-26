@@ -1,61 +1,59 @@
-import { getAllOrdersRequest } from "../../redux/actions/actions"
-import { getOrderStatus } from "../../constants/Status"
-import { useDispatch, useSelector } from "react-redux"
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { getAllOrdersRequest } from '../../redux/actions/actions'
+import { getOrderStatus } from '../../constants/Status'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 const AllOrder = () => {
   const dispatch = useDispatch()
-  const orders = useSelector(state => state.orders.orders)
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+  const orders = useSelector((state) => state.orders.orders)
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
+  const [status, setStatus] = useState('')
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [filteredOrders, setFilteredOrders] = useState([])
   const navigate = useNavigate()
-
   useEffect(() => {
     try {
       dispatch(getAllOrdersRequest())
     } catch (error) {
-      console.error("Error dispatch", error)
+      console.error('Error dispatch', error)
     }
   }, [dispatch])
 
   useEffect(() => {
     const filtered = orders?.data?.filter((order) => {
-      const orderDate = new Date(order.create_at).getTime();
-      const startDateTimestamp = startDate ? startDate.getTime() : null;
-      const endDateTimestamp = endDate ? endDate.getTime() : null;
-
+      const orderDate = new Date(order.created_at).getTime()
+      const startDateTimestamp = startDate ? startDate.getTime() : null
+      const endDateTimestamp = endDate ? endDate.getTime() : null
 
       if (startDateTimestamp && orderDate < startDateTimestamp) {
-        return false;
+        return false
       }
 
       if (endDateTimestamp && orderDate > endDateTimestamp) {
-        return false;
+        return false
       }
 
-      if (status && order.status !== parseInt(status)) {
-
-        return false;
+      if (status && order.status !== status) {
+        return false
       }
-      return true;
-    });
-    setFilteredOrders(filtered || []);
+      return true
+    })
+    setFilteredOrders(filtered || [])
 
-    const total = filtered ? filtered.reduce((acc, order) => acc + order.total_price, 0) : 0;
-    setTotalPrice(total);
-
-  }, [orders.data, startDate, endDate, status]);
+    const total = filtered
+      ? filtered.reduce((acc, order) => acc + order.total_price, 0)
+      : 0
+    setTotalPrice(total)
+  }, [orders.data, startDate, endDate, status])
 
   const handleReset = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setStatus(null);
+    setStartDate(null)
+    setEndDate(null)
+    setStatus(null)
   }
 
   return (
@@ -64,12 +62,20 @@ const AllOrder = () => {
         <div className="flex justify-between">
           <div className="p-2 flex items-center justify-center gap-2">
             <label>Ngày bắt đầu</label>
-            <DatePicker className="text-center p-[3px] rounded-md border-primary border-[1px]" selected={startDate} onChange={date => setStartDate(date)} />
+            <DatePicker
+              className="text-center p-[3px] rounded-md border-primary border-[1px]"
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+            />
           </div>
 
           <div className="p-2 flex items-center justify-center gap-2">
             <label>Ngày kết thúc</label>
-            <DatePicker className="text-center p-[3px] rounded-md border-primary border-[1px]" selected={endDate} onChange={date => setEndDate(date)} />
+            <DatePicker
+              className="text-center p-[3px] rounded-md border-primary border-[1px]"
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+            />
           </div>
 
           <div className="p-2 flex items-center justify-center gap-2">
@@ -82,10 +88,9 @@ const AllOrder = () => {
               <option value="">Tất cả</option>
               <option value="0">Chờ xác nhận</option>
               <option value="1">Đã xác nhận</option>
-              <option value="2">Đang thực hiện</option>
-              <option value="3">Đang giao</option>
-              <option value="4">Đã giao</option>
-              <option value="5">Đã hủy</option>
+              <option value="2">Đang giao</option>
+              <option value="3">Đã giao</option>
+              <option value="4">Đã hủy</option>
             </select>
           </div>
 
@@ -111,34 +116,49 @@ const AllOrder = () => {
               <td>Tổng Số Lượng</td>
               <td>Thanh Toán</td>
               <td>Ngày Đặt</td>
-              <td className="rounded-e-md">Trạng Thái</td>
+              <td className="rounded-e-md" style={{ paddingRight: '50px' }}>
+                Trạng Thái
+              </td>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.map((order, index) => (
-              <tr key={index} className="cursor-pointer" onClick={() => navigate(`/admin/order/${order.order_id}`)}>
+              <tr
+                key={index}
+                className="cursor-pointer"
+                onClick={() => navigate(`/admin/order/${order.order_id}`)}
+              >
                 <td>{index + 1}</td>
                 <td className="flex items-center">
-                  {[...new Map(order.order_detail.map(item => [item.product.image, item])).values()].map((uniqueItem, index) => (
+                  {[
+                    ...new Map(
+                      order.orderDetails.map((item) => [
+                        item.product.image,
+                        item
+                      ])
+                    ).values()
+                  ].map((uniqueItem, index) => (
                     <img
                       key={index}
-                      className="w-[60px] mt-[2px] rounded-full shadow-md mr-2"
+                      className="w-[50px] mt-[2px] rounded-full shadow-md mr-2"
                       src={uniqueItem.product && uniqueItem.product.image}
-                      alt={uniqueItem.product && uniqueItem.product.product_name}
+                      alt={
+                        uniqueItem.product && uniqueItem.product.product_name
+                      }
                     />
                   ))}
                 </td>
                 <td>
-                  {order.order_detail.map((item, index) => (
+                  {order.orderDetails.map((item, index) => (
                     <div key={index}>
-                      {item.quantity} {item.product && item.product.product_name} ({item.product && item.size}),
+                      {item.product && item.product.product_name}
                     </div>
                   ))}
                 </td>
-                <td>{order.customer.address}</td>
+                <td>{order.address}</td>
                 <td>{order.total_quantity}</td>
-                <td>{(order.total_price).toLocaleString('en')} VNĐ</td>
-                <td>{new Date(order.create_at).toLocaleDateString()}</td>
+                <td>{order.total_price.toLocaleString('en')} VNĐ</td>
+                <td>{new Date(order.created_at).toLocaleDateString()}</td>
                 <td>{getOrderStatus(order.status)}</td>
               </tr>
             ))}
@@ -148,8 +168,12 @@ const AllOrder = () => {
 
       <div className="w-[80%] ml-[18%] mt-2">
         <div className="flex justify-between font-RobotoMedium">
-          <div className="text-primary rounded-md p-2">Số đơn hàng: {filteredOrders ? filteredOrders.length : 0}</div>
-          <div className="text-primary rounded-md p-2">Tổng: {totalPrice.toLocaleString('en')} VNĐ</div>
+          <div className="text-primary rounded-md p-2">
+            Số đơn hàng: {filteredOrders ? filteredOrders.length : 0}
+          </div>
+          <div className="text-primary rounded-md p-2">
+            Tổng: {totalPrice.toLocaleString('en')} VNĐ
+          </div>
         </div>
       </div>
     </>

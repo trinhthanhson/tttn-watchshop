@@ -14,17 +14,11 @@ export function getOrderStatus(status) {
       )
     case '2':
       return (
-        <span className="capitalize py-1 px-2 rounded-md text-xs text-orange-600 bg-orange-100">
-          Đang Thực Hiện
-        </span>
-      )
-    case '3':
-      return (
         <span className="capitalize py-1 px-2 rounded-md text-xs text-teal-600 bg-teal-100">
           Đang Vận Chuyển
         </span>
       )
-    case '4':
+    case '3':
       return (
         <span className="capitalize py-1 px-2 rounded-md text-xs text-white bg-green">
           Đã Giao

@@ -24,7 +24,7 @@ const Login = () => {
         (user.user.role.role_name === 'ADMIN' ||
           user.user.role.role_name === 'STAFF')
       ) {
-        console.log('for admin and staff')
+        navigate('/admin')
       } else {
         navigate('/home')
       }

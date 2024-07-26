@@ -66,20 +66,22 @@ const Routers = () => {
       <Route path="/order/:id" element={<OrderDetail />} />
       <Route path="/checkout" element={<Checkout />} />
 
-      {/* <Route path="/admin" element={<Layout />} >
-        <Route index element={<Dashboard />} />
-        <Route path="/admin/products" element={<AllProducts />} />
-        <Route path="/admin/create-product" element={<CreateProduct />} />
-        <Route path="/admin/update-product/:id" element={<UpdateProduct />} />
-        <Route path="/admin/product/:id" element={<AdminProductDetail />} />
-        <Route path="/admin/orders" element={<AllOrder />} />
-        <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
-        <Route path="/admin/customers" element={<AllCustomers />} />
-        <Route path="/admin/category" element={<AllCategory />} />
-        <Route path="/admin/profile" element={<StaffProfile />} />
-        <Route path="/admin/coupons" element={<AllCoupons />} />
-        <Route path="/admin/create-coupon" element={<CreateCoupon />} />
-      </Route> */}
+      {
+        <Route path="/admin" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="/admin/products" element={<AllProducts />} />
+          <Route path="/admin/create-product" element={<CreateProduct />} />
+          <Route path="/admin/update-product/:id" element={<UpdateProduct />} />
+          <Route path="/admin/product/:id" element={<AdminProductDetail />} />
+          <Route path="/admin/orders" element={<AllOrder />} />
+          <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
+          <Route path="/admin/customers" element={<AllCustomers />} />
+          <Route path="/admin/category" element={<AllCategory />} />
+          <Route path="/admin/profile" element={<StaffProfile />} />
+          <Route path="/admin/coupons" element={<AllCoupons />} />
+          <Route path="/admin/create-coupon" element={<CreateCoupon />} />
+        </Route>
+      }
     </Routes>
   )
 }

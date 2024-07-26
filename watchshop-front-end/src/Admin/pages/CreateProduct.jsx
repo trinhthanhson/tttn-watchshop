@@ -1,43 +1,89 @@
-import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { addProductRequest, getAllCategoriesRequest } from "../../redux/actions/actions"
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import {
+  addProductRequest,
+  getAllCategoriesRequest,
+  getAllBrandRequest
+} from '../../redux/actions/actions'
+import { uploadImageToFirebase } from '../../firebase' // Import the function
 
 const CreateProduct = () => {
   const dispatch = useDispatch()
-  const message = useSelector((state) => state.addProduct);
-  const categories = useSelector((state) => state.categories.categories);
+  const message = useSelector((state) => state.addProduct)
+  const categories = useSelector((state) => state.categories.categories)
+  const brands = useSelector((state) => state.brands.brands)
+
   const [formData, setFormData] = useState({
     file: '',
     data: {
       product_name: '',
-      price: 0,
-      description: '',
       status: 'Active',
+      quantity: 0,
+      price: 0,
+      detail: '',
+      technology: '',
+      glass: '',
+      func: '',
+      color: '',
+      machine: '',
+      sex: '',
+      accuracy: '',
+      battery_life: '',
+      water_resistance: '',
+      weight: '',
+      other_features: '',
+      brand_name: '',
       category_name: '',
-    },
-  });
+      image: ''
+    }
+  })
   const navigate = useNavigate()
 
   useEffect(() => {
-    dispatch(getAllCategoriesRequest());
+    dispatch(getAllCategoriesRequest())
+    dispatch(getAllBrandRequest())
   }, [dispatch])
 
   const handleChange = (e) => {
     if (e.target.name === 'file') {
-      setFormData({ ...formData, file: e.target.files[0] });
+      setFormData({ ...formData, file: e.target.files[0] })
     } else {
-      setFormData({ ...formData, data: { ...formData.data, [e.target.name]: e.target.value } });
+      setFormData({
+        ...formData,
+        data: { ...formData.data, [e.target.name]: e.target.value }
+      })
     }
-  };
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
-    formDataToSend.append('file', formData.file);
-    formDataToSend.append('data', JSON.stringify(formData.data));
-    dispatch(addProductRequest(formDataToSend));
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    let imageUrl = '' // Giữ URL hình ảnh hiện tại nếu không có hình ảnh mới
+
+    if (formData.file) {
+      try {
+        // Tải lên hình ảnh mới vào Firebase và lấy URL
+        imageUrl = await uploadImageToFirebase(formData.file)
+      } catch (error) {
+        console.error('Error uploading image:', error)
+        // Xử lý lỗi với thông báo thân thiện với người dùng (nếu cần)
+        return
+      }
+    }
+
+    // Tạo đối tượng mới để gửi đến máy chủ
+    const dataToSend = {
+      ...formData.data,
+      image: imageUrl // Cập nhật với URL hình ảnh mới
+    }
+
+    // Log dữ liệu để kiểm tra
+    console.log('Data to send:', JSON.stringify(dataToSend))
+
+    // Gửi yêu cầu để cập nhật sản phẩm
+    dispatch(addProductRequest(dataToSend))
+  }
 
   useEffect(() => {
     if (message.code === 201) {
@@ -45,13 +91,26 @@ const CreateProduct = () => {
         file: '',
         data: {
           product_name: '',
+          status: '',
+          quantity: 0,
           price: 0,
-          description: '',
-          status: 'Active',
-          category_name: '',
-        },
-      });
-      navigate("/admin/products")
+          detail: '',
+          technology: '',
+          glass: '',
+          func: '',
+          color: '',
+          machine: '',
+          sex: '',
+          accuracy: '',
+          battery_life: '',
+          water_resistance: '',
+          weight: '',
+          other_features: '',
+          brand_name: '',
+          category_name: ''
+        }
+      })
+      navigate('/admin/products')
     }
   }, [message, navigate])
 
@@ -59,7 +118,9 @@ const CreateProduct = () => {
     <>
       <div className="flex flex-col justify-center items-center ml-[18%]">
         <div className="flex mt-2 justify-center items-center">
-          <h2 className="text-main font-RobotoSemibold text-[20px] uppercase">Create Product</h2>
+          <h2 className="text-main font-RobotoSemibold text-[20px] uppercase">
+            Create Product
+          </h2>
         </div>
         <div className="w-[50%] p-2 rounded-md shadow-md bg-white text-primary mt-5">
           <form
@@ -90,9 +151,13 @@ const CreateProduct = () => {
                   />
                 </svg>
                 {formData.file ? (
-                  <span className="text-primary font-RobotoMedium">{formData.file.name}</span>
+                  <span className="text-primary font-RobotoMedium">
+                    {formData.file.name}
+                  </span>
                 ) : (
-                  <span className="text-primary font-RobotoMedium">Choose File</span>
+                  <span className="text-primary font-RobotoMedium">
+                    Choose File
+                  </span>
                 )}
               </div>
             </div>
@@ -105,33 +170,156 @@ const CreateProduct = () => {
             )}
             <div className="flex justify-between">
               <div className="flex-1">
-                <label className="text-[14px]">Product Name:</label>
+                <label className="text-[14px] block font-bold">
+                  Product Name:
+                </label>
                 <input
-                  className="border-b-2 p-2"
-                  type="text"
+                  className="border-b-2"
                   name="product_name"
                   onChange={handleChange}
+                  style={{ marginTop: '20px' }}
                 />
               </div>
               <div className="flex-1">
-                <label className="text-[14px] block">Price:</label>
+                <label className="text-[14px] block font-bold">Price:</label>
                 <input
-                  className="border-b-2 p-2"
-                  type="number"
+                  className="border-b-2"
                   name="price"
+                  type="number"
                   onChange={handleChange}
+                  style={{ marginTop: '20px' }}
                 />
               </div>
             </div>
             <div className="flex justify-between">
               <div className="flex-1">
-                <label className="text-[14px] block">Description:</label>
+                <label className="text-[14px] block font-bold">Accuracy:</label>
                 <textarea
-                  className="border-b-2 p-2"
-                  name="description"
+                  className="border-b-2"
+                  name="accuracy"
                   onChange={handleChange}
+                  style={{ marginTop: '20px' }}
                 />
               </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">
+                  Battery Life:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="battery_life"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Color:</label>
+                <textarea
+                  className="border-b-2"
+                  name="color"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Function:</label>
+                <textarea
+                  className="border-b-2"
+                  name="func"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Glass:</label>
+                <textarea
+                  className="border-b-2"
+                  name="glass"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Machine:</label>
+                <textarea
+                  className="border-b-2"
+                  name="machine"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">
+                  Other Features:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="other_features"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Quantity:</label>
+                <textarea
+                  className="border-b-2"
+                  name="quantity"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Sex:</label>
+                <textarea
+                  className="border-b-2"
+                  name="sex"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">
+                  Technology:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="technology"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">
+                  Water Resistance:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="water_resistance"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Weight:</label>
+                <textarea
+                  className="border-b-2"
+                  name="weight"
+                  onChange={handleChange}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
               <div className="flex-1">
                 <label className="text-[14px] block mb-5">Category:</label>
                 <select
@@ -140,13 +328,44 @@ const CreateProduct = () => {
                   onChange={handleChange}
                 >
                   <option value="">Select Category</option>
-                  {categories?.data && categories?.data.map((category) => (
-                    <option key={category.slug} value={category.category_name}>
-                      {category.category_name}
-                    </option>
-                  ))}
+                  {categories?.data &&
+                    categories?.data.map((category) => (
+                      <option
+                        key={category.category_id}
+                        value={category.category_name}
+                      >
+                        {category.category_name}
+                      </option>
+                    ))}
                 </select>
               </div>
+              <div className="flex-1">
+                <label className="text-[14px] block mb-5">Category:</label>
+                <select
+                  className="p-2 rounded-md border-none"
+                  name="brand_name"
+                  onChange={handleChange}
+                >
+                  <option value="">Select Brand</option>
+                  {brands?.data &&
+                    brands?.data.map((brand) => (
+                      <option key={brand.brand_id} value={brand.brand_name}>
+                        {brand.brand_name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            <div className="flex-1">
+              <label className="text-[14px] block font-bold">
+                Description:
+              </label>
+              <textarea
+                className="border-b-2"
+                name="detail"
+                onChange={handleChange}
+                style={{ marginTop: '20px', width: '700px', height: '200px' }}
+              />
             </div>
 
             <div className="flex justify-center">
@@ -161,7 +380,7 @@ const CreateProduct = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
 export default CreateProduct

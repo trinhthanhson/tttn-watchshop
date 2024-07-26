@@ -1,23 +1,25 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { getProductDetailRequest } from "../../redux/actions/actions";
-import { getStatus } from "../../constants/Status";
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { getProductDetailRequest } from '../../redux/actions/actions'
+import { getStatus } from '../../constants/Status'
 
 const AdminProductDetail = () => {
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  const productDetail = useSelector(state => state.productDetail.productDetail);
+  const { id } = useParams()
+  const dispatch = useDispatch()
+  const productDetail = useSelector(
+    (state) => state.productDetail.productDetail?.data
+  )
 
   useEffect(() => {
     try {
-      dispatch(getProductDetailRequest(id));
+      dispatch(getProductDetailRequest(id))
     } catch (error) {
-      console.error("Error dispatch", error);
+      console.error('Error dispatch', error)
     }
-  }, [dispatch, id]);
+  }, [dispatch, id])
 
-  console.log("productDetail", productDetail)
+  console.log(productDetail)
 
   return (
     <>
@@ -25,41 +27,77 @@ const AdminProductDetail = () => {
         <div className="flex">
           <div className="flex flex-[0.6] gap-4 w-[80%] ml-[18%] rounded-md shadow-md bg-white mt-2">
             <div className="flex">
-
               <div className="flex-[0.6] w-full ml-5">
-                <h5 className="text-left text-lg font-RobotoSemibold text-primary py-3">Thông Tin Sản Phẩm</h5>
+                <h5 className="text-left text-lg font-RobotoSemibold text-primary py-3">
+                  Thông Tin Sản Phẩm
+                </h5>
                 <p className="p-5">
-                  <span className="text-primary font-RobotoMedium mr-2">Mã Sản Phẩm:</span>
-                  <span className="text-primary font-RobotoSemibold">{productDetail?.product_id}</span>
+                  <span className="text-primary font-RobotoMedium mr-2">
+                    Mã Sản Phẩm:
+                  </span>
+                  <span className="text-primary font-RobotoSemibold">
+                    {productDetail?.product_id}
+                  </span>
                 </p>
                 <p className="p-5">
-                  <span className="text-primary font-RobotoMedium mr-2">Tên Sản Phẩm:</span>
-                  <span className="text-primary font-RobotoSemibold">{productDetail?.product_name}</span>
+                  <span className="text-primary font-RobotoMedium mr-2">
+                    Tên Sản Phẩm:
+                  </span>
+                  <span className="text-primary font-RobotoSemibold">
+                    {productDetail?.product_name}
+                  </span>
                 </p>
                 <p className="p-5">
-                  <span className="text-primary font-RobotoMedium mr-2">Category:</span>
-                  <span className="text-primary font-RobotoSemibold">{productDetail?.category.category_name}</span>
+                  <span className="text-primary font-RobotoMedium mr-2">
+                    Category:
+                  </span>
+                  <span className="text-primary font-RobotoSemibold">
+                    {productDetail?.category.category_name}
+                  </span>
                 </p>
                 {productDetail.priceUpdateDetails[0] && (
                   <p className="p-5">
-                    <span className="text-primary font-RobotoMedium mr-2">Đơn Giá:</span>
-                    <span className="text-primary font-RobotoSemibold">{(productDetail.priceUpdateDetails[0].price_new).toLocaleString('en')} VNĐ</span>
+                    <span className="text-primary font-RobotoMedium mr-2">
+                      Đơn Giá:
+                    </span>
+                    <span className="text-primary font-RobotoSemibold">
+                      {productDetail.priceUpdateDetails[0].price_new.toLocaleString(
+                        'en'
+                      )}{' '}
+                      VNĐ
+                    </span>
                   </p>
                 )}
                 <p className="p-5">
-                  <span className="text-primary font-RobotoMedium mr-2">Tạo Bởi:</span>
-                  <span className="font-RobotoSemibold">{productDetail?.staff_created.firstname} {productDetail?.staff_created.lastname}</span>
+                  <span className="text-primary font-RobotoMedium mr-2">
+                    Tạo Bởi:
+                  </span>
+                  <span className="font-RobotoSemibold">
+                    {productDetail?.created_product.first_name}{' '}
+                    {productDetail?.created_product.last_name}
+                  </span>
                 </p>
 
-                {productDetail?.staff_updated && (
+                {productDetail?.updated_product && (
                   <p className="p-5">
-                    <span className="text-primary font-RobotoMedium mr-2">Cập Nhật Bởi:</span>
-                    <span className="font-RobotoSemibold">{productDetail?.staff_updated.firstname} {productDetail?.staff_updated.lastname}</span>
+                    <span className="text-primary font-RobotoMedium mr-2">
+                      Cập Nhật Bởi:
+                    </span>
+                    <span className="font-RobotoSemibold">
+                      {productDetail?.updated_product.first_name}{' '}
+                      {productDetail?.updated_product.last_name}
+                    </span>
                   </p>
                 )}
                 <p className="p-5">
-                  <span className="text-primary font-RobotoMedium mr-2">Trạng Thái:</span>
-                  {productDetail?.status && <span className="font-RobotoSemibold">{getStatus(productDetail?.status)}</span>}
+                  <span className="text-primary font-RobotoMedium mr-2">
+                    Trạng Thái:
+                  </span>
+                  {productDetail?.status && (
+                    <span className="font-RobotoSemibold">
+                      {getStatus(productDetail?.status)}
+                    </span>
+                  )}
                 </p>
               </div>
 
@@ -74,10 +112,16 @@ const AdminProductDetail = () => {
           </div>
           <div className="flex-[0.4] w-[80%] ml-[20px] mr-[30px] rounded-md shadow-md bg-white mt-2">
             <div className="ml-5">
-              <h5 className="text-left text-lg font-RobotoSemibold text-primary py-3">Đánh Giá Sản Phẩm</h5>
+              <h5 className="text-left text-lg font-RobotoSemibold text-primary py-3">
+                Đánh Giá Sản Phẩm
+              </h5>
               <p className="p-5">
-                <span className="text-primary font-RobotoMedium mr-2">Trinh Son:</span>
-                <span className="text-primary font-RobotoSemibold">Tuyệt cú mèo</span>
+                <span className="text-primary font-RobotoMedium mr-2">
+                  Trinh Son:
+                </span>
+                <span className="text-primary font-RobotoSemibold">
+                  Tuyệt cú mèo
+                </span>
               </p>
             </div>
           </div>

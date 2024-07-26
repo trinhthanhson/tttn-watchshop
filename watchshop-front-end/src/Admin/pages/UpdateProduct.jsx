@@ -1,93 +1,161 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom"
-import { updateProductRequest, getProductDetailRequest, getAllCategoriesRequest } from "../../redux/actions/actions";
+import { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
+import {
+  updateProductRequest,
+  getProductDetailRequest,
+  getAllCategoriesRequest,
+  getAllBrandRequest
+} from '../../redux/actions/actions'
+import { uploadImageToFirebase } from '../../firebase' // Import the function
 
 const UpdateProduct = () => {
-  const { id } = useParams();
+  const { id } = useParams()
   const dispatch = useDispatch()
-  const message = useSelector((state) => state.updateProduct);
-  const productDetail = useSelector((state) => state.productDetail.productDetail);
+  const message = useSelector((state) => state.updateProduct)
+  const productDetail = useSelector(
+    (state) => state.productDetail.productDetail
+  )
   const categories = useSelector((state) => state.categories.categories)
+  const brands = useSelector((state) => state.brands.brands)
   const [formData, setFormData] = useState({
-    file: '',
     data: {
       product_name: '',
-      price: 0,
-      description: '',
       status: '',
+      quantity: 0,
+      price: 0,
+      detail: '',
+      technology: '',
+      glass: '',
+      func: '',
+      color: '',
+      machine: '',
+      sex: '',
+      accuracy: '',
+      battery_life: '',
+      water_resistance: '',
+      weight: '',
+      other_features: '',
+      brand_name: '',
       category_name: '',
-    },
-  });
-  const [imageSrc, setImageSrc] = useState(null);
+      image: ''
+    }
+  })
+  const [imageSrc, setImageSrc] = useState(null)
   const navigate = useNavigate()
-  const formDataRef = useRef(formData);
-
+  const formDataRef = useRef(formData)
   useEffect(() => {
     try {
-      dispatch(getProductDetailRequest(id));
-      dispatch(getAllCategoriesRequest());
+      dispatch(getAllBrandRequest())
+      dispatch(getProductDetailRequest(id))
+      dispatch(getAllCategoriesRequest())
     } catch (error) {
-      console.error("Error dispatch", error);
+      console.error('Error dispatch', error)
     }
-  }, [dispatch, id]);
+  }, [dispatch, id])
 
   useEffect(() => {
-    formDataRef.current = formData;
-  }, [formData]);
-
+    formDataRef.current = formData
+  }, [formData])
   useEffect(() => {
     if (productDetail) {
       setFormData({
         ...formData,
         data: {
-          product_name: productDetail?.product_name,
-          price: productDetail?.priceUpdateDetails[0]?.price_new,
-          description: productDetail?.description,
-          status: productDetail?.status,
-          category_name: productDetail?.category?.category_name,
-        },
-      });
-      setImageSrc(productDetail?.image);
+          product_name: productDetail?.data.product_name,
+          price: productDetail?.data.priceUpdateDetails[0]?.price_new,
+          detail: productDetail?.data.detail,
+          status: productDetail?.data.status,
+          category_name: productDetail?.data.category?.category_name,
+          brand_name: productDetail?.data.brand?.brand_name,
+          accuracy: productDetail?.data.accuracy,
+          battery_life: productDetail?.data.battery_life,
+          color: productDetail?.data.color,
+          func: productDetail?.data.func,
+          glass: productDetail?.data.glass,
+          machine: productDetail?.data.machine,
+          other_features: productDetail?.data.other_features,
+          quantity: productDetail?.data.quantity,
+          sex: productDetail?.data.sex,
+          technology: productDetail?.data.technology,
+          water_resistance: productDetail?.data.water_resistance,
+          weight: productDetail?.data.weight,
+          image: productDetail?.data.image
+        }
+      })
+      setImageSrc(productDetail?.data.image)
     }
-  }, [productDetail]);
+  }, [productDetail])
 
   const handleChange = (e) => {
     if (e.target.name === 'file') {
-      setFormData({ ...formData, file: e.target.files[0] });
+      setFormData({
+        data: {
+          ...formData.data,
+          file: e.target.files[0] // Update with the selected file
+        }
+      })
     } else if (e.target.name === 'status') {
-      const newStatus = e.target.checked ? "Active" : "Unactive";
-      setFormData({ ...formData, data: { ...formData.data, status: newStatus } });
+      const newStatus = e.target.checked ? 'Active' : 'Unactive'
+      setFormData({
+        data: {
+          ...formData.data,
+          status: newStatus
+        }
+      })
     } else {
-      setFormData({ ...formData, data: { ...formData.data, [e.target.name]: e.target.value } });
+      setFormData({
+        data: {
+          ...formData.data,
+          [e.target.name]: e.target.value
+        }
+      })
     }
-  };
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
-    if (!formDataRef.current.file) {
-      const emptyFile = new File([], '');
-      formDataToSend.append('file', emptyFile);
-    } else {
-      formDataToSend.append('file', formDataRef.current.file);
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    let imageUrl = formData.data.image // Giữ URL hình ảnh hiện tại nếu không có hình ảnh mới
+
+    if (formData.data.file) {
+      try {
+        // Tải lên hình ảnh mới vào Firebase và lấy URL
+        imageUrl = await uploadImageToFirebase(formData.data.file)
+      } catch (error) {
+        console.error('Error uploading image:', error)
+        // Xử lý lỗi với thông báo thân thiện với người dùng (nếu cần)
+        return
+      }
     }
-    formDataToSend.append('data', JSON.stringify(formDataRef.current.data));
-    dispatch(updateProductRequest(id, formDataToSend));
-  };
+
+    // Tạo đối tượng mới để gửi đến máy chủ
+    const dataToSend = {
+      ...formData.data,
+      image: imageUrl // Cập nhật với URL hình ảnh mới
+    }
+
+    // Log dữ liệu để kiểm tra
+    console.log('Data to send:', JSON.stringify(dataToSend))
+
+    // Dispatch action để Saga xử lý
+    dispatch(updateProductRequest(id, dataToSend))
+  }
 
   useEffect(() => {
-    if (message.code === 202) {
-      console.log("Thành công")
-      navigate("/admin/products");
+    if (message.code === 200) {
+      console.log('Thành công')
+      navigate('/admin/products')
     }
-  }, [message, navigate]);
+  }, [message, navigate])
 
   return (
     <>
       <div className="flex flex-col justify-center items-center ml-[18%]">
         <div className="flex mt-2 justify-center items-center">
-          <h2 className="text-main font-RobotoSemibold text-[20px] uppercase">Update Product</h2>
+          <h2 className="text-main font-RobotoSemibold text-[20px] uppercase">
+            Update Product
+          </h2>
         </div>
         <div className="w-[50%] p-2 rounded-md shadow-md bg-white text-primary mt-5">
           <form
@@ -95,7 +163,6 @@ const UpdateProduct = () => {
             onSubmit={handleSubmit}
           >
             <div className="relative">
-
               <input
                 type="file"
                 name="file"
@@ -117,76 +184,248 @@ const UpdateProduct = () => {
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
-                {formData.file ? (
-                  <span className="text-primary font-RobotoMedium">{formData.file.name}</span>
+                {formData.data.file ? (
+                  <span className="text-primary font-RobotoMedium">
+                    {formData.data.file.name}
+                  </span>
                 ) : (
-                  <span className="text-primary font-RobotoMedium">Choose File</span>
+                  <span className="text-primary font-RobotoMedium">
+                    Choose File
+                  </span>
                 )}
               </div>
             </div>
-            {formData.file && (
+            {formData.data.file && (
               <img
-                src={URL.createObjectURL(formData.file)}
-                alt="Please choose file again"
+                src={URL.createObjectURL(formData.data.file)}
+                alt="Preview"
                 className="w-full h-[280px] object-contain"
               />
             )}
-            {imageSrc && !formData.file && (
+            {imageSrc && !formData.data.file && (
               <img
                 src={imageSrc}
-                alt="Selected file"
+                alt="Current file"
                 className="w-full h-[280px] object-contain"
               />
             )}
             <div className="flex justify-between">
               <div className="flex-1">
-                <label className="text-[14px]">Product Name:</label>
+                <label className="text-[14px] block font-bold">
+                  Product Name:
+                </label>
                 <input
-                  className="border-b-2 p-2"
-                  type="text"
+                  className="border-b-2"
                   name="product_name"
                   onChange={handleChange}
                   value={formData.data.product_name}
+                  style={{ marginTop: '20px' }}
                 />
               </div>
               <div className="flex-1">
-                <label className="text-[14px] block">Price:</label>
+                <label className="text-[14px] block font-bold">Price:</label>
                 <input
-                  className="border-b-2 p-2"
-                  type="number"
+                  className="border-b-2"
                   name="price"
+                  type="number"
                   onChange={handleChange}
                   value={formData.data.price}
+                  style={{ marginTop: '20px' }}
                 />
               </div>
             </div>
-
             <div className="flex justify-between">
               <div className="flex-1">
-                <label className="text-[14px] block">Description:</label>
+                <label className="text-[14px] block font-bold">Accuracy:</label>
                 <textarea
                   className="border-b-2"
-                  name="description"
+                  name="accuracy"
                   onChange={handleChange}
-                  value={formData.data.description}
+                  value={formData.data.accuracy}
+                  style={{ marginTop: '20px' }}
                 />
               </div>
-
               <div className="flex-1">
-                <label className="text-[14px] block mb-5">Category:</label>
+                <label className="text-[14px] block font-bold">
+                  Battery Life:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="battery_life"
+                  onChange={handleChange}
+                  value={formData.data.battery_life}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Color:</label>
+                <textarea
+                  className="border-b-2"
+                  name="color"
+                  onChange={handleChange}
+                  value={formData.data.color}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Function:</label>
+                <textarea
+                  className="border-b-2"
+                  name="func"
+                  onChange={handleChange}
+                  value={formData.data.func}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Glass:</label>
+                <textarea
+                  className="border-b-2"
+                  name="glass"
+                  onChange={handleChange}
+                  value={formData.data.glass}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Machine:</label>
+                <textarea
+                  className="border-b-2"
+                  name="machine"
+                  onChange={handleChange}
+                  value={formData.data.machine}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">
+                  Other Features:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="other_features"
+                  onChange={handleChange}
+                  value={formData.data.other_features}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Quantity:</label>
+                <textarea
+                  className="border-b-2"
+                  name="quantity"
+                  onChange={handleChange}
+                  value={formData.data.quantity}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Sex:</label>
+                <textarea
+                  className="border-b-2"
+                  name="sex"
+                  onChange={handleChange}
+                  value={formData.data.sex}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">
+                  Technology:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="technology"
+                  onChange={handleChange}
+                  value={formData.data.technology}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">
+                  Water Resistance:
+                </label>
+                <textarea
+                  className="border-b-2"
+                  name="water_resistance"
+                  onChange={handleChange}
+                  value={formData.data.water_resistance}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-[14px] block font-bold">Weight:</label>
+                <textarea
+                  className="border-b-2"
+                  name="weight"
+                  onChange={handleChange}
+                  value={formData.data.weight}
+                  style={{ marginTop: '20px' }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <label className="text-[14px] block mb-5 font-bold">
+                  Category:
+                </label>
                 <select
                   className="p-2 rounded-md border-none"
                   name="category_name"
                   onChange={handleChange}
                   value={formData.data.category_name}
                 >
-                  {categories?.data && categories?.data.map((category) => (
-                    <option key={category.slug} value={category.category_name}>
-                      {category.category_name}
-                    </option>
-                  ))}
+                  {categories?.data &&
+                    categories?.data.map((category) => (
+                      <option
+                        key={category.slug}
+                        value={category.category_name}
+                      >
+                        {category.category_name}
+                      </option>
+                    ))}
                 </select>
               </div>
+              <div className="flex-1">
+                <label className="text-[14px] block mb-5 font-bold">
+                  Brand:
+                </label>
+                <select
+                  className="p-2 rounded-md border-none"
+                  name="category_name"
+                  onChange={handleChange}
+                  value={formData.data.brand_name}
+                >
+                  {brands?.data &&
+                    brands?.data.map((brand) => (
+                      <option key={brand.brand_id} value={brand.brand_name}>
+                        {brand.brand_name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            <div className="flex-1">
+              <label className="text-[14px] block font-bold">
+                Description:
+              </label>
+              <textarea
+                className="border-b-2"
+                name="detail"
+                onChange={handleChange}
+                value={formData.data.detail}
+                style={{ marginTop: '20px', width: '700px', height: '200px' }}
+              />
             </div>
 
             <label className="switch">
@@ -194,7 +433,7 @@ const UpdateProduct = () => {
                 type="checkbox"
                 name="status"
                 onChange={handleChange}
-                checked={formData.data.status === "Active"}
+                checked={formData.data.status === 'Active'}
               />
               <span className="slider round"></span>
             </label>
@@ -210,7 +449,7 @@ const UpdateProduct = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
 export default UpdateProduct

@@ -59,10 +59,10 @@ const Checkout = () => {
     //setLoading(true)
     setError(null)
     setSuccess(null)
-
+    const total_price = cart?.data?.total_price + 20000
     try {
       const response = await fetch(
-        'http://localhost:9999/api/customer/order/buy-now',
+        'http://localhost:9999/api/customer/order/buy-cart',
         {
           method: 'POST',
           headers: {
@@ -70,6 +70,7 @@ const Checkout = () => {
             Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
+            total_price,
             address,
             recipient_name: recipientName,
             note,
@@ -86,11 +87,14 @@ const Checkout = () => {
       if (data.code === 201) {
         setSuccess('Order placed successfully!')
         navigate('/orders-history')
+        console.log(success)
       } else {
         setSuccess('Order placed fail!')
+        console.log(success)
       }
     } catch (error) {
       setError(error.message)
+      console.log(success)
     } finally {
       //setLoading(false)
     }
@@ -232,7 +236,7 @@ const Checkout = () => {
 
               <div className="flex justify-center items-center gap-5">
                 <button
-                  onClick={() => handleOrder()}
+                  onClick={handleOrder}
                   className="w-[50%] bg-green-500 bg-primary text-white p-2 rounded-md mt-5 shadow-md hover:bg-main transition duration-300 ease-in-out"
                 >
                   Đặt Hàng

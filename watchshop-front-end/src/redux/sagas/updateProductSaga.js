@@ -1,28 +1,36 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
-import axios from 'axios';
+import { call, put, takeEvery } from 'redux-saga/effects'
 
+// Saga worker function to handle the update product action
 function* updateProduct(action) {
   try {
-    const { id, formData } = action.payload;
+    const { id, dataToSend } = action.payload
+    const token = localStorage.getItem('token')
 
-    const token = localStorage.getItem('token');
+    const response = yield call(() =>
+      fetch(`http://localhost:9999/api/staff/product/${id}/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(dataToSend)
+      })
+    )
 
-    const response = yield call(axios.put, `http://localhost:9999/api/admin/product/${id}/update`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`,
-      }
-    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
 
-    yield put({ type: 'UPDATE_PRODUCT_SUCCESS', payload: response.data });
-
+    const responseData = yield response.json()
+    yield put({ type: 'UPDATE_PRODUCT_SUCCESS', payload: responseData })
   } catch (error) {
-    yield put({ type: 'UPDATE_PRODUCT_FAILURE', error: error.message });
+    yield put({ type: 'UPDATE_PRODUCT_FAILURE', error: error.message })
   }
 }
 
-function* putUpdateProduct() {
-  yield takeEvery('UPDATE_PRODUCT_REQUEST', updateProduct);
+// Saga watcher function to watch for UPDATE_PRODUCT_REQUEST actions
+function* watchUpdateProduct() {
+  yield takeEvery('UPDATE_PRODUCT_REQUEST', updateProduct)
 }
 
-export default putUpdateProduct;
+export default watchUpdateProduct
