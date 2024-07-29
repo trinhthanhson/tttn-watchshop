@@ -5,9 +5,8 @@ import {
   HiOutlineUserGroup,
   HiOutlineServer,
   HiOutlineReceiptTax,
-  HiOutlineCog,
-}
-  from "react-icons/hi";
+  HiOutlineCog
+} from 'react-icons/hi'
 
 export const DASHBOARD_SIDEBAR_TOP_LINKS = [
   {
@@ -35,9 +34,21 @@ export const DASHBOARD_SIDEBAR_TOP_LINKS = [
     icon: <HiOutlineUserGroup />
   },
   {
+    key: 'staffs',
+    label: 'Staffs',
+    path: '/admin/staffs',
+    icon: <HiOutlineUserGroup />
+  },
+  {
     key: 'category',
     label: 'Category',
     path: '/admin/category',
+    icon: <HiOutlineServer />
+  },
+  {
+    key: 'brand',
+    label: 'Brand',
+    path: '/admin/brand',
     icon: <HiOutlineServer />
   },
   {
@@ -45,7 +56,7 @@ export const DASHBOARD_SIDEBAR_TOP_LINKS = [
     label: 'Coupons',
     path: '/admin/coupons',
     icon: <HiOutlineReceiptTax />
-  },
+  }
 ]
 
 export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
@@ -54,7 +65,7 @@ export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
     label: 'Settings',
     path: '/admin/settings',
     icon: <HiOutlineCog />
-  },
+  }
   // {
   //   key: 'logout',
   //   label: 'Logout',

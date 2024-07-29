@@ -16,7 +16,7 @@ const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-
+  console.log(user)
   useEffect(() => {
     if (user) {
       if (

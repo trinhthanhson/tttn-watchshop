@@ -17,6 +17,8 @@ import couponsSaga from './couponsSaga'
 import putAddCart from './addCartSaga'
 import postAddCoupon from './addCouponSaga'
 import brandSaga from './brandSaga'
+import staffSaga from './staffSaga'
+import reviewCustomerSaga from './reviewCustomerSaga'
 
 export default function* rootSaga() {
   yield all([
@@ -30,6 +32,8 @@ export default function* rootSaga() {
     postAddProduct(),
     categoriesSaga(),
     brandSaga(),
+    staffSaga(),
+    reviewCustomerSaga(),
     putUpdateProduct(),
     userProfileSaga(),
     customerOrdersSaga(),

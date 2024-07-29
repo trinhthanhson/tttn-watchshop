@@ -88,9 +88,11 @@ const AllOrder = () => {
               <option value="">Tất cả</option>
               <option value="0">Chờ xác nhận</option>
               <option value="1">Đã xác nhận</option>
-              <option value="2">Đang giao</option>
-              <option value="3">Đã giao</option>
-              <option value="4">Đã hủy</option>
+              <option value="2">Đang vận chuyển</option>
+              <option value="3">Chờ thanh toán</option>
+              <option value="4">Đã thanh toán</option>
+              <option value="5">Đã giao</option>
+              <option value="6">Đã huỷ</option>
             </select>
           </div>
 

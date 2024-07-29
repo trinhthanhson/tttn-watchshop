@@ -8,8 +8,10 @@ import OrderTraker from '../../components/Order/OrderTraker'
 const ORDER_STATUS_NEXT = {
   0: 'Xác Nhận',
   1: 'Đã xác nhận',
-  2: 'Đang Giao',
-  3: 'Đã giao'
+  2: 'Đang vận chuyển',
+  3: 'Chờ thanh toán',
+  4: 'Đã thanh toán',
+  5: 'Đã giao'
 }
 
 const AdminOrderDetail = () => {
@@ -51,6 +53,7 @@ const AdminOrderDetail = () => {
       const token = localStorage.getItem('token')
       const currentStatus = parseInt(orderDetail?.status, 10)
       const newStatus = (currentStatus + 1).toString()
+      console.log(newStatus)
       axios
         .put(
           `http://localhost:9999/api/staff/order/${id}/status`,
@@ -69,7 +72,7 @@ const AdminOrderDetail = () => {
     }
   }
 
-  const activeStep = orderDetail?.status + 1
+  const activeStep = parseInt(orderDetail?.status, 10) + 1
 
   return (
     <>
@@ -213,7 +216,7 @@ const AdminOrderDetail = () => {
               Hủy Đơn Hàng
             </button>
           )}
-          {orderDetail?.status < 3 && (
+          {parseInt(orderDetail?.status, 10) < 5 && (
             <button
               className="mt-5 bg-primary text-white font-RobotoMedium text-[16px] rounded-md p-2 shadow-md hover:bg-hoverPrimary ease-out duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-r border-none"
               onClick={() => handleConfirmOrder()}

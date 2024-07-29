@@ -37,18 +37,26 @@ const NewCustomers = () => {
             .slice(0, 5)
             .map((customer) => (
               <div key={customer?.user_id} className="flex items-start">
-                <div className="w-[50px] h-[50px] bg-primary rounded-md">
+                <div
+                  className="w-[50px] h-[50px] bg-primary rounded-md"
+                  style={{ backgroundColor: 'rgb(167 167 167)' }}
+                >
                   <img
                     className="w-full h-full object-contain"
                     src={
                       customer?.avatar ||
-                      'https://www.highlandscoffee.com.vn/vnt_upload/weblink/White_logo800.png'
+                      'https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea'
                     }
                     alt={customer?.username}
                   />
                 </div>
                 <div className="ml-4 flex-1">
-                  <p className="text-sm text-gray-800">{customer?.username}</p>
+                  <p
+                    className="text-sm text-gray-800"
+                    style={{ marginTop: '15px' }}
+                  >
+                    {customer?.username}
+                  </p>
                 </div>
                 {customer?.created_at && (
                   <div className="text-xs text-gray-400 pl-1.5">

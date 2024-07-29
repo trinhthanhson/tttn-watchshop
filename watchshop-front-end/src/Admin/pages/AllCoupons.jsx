@@ -1,24 +1,24 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllCouponsRequest } from "../../redux/actions/actions";
-import { getStatus } from "../../constants/Status";
-import { IoIosAddCircle } from "react-icons/io";
-import { MdDelete } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllCouponsRequest } from '../../redux/actions/actions'
+import { getStatus } from '../../constants/Status'
+import { IoIosAddCircle } from 'react-icons/io'
+import { MdDelete } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 
 const AllCoupons = () => {
-  const dispatch = useDispatch();
-  const coupons = useSelector((state) => state.coupons.coupons);
+  const dispatch = useDispatch()
+  const coupons = useSelector((state) => state.coupons.coupons)
 
   useEffect(() => {
     try {
-      dispatch(getAllCouponsRequest());
+      dispatch(getAllCouponsRequest())
     } catch (error) {
-      console.error("Error dispatch", error);
+      console.error('Error dispatch', error)
     }
   }, [dispatch])
 
-  console.log("coupons", coupons)
+  console.log('coupons', coupons)
 
   // const handleShowDialog = () => {
   //   setShowDialog(true);
@@ -70,30 +70,35 @@ const AllCoupons = () => {
             </tr>
           </thead>
           <tbody>
-            {coupons.data && coupons?.data.map((coupon) => (
-              <tr key={coupons.coupon_id}>
-                <td>
-                  {coupon?.coupon_id}
-                </td>
-                <td>
-                  <img
-                    src={coupon?.image || "https://www.highlandscoffee.com.vn/vnt_upload/weblink/White_logo800.png"}
-                    alt={coupon?.type}
-                    className="w-[68px] object-contain rounded-md bg-primary"
-                  />
-                </td>
-                <td>{new Date(coupon?.created_at).toLocaleDateString()}</td>
-                <td>{new Date(coupon?.end_date).toLocaleDateString()}</td>
-                <td>{coupon?.minimum_value}</td>
-                <td>{coupon?.type}</td>
-                <td>{coupon?.quantity}</td>
-                <td>{coupon?.quantity}</td>
-                <td>{getStatus(coupon?.status)}</td>
-                <td>
-                  <MdDelete className="cursor-pointer text-primary" fontSize={25} />
-                </td>
-              </tr>
-            ))}
+            {coupons.data &&
+              coupons?.data.map((coupon) => (
+                <tr key={coupons.coupon_id}>
+                  <td>{coupon?.coupon_id}</td>
+                  <td>
+                    <img
+                      src={
+                        coupon?.image ||
+                        'https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea'
+                      }
+                      alt={coupon?.type}
+                      className="w-[68px] object-contain rounded-md bg-primary"
+                    />
+                  </td>
+                  <td>{new Date(coupon?.created_at).toLocaleDateString()}</td>
+                  <td>{new Date(coupon?.end_date).toLocaleDateString()}</td>
+                  <td>{coupon?.minimum_value}</td>
+                  <td>{coupon?.type}</td>
+                  <td>{coupon?.quantity}</td>
+                  <td>{coupon?.quantity}</td>
+                  <td>{getStatus(coupon?.status)}</td>
+                  <td>
+                    <MdDelete
+                      className="cursor-pointer text-primary"
+                      fontSize={25}
+                    />
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
@@ -110,4 +115,4 @@ const AllCoupons = () => {
   )
 }
 
-export default AllCoupons;
+export default AllCoupons

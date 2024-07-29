@@ -13,7 +13,7 @@ function* getAllCustomersSaga() {
 
     const response = yield call(
       axios.get,
-      'http://localhost:9999/api/user/customer/all',
+      'http://localhost:9999/api/staff/user/all',
       {
         headers: {
           Authorization: `Bearer ${token}`

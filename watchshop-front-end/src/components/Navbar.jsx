@@ -367,7 +367,7 @@ const Navbar = () => {
           >
             <img
               className="object-contain w-[50px] sm:w-[70px] lg:w-[100px] object-center"
-              src="https://www.highlandscoffee.com.vn/vnt_upload/weblink/White_logo800.png"
+              src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea"
               alt="logo"
             />
           </a>

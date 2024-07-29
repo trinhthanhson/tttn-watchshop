@@ -21,7 +21,19 @@ export function getOrderStatus(status) {
     case '3':
       return (
         <span className="capitalize py-1 px-2 rounded-md text-xs text-white bg-green">
-          Đã Giao
+          Chờ thanh toán
+        </span>
+      )
+    case '4':
+      return (
+        <span className="capitalize py-1 px-2 rounded-md text-xs text-white bg-green">
+          Đã thanh toán
+        </span>
+      )
+    case '5':
+      return (
+        <span className="capitalize py-1 px-2 rounded-md text-xs text-white bg-green">
+          Đã giao
         </span>
       )
     default:
@@ -36,7 +48,7 @@ export function getOrderStatus(status) {
 export function getStatus(status) {
   if (typeof status === 'string') {
     switch (status) {
-      case 'Unactive':
+      case 'Inactive':
         return (
           <span className="capitalize py-1 px-2 rounded-md text-xs text-white bg-main">
             {status.split('_').join(' ').toLowerCase()}

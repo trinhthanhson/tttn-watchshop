@@ -1,15 +1,25 @@
+import PropTypes from 'prop-types'
 import { Stepper, Step, StepLabel } from '@mui/material'
 
-const steps = ['Order Placed', 'Confirmed', 'Cooking', 'Shipped', 'Delivered']
+const steps = [
+  'Pending confirmation',
+  'Confirmed',
+  'Shipping',
+  'Pending payment',
+  'Paid',
+  'Delivered'
+]
 
-// eslint-disable-next-line react/prop-types
-const OrderTraker = ({ activeStep }) => {
+const OrderTracker = ({ activeStep }) => {
+  // Convert activeStep to an integer and handle NaN
+  const stepIndex = parseInt(activeStep, 10)
+  const validStepIndex = isNaN(stepIndex) ? 0 : stepIndex
+
   return (
     <div className="w-full">
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          // eslint-disable-next-line react/jsx-key
-          <Step>
+      <Stepper activeStep={validStepIndex} alternativeLabel>
+        {steps.map((label, index) => (
+          <Step key={index}>
             <StepLabel className="" sx={{ color: '#b22830', fontSize: '44px' }}>
               {label}
             </StepLabel>
@@ -20,4 +30,9 @@ const OrderTraker = ({ activeStep }) => {
   )
 }
 
-export default OrderTraker
+OrderTracker.propTypes = {
+  activeStep: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired
+}
+
+export default OrderTracker

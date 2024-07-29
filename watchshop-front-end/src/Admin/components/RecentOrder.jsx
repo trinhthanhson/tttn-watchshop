@@ -33,13 +33,19 @@ const RecentOrder = () => {
       <div className="mt-3">
         <table className="w-full text-gray-700">
           <thead className="text-white font-medium bg-primary">
-            <tr className="bg-primary">
+            <tr
+              className="bg-primary"
+              style={{
+                backgroundColor: 'rgb(171, 171, 171)',
+                color: 'rgba(0, 0, 0, 0.8)'
+              }}
+            >
               <td className="rounded-s-md">STT</td>
-              <td>Hinh Anh</td>
-              <td>Ten San Pham</td>
-              <td>Total Price</td>
-              <td>Date</td>
-              <td className="rounded-e-md">Status</td>
+              <td>Hình ảnh</td>
+              <td>Tên sản phẩm</td>
+              <td>Tổng giá</td>
+              <td>Ngày đặt</td>
+              <td className="rounded-e-md">Trạng thái</td>
             </tr>
           </thead>
           <tbody>

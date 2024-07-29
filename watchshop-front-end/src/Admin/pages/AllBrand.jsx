@@ -1,27 +1,26 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllCategoriesRequest } from '../../redux/actions/actions'
+import { getAllBrandRequest } from '../../redux/actions/actions'
 import { getStatus } from '../../constants/Status'
 import { IoIosAddCircle } from 'react-icons/io'
 import axios from 'axios'
 import { MdModeEditOutline, MdDelete } from 'react-icons/md'
 
-const AllCategory = () => {
+const AllBrand = () => {
   const dispatch = useDispatch()
-  const categories = useSelector((state) => state.categories.categories)
+  const brands = useSelector((state) => state.brands.brands)
   const [showDialog, setShowDialog] = useState(false)
   const [showUpdateDialog, setShowUpdateDialog] = useState(false)
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null)
-  const [newCategoryName, setNewCategoryName] = useState('')
-  const [deletedCategoryId, setDeletedCategoryId] = useState(null)
-
+  const [selectedBrandId, setSelectedBrandId] = useState(null)
+  const [newBrandName, setnewBrandName] = useState('')
+  const [deletedBrandId, setDeletedBrandId] = useState(null)
   useEffect(() => {
     try {
-      dispatch(getAllCategoriesRequest())
+      dispatch(getAllBrandRequest())
     } catch (error) {
       console.error('Error dispatch', error)
     }
-  }, [dispatch, deletedCategoryId])
+  }, [dispatch, deletedBrandId])
 
   const handleShowDialog = () => {
     setShowDialog(true)
@@ -29,16 +28,16 @@ const AllCategory = () => {
 
   const handleCloseDialog = () => {
     setShowDialog(false)
-    setNewCategoryName('')
+    setnewBrandName('')
   }
 
-  const handleAddCategory = async () => {
+  const handleAddBrand = async () => {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.post(
-        'http://localhost:9999/api/staff/category/add',
+        'http://localhost:9999/api/staff/brand/add',
         {
-          category_name: newCategoryName
+          brand_name: newBrandName
         },
         {
           headers: {
@@ -49,41 +48,39 @@ const AllCategory = () => {
 
       if (response.data.code === 201) {
         handleCloseDialog()
-        dispatch(getAllCategoriesRequest())
+        dispatch(getAllBrandRequest())
       }
     } catch (error) {
-      console.error('Error adding category', error)
+      console.error('Error adding brand', error)
     }
   }
 
-  const getCategoryNameById = (categoryId) => {
-    const category = categories?.data.find(
-      (cat) => cat.category_id === categoryId
-    )
-    return category?.category_name || ''
+  const getBrandNameById = (brandId) => {
+    const brand = brands?.data.find((cat) => cat.brand_id === brandId)
+    return brand?.brand_name || ''
   }
 
-  const handleShowUpdateDialog = (categoryId) => {
-    setSelectedCategoryId(categoryId)
-    setNewCategoryName(getCategoryNameById(categoryId))
+  const handleShowUpdateDialog = (brandId) => {
+    setSelectedBrandId(brandId)
+    setnewBrandName(getBrandNameById(brandId))
     setShowUpdateDialog(true)
   }
 
   const handleCloseUpdateDialog = () => {
     setShowUpdateDialog(false)
-    setSelectedCategoryId(null)
-    setNewCategoryName('')
+    setSelectedBrandId(null)
+    setnewBrandName('')
   }
 
-  const handleUpdateCategory = async (categoryId) => {
-    console.log('update category', categoryId)
+  const handleUpdateBrand = async (brandId) => {
+    console.log('update brand', brandId)
     try {
       const token = localStorage.getItem('token')
 
       const response = await axios.put(
-        `http://localhost:9999/api/staff/category/${categoryId}/update`,
+        `http://localhost:9999/api/staff/brand/${brandId}/update`,
         {
-          category_name: newCategoryName
+          brand_name: newBrandName
         },
         {
           headers: {
@@ -93,16 +90,15 @@ const AllCategory = () => {
       )
       if (response.data.code === 200) {
         setShowUpdateDialog(false)
-        setNewCategoryName('')
-
-        dispatch(getAllCategoriesRequest())
+        setnewBrandName('')
+        dispatch(getAllBrandRequest())
       }
     } catch (error) {
-      console.error('Error updating category', error)
+      console.error('Error updating brand', error)
     }
   }
 
-  const handleDeleteCategory = async (categoryId) => {
+  const handleDeleteBrand = async (brandId) => {
     const confirmDelete = window.confirm(
       'Bạn có chắc chắn muốn xóa loại này không?'
     )
@@ -118,7 +114,7 @@ const AllCategory = () => {
     if (confirmDelete) {
       try {
         await axios.delete(
-          `http://localhost:9999/api/staff/category/${categoryId}/delete`,
+          `http://localhost:9999/api/staff/brand/${brandId}/delete`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -126,11 +122,11 @@ const AllCategory = () => {
           }
         )
 
-        setDeletedCategoryId(categoryId)
-        dispatch(getAllCategoriesRequest())
-        alert('Category deleted successfully!')
+        setDeletedBrandId(brandId)
+        dispatch(getAllBrandRequest())
+        alert('Brand deleted successfully!')
       } catch (error) {
-        console.error('Error deleting category:', error)
+        console.error('Error deleting brand:', error)
       }
     }
   }
@@ -143,7 +139,7 @@ const AllCategory = () => {
             <tr className="bg-primary">
               <td className="rounded-s-md">ID</td>
               <td>Hình Ảnh</td>
-              <td>Tên Loại</td>
+              <td>Tên Hãng</td>
               <td>Ngày Tạo</td>
               <td>Người Tạo</td>
               <td>Trạng Thái</td>
@@ -151,45 +147,41 @@ const AllCategory = () => {
             </tr>
           </thead>
           <tbody>
-            {categories?.data &&
-              categories?.data.map((category, index) => (
-                <tr key={category.slug}>
+            {brands?.data &&
+              brands?.data.map((brand, index) => (
+                <tr key={brand.slug}>
                   <td>{index + 1}</td>
                   <td>
                     <img
                       src={
-                        category?.image ||
+                        brand?.image ||
                         'https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea'
                       }
-                      alt={category?.category_name}
+                      alt={brand?.brand_name}
                       className="w-[68px] h-[50px] object-contain rounded-md bg-primary"
                     />
                   </td>
-                  <td>{category?.category_name}</td>
-                  <td>{new Date(category?.created_at).toLocaleDateString()}</td>
+                  <td>{brand?.brand_name}</td>
+                  <td>{new Date(brand?.created_at).toLocaleDateString()}</td>
                   <td>
-                    {category?.created_category?.first_name +
+                    {brand?.created_brand?.first_name +
                       ' ' +
-                      category?.created_category?.last_name}
+                      brand?.created_brand?.last_name}
                   </td>
-                  <td>{getStatus(category?.status)}</td>
+                  <td>{getStatus(brand?.status)}</td>
                   <td>
                     <span>
                       <MdModeEditOutline
                         className="cursor-pointer text-primary"
                         fontSize={25}
-                        onClick={() =>
-                          handleShowUpdateDialog(category?.category_id)
-                        }
+                        onClick={() => handleShowUpdateDialog(brand?.brand_id)}
                       />
                     </span>
                     <span>
                       <MdDelete
                         className="cursor-pointer text-primary"
                         fontSize={25}
-                        onClick={() =>
-                          handleDeleteCategory(category?.category_id)
-                        }
+                        onClick={() => handleDeleteBrand(brand?.brand_id)}
                       />
                     </span>
                   </td>
@@ -212,8 +204,8 @@ const AllCategory = () => {
             <h2 className="text-xl font-bold mb-4">Thêm Loại</h2>
             <input
               type="text"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
+              value={newBrandName}
+              onChange={(e) => setnewBrandName(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full"
               placeholder="Nhập tên loại"
             />
@@ -225,7 +217,7 @@ const AllCategory = () => {
                 Hủy
               </button>
               <button
-                onClick={handleAddCategory}
+                onClick={handleAddBrand}
                 className="bg-primary text-white px-4 py-2 rounded-md"
               >
                 Thêm
@@ -241,8 +233,8 @@ const AllCategory = () => {
             <h2 className="text-xl font-bold mb-4">Cập Nhật Loại</h2>
             <input
               type="text"
-              value={newCategoryName}
-              onChange={(e) => setNewCategoryName(e.target.value)}
+              value={newBrandName}
+              onChange={(e) => setnewBrandName(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full"
               placeholder="Nhập tên loại"
             />
@@ -254,7 +246,7 @@ const AllCategory = () => {
                 Hủy
               </button>
               <button
-                onClick={() => handleUpdateCategory(selectedCategoryId)}
+                onClick={() => handleUpdateBrand(selectedBrandId)}
                 className="bg-primary text-white px-4 py-2 rounded-md"
               >
                 Cập Nhật
@@ -267,4 +259,4 @@ const AllCategory = () => {
   )
 }
 
-export default AllCategory
+export default AllBrand

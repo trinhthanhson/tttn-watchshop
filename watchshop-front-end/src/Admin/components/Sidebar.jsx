@@ -1,36 +1,49 @@
-import { Link, useLocation } from "react-router-dom/dist"
-import { DASHBOARD_SIDEBAR_BOTTOM_LINKS, DASHBOARD_SIDEBAR_TOP_LINKS } from "../../constants/MenuLink"
-import { HiOutlineLogout } from "react-icons/hi";
+import { Link, useLocation } from 'react-router-dom/dist'
+import {
+  DASHBOARD_SIDEBAR_BOTTOM_LINKS,
+  DASHBOARD_SIDEBAR_TOP_LINKS
+} from '../../constants/MenuLink'
+import { HiOutlineLogout } from 'react-icons/hi'
+import { useState } from 'react'
 
 const Sidebar = () => {
-  const location = useLocation();
+  const location = useLocation()
   // const navigate = useNavigate();
 
   const handleLogout = () => {
-
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+    localStorage.removeItem('token')
+    window.location.href = '/login'
   }
+  const [hoveredIndex, setHoveredIndex] = useState(null)
 
   return (
-    <div className="fixed bg-primary w-60 h-full p-3 flex flex-col text-white font-RobotoMedium">
+    <div
+      className="fixed bg-primary w-60 h-full p-3 flex flex-col text-white font-RobotoMedium"
+      style={{ backgroundColor: 'rgb(199 199 199)' }}
+    >
       <div className="flex items-center justify-center gap-3">
         <img
-          src="https://www.highlandscoffee.com.vn/vnt_upload/weblink/White_logo800.png"
+          src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea"
           alt="logo"
-          className="w-[100px]"
+          className="w-[125px]"
         />
-        <div className="text-[16px]">
-          <p className="">Highland</p>
-          <p className="">Coffee</p>
-        </div>
+        <div className="text-[16px]"></div>
       </div>
       <div className="flex-1 mt-6">
         {DASHBOARD_SIDEBAR_TOP_LINKS.map((link) => (
           <Link key={link.key} to={link.path}>
             <div
               key={link.key}
-              className={`flex items-center gap-3 p-3 cursor-pointer hover:no-underline hover:bg-hoverPrimary ${location.pathname === link.path ? "bg-hoverPrimary" : "text-textNoneActive"}`}
+              className={`flex items-center gap-3 p-3 cursor-pointer hover:no-underline ${location.pathname === link.path ? '' : 'text-textNoneActive'}`}
+              style={{
+                color: '#000c',
+                backgroundColor:
+                  hoveredIndex === link.key || location.pathname === link.path
+                    ? 'rgb(171, 171, 171)'
+                    : 'transparent'
+              }}
+              onMouseEnter={() => setHoveredIndex(link.key)}
+              onMouseLeave={() => setHoveredIndex(null)}
             >
               <div>{link.icon}</div>
               <div>{link.label}</div>
@@ -42,13 +55,28 @@ const Sidebar = () => {
       <div className="">
         {DASHBOARD_SIDEBAR_BOTTOM_LINKS.map((link) => (
           <Link key={link.key} to={link.path}>
-            <div className={`flex items-center gap-3 p-3 cursor-pointer ${location.pathname === link.path ? "bg-hoverPrimary" : "text-textNoneActive"}`}>
+            <div
+              key={link.key}
+              className={`flex items-center gap-3 p-3 cursor-pointer hover:no-underline ${location.pathname === link.path ? '' : 'text-textNoneActive'}`}
+              style={{
+                color: '#000c',
+                backgroundColor:
+                  hoveredIndex === link.key || location.pathname === link.path
+                    ? 'rgb(171, 171, 171)'
+                    : 'transparent'
+              }}
+              onMouseEnter={() => setHoveredIndex(link.key)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
               <div>{link.icon}</div>
               <div>{link.label}</div>
             </div>
           </Link>
         ))}
-        <div className="flex items-center gap-3 p-3 cursor-pointer text-main">
+        <div
+          className="flex items-center gap-3 p-3 cursor-pointer text-main"
+          style={{ color: 'rgb(253 0 15)' }}
+        >
           <HiOutlineLogout />
           <div onClick={handleLogout}>Logout</div>
         </div>

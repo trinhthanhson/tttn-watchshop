@@ -14,7 +14,11 @@ const OrderBuyNow = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
-
+  const [errors, setErrors] = useState({
+    recipientName: '',
+    recipientPhone: '',
+    shippingAddress: ''
+  })
   if (!product) {
     return <div>No product selected for buying now.</div>
   }
@@ -28,13 +32,50 @@ const OrderBuyNow = () => {
   const handleCloseModal = () => setIsModalOpen(false)
 
   const handleAddressSave = () => {
-    if (recipientName && shippingAddress && recipientPhone) {
-      setAddress(`${recipientName}, ${recipientPhone}, ${shippingAddress}`)
-      handleCloseModal()
+    let hasError = false
+    const newErrors = {
+      recipientName: '',
+      recipientPhone: '',
+      shippingAddress: ''
     }
+
+    if (!recipientName) {
+      newErrors.recipientName = 'Recipient name is required.'
+      hasError = true
+    }
+
+    if (!shippingAddress) {
+      newErrors.shippingAddress = 'Shipping address is required.'
+      hasError = true
+    }
+
+    if (!recipientPhone) {
+      newErrors.recipientPhone = 'Recipient phone is required.'
+      hasError = true
+    }
+
+    if (hasError) {
+      setErrors(newErrors)
+      return
+    }
+    // Clear errors and set address
+    setErrors({
+      recipientName: '',
+      recipientPhone: '',
+      shippingAddress: ''
+    })
+    setAddress(`${recipientName}, ${recipientPhone}, ${shippingAddress}`)
+    setError(null)
+
+    handleCloseModal()
   }
 
   const handleOrder = async () => {
+    if (!address) {
+      setError('Please enter a shipping address.')
+      return
+    }
+
     setLoading(true)
     setError(null)
     setSuccess(null)
@@ -68,7 +109,55 @@ const OrderBuyNow = () => {
       if (data.code === 201) {
         setSuccess('Order placed successfully!')
       } else {
-        setSuccess('Order placed fail!')
+        setSuccess('Order placed failed!')
+      }
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+  const handlePayNow = async () => {
+    if (!address) {
+      setError('Please enter a shipping address.')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(
+        'http://localhost:9999/api/customer/payment/submit',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            product_id: product.product_id,
+            quantity,
+            price: product.priceUpdateDetails[0].price_new,
+            address,
+            recipient_name: recipientName,
+            note,
+            recipient_phone: recipientPhone
+          })
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to initiate payment')
+      }
+
+      const data = await response.json()
+      console.log(data.message)
+      if (data.message) {
+        // Chuyển hướng người dùng đến URL thanh toán
+        window.location.href = data.message
+      } else {
+        setError('Failed to retrieve payment URL')
       }
     } catch (error) {
       setError(error.message)
@@ -77,12 +166,19 @@ const OrderBuyNow = () => {
     }
   }
 
+  const isFormComplete = recipientName && recipientPhone && shippingAddress
+
   return (
     <div className="flex flex-col justify-center items-center min-h-screen p-5 bg-gray-100">
       <div
         className="w-full h-full bg-white border border-gray-200 p-5 rounded-lg shadow-lg"
         style={{ marginTop: '50px' }}
       >
+        {error && (
+          <p className=" mt-4" style={{ color: 'red' }}>
+            {error}
+          </p>
+        )}
         <div className="flex items-center mt-5">
           <input
             type="text"
@@ -140,18 +236,27 @@ const OrderBuyNow = () => {
             <span>{totalPrice.toLocaleString('en')} VNĐ</span>
           </div>
         </div>
-
-        <button
-          className={`mt-5 p-2 rounded ${loading ? 'bg-gray-300' : 'bg-blue-500'} text-white hover:bg-blue-600`}
-          onClick={handleOrder}
-          disabled={loading}
-        >
-          {loading ? 'Placing order...' : 'Đặt hàng'}
-        </button>
-
-        {error && <p className="text-red-500 mt-4">{error}</p>}
+        <div className="flex mt-5 space-x-4">
+          <button
+            className={`p-2 rounded ${isFormComplete ? 'bg-green' : 'bg-gray'} text-white hover:bg-green`}
+            onClick={handleOrder}
+            disabled={!isFormComplete}
+            style={{ marginTop: '20px' }}
+          >
+            {loading ? 'Placing order...' : 'Đặt hàng'}
+          </button>
+          <button
+            className={`p-2 rounded ${isFormComplete ? 'bg-green' : 'bg-gray'} text-white hover:bg-green`}
+            onClick={handlePayNow}
+            disabled={!isFormComplete}
+            style={{ marginTop: '20px' }}
+          >
+            Pay Now
+          </button>
+        </div>
         {success && <p className="text-green-500 mt-4">{success}</p>}
 
+        {/* Address Modal */}
         {/* Address Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50">
@@ -170,6 +275,9 @@ const OrderBuyNow = () => {
                   onChange={(e) => setRecipientName(e.target.value)}
                   className="border border-gray-300 p-2 rounded w-full"
                 />
+                {errors.recipientName && (
+                  <p className="text-red mt-1">{errors.recipientName}</p>
+                )}
               </div>
               <div className="mb-4">
                 <label className="block mb-2 font-semibold">
@@ -181,10 +289,13 @@ const OrderBuyNow = () => {
                   onChange={(e) => setShippingAddress(e.target.value)}
                   className="border border-gray-300 p-2 rounded w-full"
                 />
+                {errors.shippingAddress && (
+                  <p className="text-red mt-1">{errors.shippingAddress}</p>
+                )}
               </div>
               <div className="mb-4">
                 <label className="block mb-2 font-semibold">
-                  Recipient Phone{' '}
+                  Recipient Phone
                 </label>
                 <input
                   type="number"
@@ -192,6 +303,9 @@ const OrderBuyNow = () => {
                   onChange={(e) => setRecipientPhone(e.target.value)}
                   className="border border-gray-300 p-2 rounded w-full"
                 />
+                {errors.recipientPhone && (
+                  <p className="text-red">{errors.recipientPhone}</p>
+                )}
               </div>
               <div className="mb-4">
                 <label className="block mb-2 font-semibold">Note</label>
@@ -205,7 +319,7 @@ const OrderBuyNow = () => {
 
               <div className="flex justify-end">
                 <button
-                  className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2 "
+                  className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
                   style={{ marginTop: 10 }}
                   onClick={handleAddressSave}
                 >

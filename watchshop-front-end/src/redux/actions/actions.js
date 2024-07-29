@@ -56,7 +56,13 @@ import {
   ADD_COUPON_FAILURE,
   GET_ALL_BRAND_REQUEST,
   GET_ALL_BRAND_SUCCESS,
-  GET_ALL_BRAND_FAILURE
+  GET_ALL_BRAND_FAILURE,
+  GET_ALL_STAFFS_REQUEST,
+  GET_ALL_STAFFS_SUCCESS,
+  GET_ALL_STAFFS_FAILURE,
+  GET_ALL_REVIEW_CUSTOMER_REQUEST,
+  GET_ALL_REVIEW_CUSTOMER_SUCCESS,
+  GET_ALL_REVIEW_CUSTOMER_FAILURE
 } from './types'
 
 export const addCouponRequest = (formData) => ({
@@ -180,7 +186,19 @@ export const getAllCustomersFailure = (error) => ({
   type: GET_ALL_CUSTOMERS_FAILURE,
   payload: error
 })
+export const getAllStaffsRequest = () => ({
+  type: GET_ALL_STAFFS_REQUEST
+})
 
+export const getAllStaffsSuccess = (customers) => ({
+  type: GET_ALL_STAFFS_SUCCESS,
+  payload: customers
+})
+
+export const getAllStaffsFailure = (error) => ({
+  type: GET_ALL_STAFFS_FAILURE,
+  payload: error
+})
 export const getCustomerOrdersRequest = () => ({
   type: GET_CUSTOMER_ORDERS_REQUEST
 })
@@ -254,6 +272,20 @@ export const getAllProductsSuccess = (products) => ({
 
 export const getAllProductsFailure = (error) => ({
   type: GET_ALL_PRODUCTS_FAILURE,
+  payload: error
+})
+
+export const getAllReviewCustomerRequest = () => ({
+  type: GET_ALL_REVIEW_CUSTOMER_REQUEST
+})
+
+export const getAllReviewCustomerSuccess = (reviews) => ({
+  type: GET_ALL_REVIEW_CUSTOMER_SUCCESS,
+  payload: reviews
+})
+
+export const getAllReviewCustomerFailure = (error) => ({
+  type: GET_ALL_REVIEW_CUSTOMER_FAILURE,
   payload: error
 })
 

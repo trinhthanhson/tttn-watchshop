@@ -34,6 +34,10 @@ import CreateCoupon from '../Admin/pages/CreateCoupon'
 import Checkout from '../pages/Order/Checkout'
 import ProductDetailByCategory from '../pages/Menu/ProductByCategory'
 import OrderBuyNow from '../pages/Order/OrderBuyNow'
+import AdminUserCustomerDetail from '../Admin/pages/AdminUserCustomerDetail'
+import AllBrand from '../Admin/pages/AllBrand'
+import AllStaff from '../Admin/pages/AllStaff'
+import AdminUserStaffDetail from '../Admin/pages/AdminUserStaffDetail'
 
 const Routers = () => {
   return (
@@ -72,11 +76,21 @@ const Routers = () => {
           <Route path="/admin/products" element={<AllProducts />} />
           <Route path="/admin/create-product" element={<CreateProduct />} />
           <Route path="/admin/update-product/:id" element={<UpdateProduct />} />
+          <Route
+            path="/admin/user-customer/:id"
+            element={<AdminUserCustomerDetail />}
+          />
+          <Route
+            path="/admin/user-staff/:id"
+            element={<AdminUserStaffDetail />}
+          />
           <Route path="/admin/product/:id" element={<AdminProductDetail />} />
           <Route path="/admin/orders" element={<AllOrder />} />
           <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
           <Route path="/admin/customers" element={<AllCustomers />} />
+          <Route path="/admin/staffs" element={<AllStaff />} />
           <Route path="/admin/category" element={<AllCategory />} />
+          <Route path="/admin/brand" element={<AllBrand />} />
           <Route path="/admin/profile" element={<StaffProfile />} />
           <Route path="/admin/coupons" element={<AllCoupons />} />
           <Route path="/admin/create-coupon" element={<CreateCoupon />} />

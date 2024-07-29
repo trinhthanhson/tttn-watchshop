@@ -17,6 +17,8 @@ import couponsReducer from './couponsReducer'
 import addCartReducer from './addCartReducer'
 import addCouponReducer from './addCouponReducer'
 import brandReducer from './brandReducer'
+import staffsReducer from './staffsReducer'
+import reviewCustomerReducer from './reviewCustomerReducer'
 
 const rootReducer = combineReducers({
   news: newsReducer,
@@ -29,10 +31,12 @@ const rootReducer = combineReducers({
   addProduct: addProductReducer,
   categories: categoriesReducer,
   brands: brandReducer,
+  staffs: staffsReducer,
   updateProduct: updateProductReducer,
   user: userProfileReducer,
   customerOrders: customerOrdersReducer,
   cart: cartReducer,
+  reviews: reviewCustomerReducer,
   addOrder: addOrderReducer,
   coupons: couponsReducer,
   addCoupon: addCouponReducer,
