@@ -24,6 +24,9 @@ public class Category {
     private String category_name;
 
     @Column
+    private String status;
+
+    @Column
     private LocalDateTime created_at;
 
     @Column
@@ -36,12 +39,10 @@ public class Category {
     private  Long updated_by;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Staff created_category;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
     private Staff updated_category;
 

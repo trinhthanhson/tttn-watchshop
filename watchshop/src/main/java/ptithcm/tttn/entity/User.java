@@ -32,6 +32,9 @@ public class User{
     private  String status;
 
     @Column
+    private float points;
+
+    @Column
     private LocalDateTime created_at;
 
     @Column
@@ -54,6 +57,7 @@ public class User{
 
     @Column
     private Long updated_by;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id",insertable = false, updatable = false)

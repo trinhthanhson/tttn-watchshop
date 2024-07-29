@@ -2,6 +2,7 @@ package ptithcm.tttn.service.impl;
 
 import org.springframework.stereotype.Service;
 import ptithcm.tttn.entity.*;
+import ptithcm.tttn.repository.BillRepo;
 import ptithcm.tttn.repository.OrderDetailRepo;
 import ptithcm.tttn.repository.OrdersRepo;
 import ptithcm.tttn.request.OrderRequest;
@@ -27,8 +28,9 @@ public class OrdersServiceImpl implements OrdersService {
     private final CartService cartService;
     private final CartDetailService cartDetailService;
     private final StaffService staffService;
+    private final BillRepo billRepo;
 
-    public OrdersServiceImpl(OrdersRepo ordersRepo, UserService userService, CustomerService customerService, OrderDetailRepo orderDetailRepo, CartService cartService, CartDetailService cartDetailService, StaffService staffService) {
+    public OrdersServiceImpl(OrdersRepo ordersRepo, UserService userService, CustomerService customerService, OrderDetailRepo orderDetailRepo, CartService cartService, CartDetailService cartDetailService, StaffService staffService, BillRepo billRepo) {
         this.ordersRepo = ordersRepo;
         this.userService = userService;
         this.customerService = customerService;
@@ -36,6 +38,7 @@ public class OrdersServiceImpl implements OrdersService {
         this.cartService = cartService;
         this.cartDetailService = cartDetailService;
         this.staffService = staffService;
+        this.billRepo = billRepo;
     }
 
     @Override
@@ -168,10 +171,55 @@ public class OrdersServiceImpl implements OrdersService {
         if(findOrder != null){
             findOrder.setStatus(status);
             findOrder.setUpdated_staff(staff.getStaff_id());
-            return  ordersRepo.save(findOrder);
+            Orders saveOrder = ordersRepo.save(findOrder);
+            if(saveOrder.getStatus().equals("4")){
+                Bill bill = new Bill();
+                bill.setOrder_id(findOrder.getOrder_id());
+                bill.setCreated_at(LocalDateTime.now());
+                bill.setCreated_by(staff.getStaff_id());
+                billRepo.save(bill);
+            }
+            return saveOrder;
         }
         throw new Exception("Not found order by id " + id);
     }
+
+    @Override
+    public Orders orderPaymentBuyNow(OrderRequest rq, String jwt) throws Exception {
+        User user = userService.findUserByJwt(jwt);
+        Customer customer = customerService.findByUserId(user.getUser_id());
+        Orders orders = new Orders();
+        orders.setAddress(rq.getAddress());
+        orders.setStatus("4");
+        orders.setCreated_at(LocalDateTime.now());
+        orders.setRecipient_name(rq.getRecipient_name());
+        orders.setUpdated_at(LocalDateTime.now());
+        orders.setCreated_by(customer.getCustomer_id());
+        orders.setNote(rq.getNote());
+        orders.setRecipient_phone(rq.getRecipient_phone());
+        Orders createOrders = ordersRepo.save(orders);
+        if(createOrders != null){
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrder_id(createOrders.getOrder_id());
+            orderDetail.setProduct_id(rq.getProduct_id());
+            orderDetail.setPrice(rq.getPrice());
+            orderDetail.setQuantity(rq.getQuantity());
+            OrderDetail createDetail = orderDetailRepo.save(orderDetail);
+            if(createDetail != null){
+                int totalPrice = orderDetailRepo.totalPriceByOrderId(createOrders.getOrder_id());
+                int totalQuantity = orderDetailRepo.totalQuantityByOrderId(createOrders.getOrder_id());
+                createOrders.setTotal_quantity(totalQuantity);
+                createOrders.setTotal_price(totalPrice);
+                ordersRepo.save(createOrders);
+            }
+            Bill bill = new Bill();
+            bill.setOrder_id(createOrders.getOrder_id());
+            bill.setCreated_at(LocalDateTime.now());
+            billRepo.save(bill);
+        }
+        return createOrders;
+    }
+
     private ProductSaleRequest mapToProductSaleRequest(Object[] result) {
         String productId = (String) result[0];
         String productName = (String) result[1];

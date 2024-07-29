@@ -2,6 +2,7 @@ package ptithcm.tttn.service.impl;
 
 import org.springframework.stereotype.Service;
 import ptithcm.tttn.entity.Brand;
+import ptithcm.tttn.entity.Category;
 import ptithcm.tttn.entity.Staff;
 import ptithcm.tttn.entity.User;
 import ptithcm.tttn.repository.BrandRepo;
@@ -45,19 +46,25 @@ public class BrandServiceImpl implements BrandService {
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Brand saveBrand = new Brand();
-        boolean checkExist = checkExistBrand(brand.getBrand_name());
-        if(!checkExist) {
+        Brand checkExist = findByBrandName(brand.getBrand_name());
+        if(checkExist == null) {
             try {
                 create.setCreated_at(LocalDateTime.now());
                 create.setCreated_by(staff.getStaff_id());
                 create.setBrand_name(brand.getBrand_name());
                 create.setUpdated_at(LocalDateTime.now());
                 create.setUpdated_by(staff.getStaff_id());
+                create.setStatus("Active");
                 saveBrand = brandRepo.save(create);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-        }else{
+        }else if(checkExist != null && checkExist.getStatus().equals("Inactive")){
+            checkExist.setStatus("Active");
+            checkExist.setUpdated_by(staff.getStaff_id());
+            return brandRepo.save(checkExist);
+        }
+        else {
             throw new Exception("exist brand by name " + brand.getBrand_name());
         }
         return saveBrand;
@@ -106,5 +113,18 @@ public class BrandServiceImpl implements BrandService {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public Brand deleteBrand(Long id, String jwt) throws Exception {
+        User user = userService.findUserByJwt(jwt);
+        Staff staff = staffRepo.findByUserId(user.getUser_id());
+        Brand find = findBrandById(id);
+        if(find != null){
+            find.setStatus("Inactive");
+            find.setUpdated_by(staff.getStaff_id());
+            return brandRepo.save(find);
+        }
+        throw new Exception("Not found category by id " + id);
     }
 }

@@ -1,5 +1,6 @@
 package ptithcm.tttn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,11 +25,13 @@ public class Bill {
     @Column
     private Long created_by;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "order_id",insertable = false, updatable = false)
     private Orders order;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "created_by" ,insertable = false, updatable = false)
     private Staff staff_created;
 

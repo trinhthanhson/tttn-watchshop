@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         User update = findById(id);
         User save = new User();
-        if(update != null && user.getRole().getRole_name().equals("MANAGER")){
+        if(update != null && (user.getRole().getRole_name().equals("MANAGER") || user.getRole().getRole_name().equals("STAFF")) ){
             update.setStatus(status);
             update.setUpdated_by(staff.getStaff_id());
             save = userRepo.save(update);

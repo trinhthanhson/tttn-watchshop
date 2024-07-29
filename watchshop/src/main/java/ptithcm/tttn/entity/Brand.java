@@ -22,6 +22,9 @@ public class Brand {
     private String brand_name;
 
     @Column
+    private String status;
+
+    @Column
     private LocalDateTime created_at;
 
     @Column
@@ -34,12 +37,10 @@ public class Brand {
     private Long updated_by;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Staff created_brand;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
     private Staff updated_brand;
 

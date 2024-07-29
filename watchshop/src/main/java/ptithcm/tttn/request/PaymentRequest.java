@@ -1,14 +1,16 @@
-package ptithcm.tttn.response;
+package ptithcm.tttn.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class PaymentResponse {
-    public String code;
-    public String message;
-    public String paymentUrl;
+
+public abstract  class PaymentRequest {
+    @Builder
+    public static class VNPayResponse {
+        public String code;
+        public String message;
+        public String paymentUrl;
+    }
 }

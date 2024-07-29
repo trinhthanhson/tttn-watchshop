@@ -15,4 +15,5 @@ public interface BrandService {
 
     boolean checkExistBrand(String name);
 
+    Brand deleteBrand(Long id, String jwt) throws Exception;
 }

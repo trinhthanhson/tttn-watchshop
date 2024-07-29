@@ -28,4 +28,6 @@ public interface OrdersService {
     List<ProductSaleRequest> getTotalAmountByDate(Date start, Date end);
 
     Orders updateStatusOrderByStaff(String status, Long id, String jwt) throws Exception;
+
+    Orders orderPaymentBuyNow(OrderRequest rq, String jwt) throws Exception;
 }

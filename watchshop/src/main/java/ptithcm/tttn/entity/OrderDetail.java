@@ -5,6 +5,8 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "order_detail")
@@ -35,4 +37,7 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "product_id",insertable = false, updatable = false)
     private Product product;
+
+    @OneToMany(mappedBy = "order_detail")
+    List<Review> reviews;
 }

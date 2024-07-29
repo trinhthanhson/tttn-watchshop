@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.Category;
+import ptithcm.tttn.response.ApiResponse;
 import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
 import ptithcm.tttn.service.CategoryService;
@@ -23,19 +24,20 @@ public class StaffCategoryController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<EntityResponse> addCategoriesByStaff(@RequestBody List<Map<String, Object>> categoriesMap, @RequestHeader("Authorization") String jwt) {
+    public ResponseEntity<EntityResponse> addCategoriesByStaff(@RequestBody Category category, @RequestHeader("Authorization") String jwt) {
         EntityResponse res = new EntityResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
-        Category saveCategory = null;
+
         try {
-            for (Map<String, Object> categoryMap : categoriesMap) {
-                if (categoryMap.containsKey("category_name")) {
-                    String category_name = (String) categoryMap.get("category_name");
-                    saveCategory = categoryService.createCategory(category_name, jwt);
-                } else {
-                    throw new Exception("Please enter complete information for all categories");
-                }
-            }
+//            for (Map<String, Object> categoryMap : categoriesMap) {
+//                if (categoryMap.containsKey("category_name")) {
+//                    String category_name = (String) categoryMap.get("category_name");
+//                    saveCategory = categoryService.createCategory(category_name, jwt);
+//                } else {
+//                    throw new Exception("Please enter complete information for all categories");
+//                }
+//            }
+            Category saveCategory = categoryService.createCategory(category.getCategory_name(),jwt);
             res.setData(saveCategory);
             res.setMessage("Success");
             res.setStatus(HttpStatus.CREATED);
@@ -53,26 +55,39 @@ public class StaffCategoryController {
 
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<EntityResponse> updatedCategoryByStaff(@RequestBody Category category, @RequestHeader("Authorization") String jwt,@PathVariable Long id) throws Exception{
-        EntityResponse res = new EntityResponse();
-        HttpStatus httpStatus = HttpStatus.CONFLICT;
+    public ResponseEntity<ApiResponse> updatedCategoryByStaff(@RequestBody Category category, @RequestHeader("Authorization") String jwt, @PathVariable Long id) throws Exception{
+        ApiResponse res = new ApiResponse();
         try{
             if(category.getCategory_name().equals("")){
                 throw new Exception("Please enter complete information");
             }
-            Category saveCategory = categoryService.updateCategory(id,category,jwt);
-            res.setData(category);
+            Category saveCategory = categoryService.updateCategory(id,category.getCategory_name(),jwt);
             res.setMessage("Success");
-            res.setStatus(HttpStatus.CREATED);
-            res.setCode(HttpStatus.CREATED.value());
-            httpStatus = HttpStatus.CREATED;
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
         }catch (Exception e){
             res.setStatus(HttpStatus.CONFLICT);
             res.setCode(HttpStatus.CONFLICT.value());
-            res.setMessage("erorr " + e.getMessage());
-            res.setData(null);
+            res.setMessage("error " + e.getMessage());
         }
-        return new ResponseEntity<>(res,httpStatus);
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<ApiResponse> deleteCategoryByStaff(@RequestHeader("Authorization") String jwt, @PathVariable Long id) throws Exception{
+        ApiResponse res = new ApiResponse();
+        try{
+            
+            Category saveCategory = categoryService.deleteCategory(id,jwt);
+            res.setMessage("Success");
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
+        }catch (Exception e){
+            res.setStatus(HttpStatus.CONFLICT);
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setMessage("error " + e.getMessage());
+        }
+        return new ResponseEntity<>(res,res.getStatus());
     }
 
 }
