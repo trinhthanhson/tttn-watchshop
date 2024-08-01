@@ -15,4 +15,5 @@ public interface UserService {
     User updateStatus(Long id, String status, String jwt) throws Exception;
     User findById(Long id) throws Exception;
     String sendMail(String email,String subject , String content, String otp) throws MessagingException;
+    User createUserStaff(SignUpRequest rq) throws Exception;
 }

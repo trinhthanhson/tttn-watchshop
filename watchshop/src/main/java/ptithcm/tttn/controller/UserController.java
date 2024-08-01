@@ -69,7 +69,7 @@ public class UserController {
                 res.setMessage("find customer success");
                 res.setStatus(HttpStatus.OK);
                 res.setCode(HttpStatus.OK.value());
-            }else if(user.getRole_id() == 2) {
+            }else if(user.getRole_id() == 2 || user.getRole_id() == 1) {
                 Staff staff = staffService.findByUserId(user.getUser_id());
                 res.setData(staff);
                 res.setMessage("find staff success");
