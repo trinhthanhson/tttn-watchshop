@@ -21,8 +21,8 @@ const Login = () => {
     if (user) {
       if (
         user.user.role &&
-        (user.user.role.role_name === 'ADMIN' ||
-          user.user.role.role_name === 'STAFF')
+        (user?.user?.role.role_name === 'ADMIN' ||
+          user?.user?.role.role_name === 'STAFF')
       ) {
         navigate('/admin')
       } else {

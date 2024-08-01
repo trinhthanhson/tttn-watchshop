@@ -33,12 +33,7 @@ export const DASHBOARD_SIDEBAR_TOP_LINKS = [
     path: '/admin/customers',
     icon: <HiOutlineUserGroup />
   },
-  {
-    key: 'staffs',
-    label: 'Staffs',
-    path: '/admin/staffs',
-    icon: <HiOutlineUserGroup />
-  },
+
   {
     key: 'category',
     label: 'Category',

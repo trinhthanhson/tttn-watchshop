@@ -3,19 +3,34 @@ import {
   DASHBOARD_SIDEBAR_BOTTOM_LINKS,
   DASHBOARD_SIDEBAR_TOP_LINKS
 } from '../../constants/MenuLink'
-import { HiOutlineLogout } from 'react-icons/hi'
-import { useState } from 'react'
+import {
+  HiOutlineLogout,
+  HiOutlineUser,
+  HiOutlineUserGroup
+} from 'react-icons/hi'
+import { useEffect, useState } from 'react'
+import { getUserProfileRequest } from '../../redux/actions/actions'
+import { useSelector, useDispatch } from 'react-redux'
 
 const Sidebar = () => {
   const location = useLocation()
+  const dispatch = useDispatch()
   // const navigate = useNavigate();
-
+  const user = useSelector((state) => state.user.user.data)
+  useEffect(() => {
+    try {
+      dispatch(getUserProfileRequest())
+    } catch (error) {
+      console.error('Error dispatch', error)
+    }
+  }, [dispatch])
   const handleLogout = () => {
     localStorage.removeItem('token')
     window.location.href = '/login'
   }
   const [hoveredIndex, setHoveredIndex] = useState(null)
-
+  const isAdmin = user?.user?.role.role_name === 'ADMIN'
+  console.log(isAdmin)
   return (
     <div
       className="fixed bg-primary w-60 h-full p-3 flex flex-col text-white font-RobotoMedium"
@@ -50,6 +65,50 @@ const Sidebar = () => {
             </div>
           </Link>
         ))}
+
+        {isAdmin && (
+          <Link key="staffs" to="/admin/staffs">
+            <div
+              className={`flex items-center gap-3 p-3 cursor-pointer hover:no-underline ${location.pathname === '/admin/staffs' ? '' : 'text-textNoneActive'}`}
+              style={{
+                color: '#000c',
+                backgroundColor:
+                  hoveredIndex === 'staffs' ||
+                  location.pathname === '/admin/staffs'
+                    ? 'rgb(171, 171, 171)'
+                    : 'transparent'
+              }}
+              onMouseEnter={() => setHoveredIndex('staffs')}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <div>
+                <HiOutlineUserGroup />
+              </div>
+              <div>Staffs</div>
+            </div>
+          </Link>
+        )}
+        {isAdmin && (
+          <Link key="role" to="/admin/role">
+            <div
+              className={`flex items-center gap-3 p-3 cursor-pointer hover:no-underline ${location.pathname === '/admin/role' ? '' : 'text-textNoneActive'}`}
+              style={{
+                color: '#000c',
+                backgroundColor:
+                  hoveredIndex === 'role' || location.pathname === '/admin/role'
+                    ? 'rgb(171, 171, 171)'
+                    : 'transparent'
+              }}
+              onMouseEnter={() => setHoveredIndex('role')}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <div>
+                <HiOutlineUser />
+              </div>
+              <div>Roles</div>
+            </div>
+          </Link>
+        )}
       </div>
       <hr className="opacity-40" />
       <div className="">
