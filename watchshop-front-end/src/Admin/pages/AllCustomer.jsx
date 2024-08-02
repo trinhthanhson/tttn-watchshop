@@ -60,7 +60,7 @@ const AllCustomers = () => {
                     style={{ marginTop: '30px' }}
                     fontSize={25}
                     onClick={() =>
-                      navigate(`/admin/user-customer/${customer?.user_id}`)
+                      navigate(`/manager/user-customer/${customer?.user_id}`)
                     }
                   />
                 </tr>

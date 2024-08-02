@@ -1,14 +1,16 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllCouponsRequest } from '../../redux/actions/actions'
-import { getStatus } from '../../constants/Status'
 import { IoIosAddCircle } from 'react-icons/io'
-import { MdDelete } from 'react-icons/md'
+import { MdDelete, MdModeEditOutline } from 'react-icons/md'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const AllCoupons = () => {
   const dispatch = useDispatch()
   const coupons = useSelector((state) => state.coupons.coupons)
+  const navigate = useNavigate()
 
   useEffect(() => {
     try {
@@ -17,40 +19,24 @@ const AllCoupons = () => {
       console.error('Error dispatch', error)
     }
   }, [dispatch])
+  const handleDeleteCoupon = async (couponId) => {
+    const token = localStorage.getItem('token') // Lấy token từ localStorage
 
-  console.log('coupons', coupons)
-
-  // const handleShowDialog = () => {
-  //   setShowDialog(true);
-  // }
-
-  // const handleCloseDialog = () => {
-  //   setShowDialog(false);
-  // }
-
-  // const handleDeleteCoupon = async (couponId) => {
-  //   const confirmDelete = window.confirm(
-  //     "Bạn có chắc chắn muốn xóa loại này không?"
-  //   );
-
-  //   const token = localStorage.getItem("token");
-
-  //   if (confirmDelete) {
-  //     try {
-
-  //       await axios.put(`http://localhost:9999/api/admin/coupon/${couponId}/delete`, null, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       setDeletedCategoryId(couponId);
-  //     } catch (error) {
-  //       console.error("Error deleting category:", error);
-  //     }
-  //   }
-  // };
-
+    try {
+      await axios.delete(
+        `http://localhost:9999/api/staff/coupon/${couponId}/delete`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}` // Thêm header Authorization
+          }
+        }
+      )
+      alert('Coupon deleted successfully.')
+      dispatch(getAllCouponsRequest()) // Refresh the coupon list after deletion
+    } catch (error) {
+      alert('Error deleting coupon. Please try again.')
+    }
+  }
   return (
     <>
       <div className="flex flex-col gap-4 w-[80%] ml-[18%] rounded-md shadow-md bg-white mt-5">
@@ -58,15 +44,13 @@ const AllCoupons = () => {
           <thead className="text-white font-RobotoSemibold text-[18px] ">
             <tr className="bg-primary">
               <td className="rounded-s-md">ID</td>
-              <td>Hình Ảnh</td>
               <td>Ngày Tạo</td>
+              <td> Ngày Bắt Đầu</td>
               <td>Ngày Kết Thúc</td>
-              <td>Giá Trị</td>
-              <td>Loại</td>
-              <td>Số Lượng</td>
+              <td>Giá trị (%)</td>
               <td>Người Tạo</td>
-              <td>Trạng Thái</td>
-              <td className="rounded-e-md">Vô Hiệu Hóa</td>
+              <td>Người Chỉnh sửa</td>
+              <td className="rounded-e-md">Action</td>
             </tr>
           </thead>
           <tbody>
@@ -84,18 +68,38 @@ const AllCoupons = () => {
                       className="w-[68px] object-contain rounded-md bg-primary"
                     />
                   </td>
-                  <td>{new Date(coupon?.created_at).toLocaleDateString()}</td>
+                  <td>{new Date(coupon?.start_date).toLocaleDateString()}</td>
                   <td>{new Date(coupon?.end_date).toLocaleDateString()}</td>
-                  <td>{coupon?.minimum_value}</td>
-                  <td>{coupon?.type}</td>
-                  <td>{coupon?.quantity}</td>
-                  <td>{coupon?.quantity}</td>
-                  <td>{getStatus(coupon?.status)}</td>
+                  <td>{coupon?.couponDetails[0].percent * 100 + '%'}</td>
                   <td>
-                    <MdDelete
-                      className="cursor-pointer text-primary"
-                      fontSize={25}
-                    />
+                    {coupon?.created_coupon?.first_name +
+                      ' ' +
+                      coupon?.created_coupon?.last_name}
+                  </td>
+                  <td>
+                    {coupon?.updated_coupon?.first_name +
+                      ' ' +
+                      coupon?.updated_coupon?.last_name}
+                  </td>
+                  <td>
+                    <span>
+                      <MdModeEditOutline
+                        className="cursor-pointer text-primary"
+                        fontSize={25}
+                        onClick={() =>
+                          navigate(
+                            `/manager/coupon-detail/${coupon?.coupon_id}`
+                          )
+                        }
+                      />
+                    </span>
+                    <span>
+                      <MdDelete
+                        className="cursor-pointer text-primary"
+                        fontSize={25}
+                        onClick={() => handleDeleteCoupon(coupon?.coupon_id)}
+                      />
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -103,7 +107,7 @@ const AllCoupons = () => {
         </table>
       </div>
 
-      <Link to="/admin/create-coupon">
+      <Link to="/manager/create-coupon">
         <div className="fixed right-8 bottom-3">
           <IoIosAddCircle
             fontSize={50}

@@ -128,7 +128,7 @@ const AllOrder = () => {
               <tr
                 key={index}
                 className="cursor-pointer"
-                onClick={() => navigate(`/admin/order/${order.order_id}`)}
+                onClick={() => navigate(`/manager/order/${order.order_id}`)}
               >
                 <td>{index + 1}</td>
                 <td className="flex items-center">

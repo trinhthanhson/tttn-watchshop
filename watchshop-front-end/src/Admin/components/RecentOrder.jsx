@@ -24,7 +24,7 @@ const RecentOrder = () => {
         <strong className="text-sub font-semibold">Đơn hàng gần đây</strong>
 
         <p
-          onClick={() => navigate('/admin/orders')}
+          onClick={() => navigate('/manager/orders')}
           className="cursor-pointer text-sky-600 hover:underline text-[14px] font-semibold"
         >
           More

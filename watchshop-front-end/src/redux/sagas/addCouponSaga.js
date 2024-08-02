@@ -7,11 +7,11 @@ function* addCoupon(action) {
 
     const response = yield call(
       axios.post,
-      'http://localhost:9999/api/admin/coupon/add',
+      'http://localhost:9999/api/staff/coupon/add',
       action.payload,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         }
       }

@@ -29,6 +29,7 @@ const Sidebar = () => {
     window.location.href = '/login'
   }
   const [hoveredIndex, setHoveredIndex] = useState(null)
+  const isManager = user?.user?.role.role_name === 'MANAGER'
   const isAdmin = user?.user?.role.role_name === 'ADMIN'
   console.log(isAdmin)
   return (
@@ -66,15 +67,15 @@ const Sidebar = () => {
           </Link>
         ))}
 
-        {isAdmin && (
-          <Link key="staffs" to="/admin/staffs">
+        {isManager && (
+          <Link key="staffs" to="/manager/staffs">
             <div
-              className={`flex items-center gap-3 p-3 cursor-pointer hover:no-underline ${location.pathname === '/admin/staffs' ? '' : 'text-textNoneActive'}`}
+              className={`flex items-center gap-3 p-3 cursor-pointer hover:no-underline ${location.pathname === '/manager/staffs' ? '' : 'text-textNoneActive'}`}
               style={{
                 color: '#000c',
                 backgroundColor:
                   hoveredIndex === 'staffs' ||
-                  location.pathname === '/admin/staffs'
+                  location.pathname === '/manager/staffs'
                     ? 'rgb(171, 171, 171)'
                     : 'transparent'
               }}

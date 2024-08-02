@@ -145,7 +145,7 @@ const UpdateProduct = () => {
   useEffect(() => {
     if (message.code === 200) {
       console.log('Thành công')
-      navigate('/admin/products')
+      navigate('/manager/products')
     }
   }, [message, navigate])
 

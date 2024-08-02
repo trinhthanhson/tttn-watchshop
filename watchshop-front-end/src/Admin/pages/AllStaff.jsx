@@ -52,7 +52,7 @@ const AllStaff = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:9999/api/admin/staff/add',
+        'http://localhost:9999/api/manager/staff/add',
         newStaff
       )
       console.log(response)
@@ -108,7 +108,7 @@ const AllStaff = () => {
                         style={{ marginTop: '30px' }}
                         fontSize={25}
                         onClick={() =>
-                          navigate(`/admin/user-staff/${staff?.user_id}`)
+                          navigate(`/manager/user-staff/${staff?.user_id}`)
                         }
                       />
                     </td>

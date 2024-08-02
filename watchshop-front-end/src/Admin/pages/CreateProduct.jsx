@@ -110,7 +110,7 @@ const CreateProduct = () => {
           category_name: ''
         }
       })
-      navigate('/admin/products')
+      navigate('/manager/products')
     }
   }, [message, navigate])
 

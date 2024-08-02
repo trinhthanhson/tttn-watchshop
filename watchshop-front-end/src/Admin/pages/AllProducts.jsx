@@ -70,7 +70,7 @@ const AllProducts = () => {
                   <td
                     className="cursor-pointer"
                     onClick={() =>
-                      navigate(`/admin/product/${product?.product_id}`)
+                      navigate(`/manager/product/${product?.product_id}`)
                     }
                   >
                     {product?.product_id}
@@ -78,7 +78,7 @@ const AllProducts = () => {
                   <td
                     className="cursor-pointer"
                     onClick={() =>
-                      navigate(`/admin/product/${product?.product_id}`)
+                      navigate(`/manager/product/${product?.product_id}`)
                     }
                   >
                     <img
@@ -90,7 +90,7 @@ const AllProducts = () => {
                   <td
                     className="cursor-pointer"
                     onClick={() =>
-                      navigate(`/admin/product/${product?.product_id}`)
+                      navigate(`/manager/product/${product?.product_id}`)
                     }
                   >
                     {product?.product_name}
@@ -104,7 +104,7 @@ const AllProducts = () => {
                   </td>
                   <td
                     onClick={() =>
-                      navigate(`/admin/product/${product?.product_id}`)
+                      navigate(`/manager/product/${product?.product_id}`)
                     }
                   >
                     {product?.description && product.description.length > 50
@@ -119,7 +119,7 @@ const AllProducts = () => {
                         fontSize={25}
                         onClick={() =>
                           navigate(
-                            `/admin/update-product/${product?.product_id}`
+                            `/manager/update-product/${product?.product_id}`
                           )
                         }
                       />
@@ -141,7 +141,7 @@ const AllProducts = () => {
         <IoIosAddCircle
           fontSize={50}
           className="cursor-pointer text-primary"
-          onClick={() => navigate('/admin/create-product')}
+          onClick={() => navigate('/manager/create-product')}
         />
       </div>
     </>

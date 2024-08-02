@@ -38,6 +38,7 @@ import AdminUserCustomerDetail from '../Admin/pages/AdminUserCustomerDetail'
 import AllBrand from '../Admin/pages/AllBrand'
 import AllStaff from '../Admin/pages/AllStaff'
 import AdminUserStaffDetail from '../Admin/pages/AdminUserStaffDetail'
+import AllCouponDetail from '../Admin/pages/AllCouponDetail'
 
 const Routers = () => {
   return (
@@ -71,29 +72,36 @@ const Routers = () => {
       <Route path="/checkout" element={<Checkout />} />
 
       {
-        <Route path="/admin" element={<Layout />}>
+        <Route path="/manager" element={<Layout />}>
           <Route index element={<Dashboard />} />
-          <Route path="/admin/products" element={<AllProducts />} />
-          <Route path="/admin/create-product" element={<CreateProduct />} />
-          <Route path="/admin/update-product/:id" element={<UpdateProduct />} />
+          <Route path="/manager/products" element={<AllProducts />} />
+          <Route path="/manager/create-product" element={<CreateProduct />} />
           <Route
-            path="/admin/user-customer/:id"
+            path="/manager/update-product/:id"
+            element={<UpdateProduct />}
+          />
+          <Route
+            path="/manager/user-customer/:id"
             element={<AdminUserCustomerDetail />}
           />
           <Route
-            path="/admin/user-staff/:id"
+            path="/manager/user-staff/:id"
             element={<AdminUserStaffDetail />}
           />
-          <Route path="/admin/product/:id" element={<AdminProductDetail />} />
-          <Route path="/admin/orders" element={<AllOrder />} />
-          <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
-          <Route path="/admin/customers" element={<AllCustomers />} />
-          <Route path="/admin/staffs" element={<AllStaff />} />
-          <Route path="/admin/category" element={<AllCategory />} />
-          <Route path="/admin/brand" element={<AllBrand />} />
-          <Route path="/admin/profile" element={<StaffProfile />} />
-          <Route path="/admin/coupons" element={<AllCoupons />} />
-          <Route path="/admin/create-coupon" element={<CreateCoupon />} />
+          <Route path="/manager/product/:id" element={<AdminProductDetail />} />
+          <Route
+            path="/manager/coupon-detail/:id"
+            element={<AllCouponDetail />}
+          />
+          <Route path="/manager/orders" element={<AllOrder />} />
+          <Route path="/manager/order/:id" element={<AdminOrderDetail />} />
+          <Route path="/manager/customers" element={<AllCustomers />} />
+          <Route path="/manager/staffs" element={<AllStaff />} />
+          <Route path="/manager/category" element={<AllCategory />} />
+          <Route path="/manager/brand" element={<AllBrand />} />
+          <Route path="/manager/profile" element={<StaffProfile />} />
+          <Route path="/manager/coupons" element={<AllCoupons />} />
+          <Route path="/manager/create-coupon" element={<CreateCoupon />} />
         </Route>
       }
     </Routes>

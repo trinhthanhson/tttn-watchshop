@@ -46,6 +46,9 @@ import {
   GET_ALL_COUPONS_REQUEST,
   GET_ALL_COUPONS_SUCCESS,
   GET_ALL_COUPONS_FAILURE,
+  GET_ALL_COUPON_DETAIL_REQUEST,
+  GET_ALL_COUPON_DETAIL_SUCCESS,
+  GET_ALL_COUPON_DETAIL_FAILURE,
   RESET_ADD_CART_STATE,
   ADD_CART_REQUEST,
   ADD_CART_SUCCESS,
@@ -116,7 +119,20 @@ export const getAllCouponsFailure = (error) => ({
   type: GET_ALL_COUPONS_FAILURE,
   payload: error
 })
+export const getAllCouponDetailRequest = (id) => ({
+  type: GET_ALL_COUPON_DETAIL_REQUEST,
+  payload: id
+})
 
+export const getAllCouponDetailSuccess = (coupondetail) => ({
+  type: GET_ALL_COUPON_DETAIL_SUCCESS,
+  payload: coupondetail
+})
+
+export const getAllCouponDetailFailure = (error) => ({
+  type: GET_ALL_COUPON_DETAIL_FAILURE,
+  payload: error
+})
 export const getAllCartRequest = () => ({
   type: GET_ALL_CART_REQUEST
 })

@@ -70,7 +70,7 @@ const AdminUserStaffDetail = () => {
         }
       )
       alert('User updated successfully!')
-      navigate('/admin/staffs')
+      navigate('/manager/staffs')
     } catch (error) {
       setError('Failed to update user: ' + error.message)
     }
