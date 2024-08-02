@@ -2,6 +2,8 @@ package ptithcm.tttn.entity;
 
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
@@ -15,7 +17,7 @@ public class CouponDetail {
     private Long coupon_detail_id;
 
     @Column
-    private String percent;
+    private float percent;
 
     @Column
     private String status;
@@ -28,6 +30,7 @@ public class CouponDetail {
 
     @ManyToOne
     @JoinColumn(name = "coupon_id",insertable = false, updatable = false)
+    @JsonIgnore
     private Coupon coupon;
 
     @ManyToOne

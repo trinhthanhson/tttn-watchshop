@@ -53,7 +53,7 @@ public class ManagerStaffController {
             List<User> listUser = userService.findAll();
             List<User> allUserStaff = new ArrayList<>();
             for(User u : listUser) {
-                if(u.getRole_id() == 2L){
+                if(u.getRole().getRole_name().equals("STAFF")){
                     allUserStaff.add(u);
                 }
             }

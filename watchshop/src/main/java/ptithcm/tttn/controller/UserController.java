@@ -63,13 +63,13 @@ public class UserController {
         User user = userService.findUserByJwt(jwt);
         EntityResponse res = new EntityResponse();
         try{
-            if(user.getRole_id() == 3) {
+            if(user.getRole().getRole_name().equals("CUSTOMER")) {
                 Customer customer = customerService.findByUserId(user.getUser_id());
                 res.setData(customer);
                 res.setMessage("find customer success");
                 res.setStatus(HttpStatus.OK);
                 res.setCode(HttpStatus.OK.value());
-            }else if(user.getRole_id() == 2 || user.getRole_id() == 1) {
+            }else if(user.getRole().getRole_name().equals("ADMIN") || user.getRole().getRole_name().equals("MANAGER") || user.getRole().getRole_name().equals("STAFF")) {
                 Staff staff = staffService.findByUserId(user.getUser_id());
                 res.setData(staff);
                 res.setMessage("find staff success");

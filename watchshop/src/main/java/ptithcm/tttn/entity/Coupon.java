@@ -1,6 +1,8 @@
 package ptithcm.tttn.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -27,10 +29,7 @@ public class Coupon {
     private String content;
 
     @Column
-    private  int quantity;
-
-    @Column
-    private String status;
+    private String title;
 
     @Column
     private LocalDateTime created_at;
@@ -54,9 +53,5 @@ public class Coupon {
 
     @OneToMany(mappedBy = "coupon")
     private List<CouponDetail> couponDetails;
-
-
-
-
 
 }

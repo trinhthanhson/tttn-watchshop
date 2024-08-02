@@ -59,7 +59,7 @@ public class User{
     private Long updated_by;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "role_id",insertable = false, updatable = false)
     private Role role;
 
@@ -69,6 +69,7 @@ public class User{
 
     @ManyToOne
     @JoinColumn(name = "updated_by",insertable = false, updatable = false)
+    @JsonIgnore
     private Staff update_staff;
 
     @OneToMany(mappedBy = "user")

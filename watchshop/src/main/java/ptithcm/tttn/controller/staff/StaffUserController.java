@@ -30,7 +30,7 @@ public class StaffUserController {
             List<User> findAll = userService.findAll();
             List<User> allUserCustomer = new ArrayList<>();
             for(User u : findAll){
-                if(u.getRole_id() == 3L){
+                if(u.getRole().getRole_name().equals("CUSTOMER")){
                     allUserCustomer.add(u);
                 }
             }
