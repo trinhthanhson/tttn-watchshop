@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import Home from '../pages/Home'
 import About from '../pages/About/About'
 import Origin from '../pages/About/Origin'
@@ -39,8 +40,41 @@ import AllBrand from '../Admin/pages/AllBrand'
 import AllStaff from '../Admin/pages/AllStaff'
 import AdminUserStaffDetail from '../Admin/pages/AdminUserStaffDetail'
 import AllCouponDetail from '../Admin/pages/AllCouponDetail'
+import { decryptData } from '../cryptoUtils/cryptoUtils'
 
 const Routers = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [role, setRole] = useState(null)
+
+  useEffect(() => {
+    // Lấy role từ localStorage và giải mã
+    const roleName = localStorage.getItem('role_name')
+    if (roleName) {
+      try {
+        const decryptedRole = decryptData(roleName)
+        setRole(decryptedRole)
+      } catch (error) {
+        console.error('Error decrypting role:', error)
+      }
+    } else {
+      setRole('CUSTOMER') // Nếu không có role, mặc định là customer
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log('role ' + role)
+    if (role === 'MANAGER' || role === 'STAFF') {
+      if (location.pathname === '/buynow' || location.pathname === '/') {
+        navigate('/manager')
+      }
+    } else if (role === 'CUSTOMER') {
+      if (location.pathname.startsWith('/manager')) {
+        navigate('/home')
+      }
+    }
+  }, [role, location.pathname, navigate])
+
   return (
     <Routes>
       <Route path="*" element={<Page404 />} />
@@ -59,7 +93,6 @@ const Routers = () => {
       <Route path="/products" element={<Products />} />
       <Route path="/products/:id" element={<ProductDetail />} />
       <Route path="/buynow" element={<OrderBuyNow />} />
-
       <Route
         path="/products/:category_id/category"
         element={<ProductDetailByCategory />}
@@ -71,39 +104,34 @@ const Routers = () => {
       <Route path="/order/:id" element={<OrderDetail />} />
       <Route path="/checkout" element={<Checkout />} />
 
-      {
-        <Route path="/manager" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="/manager/products" element={<AllProducts />} />
-          <Route path="/manager/create-product" element={<CreateProduct />} />
-          <Route
-            path="/manager/update-product/:id"
-            element={<UpdateProduct />}
-          />
-          <Route
-            path="/manager/user-customer/:id"
-            element={<AdminUserCustomerDetail />}
-          />
-          <Route
-            path="/manager/user-staff/:id"
-            element={<AdminUserStaffDetail />}
-          />
-          <Route path="/manager/product/:id" element={<AdminProductDetail />} />
-          <Route
-            path="/manager/coupon-detail/:id"
-            element={<AllCouponDetail />}
-          />
-          <Route path="/manager/orders" element={<AllOrder />} />
-          <Route path="/manager/order/:id" element={<AdminOrderDetail />} />
-          <Route path="/manager/customers" element={<AllCustomers />} />
-          <Route path="/manager/staffs" element={<AllStaff />} />
-          <Route path="/manager/category" element={<AllCategory />} />
-          <Route path="/manager/brand" element={<AllBrand />} />
-          <Route path="/manager/profile" element={<StaffProfile />} />
-          <Route path="/manager/coupons" element={<AllCoupons />} />
-          <Route path="/manager/create-coupon" element={<CreateCoupon />} />
-        </Route>
-      }
+      <Route path="/manager" element={<Layout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="/manager/products" element={<AllProducts />} />
+        <Route path="/manager/create-product" element={<CreateProduct />} />
+        <Route path="/manager/update-product/:id" element={<UpdateProduct />} />
+        <Route
+          path="/manager/user-customer/:id"
+          element={<AdminUserCustomerDetail />}
+        />
+        <Route
+          path="/manager/user-staff/:id"
+          element={<AdminUserStaffDetail />}
+        />
+        <Route path="/manager/product/:id" element={<AdminProductDetail />} />
+        <Route
+          path="/manager/coupon-detail/:id"
+          element={<AllCouponDetail />}
+        />
+        <Route path="/manager/orders" element={<AllOrder />} />
+        <Route path="/manager/order/:id" element={<AdminOrderDetail />} />
+        <Route path="/manager/customers" element={<AllCustomers />} />
+        <Route path="/manager/staffs" element={<AllStaff />} />
+        <Route path="/manager/category" element={<AllCategory />} />
+        <Route path="/manager/brand" element={<AllBrand />} />
+        <Route path="/manager/profile" element={<StaffProfile />} />
+        <Route path="/manager/coupons" element={<AllCoupons />} />
+        <Route path="/manager/create-coupon" element={<CreateCoupon />} />
+      </Route>
     </Routes>
   )
 }

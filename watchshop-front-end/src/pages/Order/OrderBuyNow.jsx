@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const OrderBuyNow = () => {
   const location = useLocation()
-  const { product, quantity } = location.state || {}
-
+  const navigate = useNavigate()
+  const { product, quantity, price } = location.state || {}
+  console.log(price)
   const [address, setAddress] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [recipientName, setRecipientName] = useState('')
@@ -26,7 +27,7 @@ const OrderBuyNow = () => {
   const token = localStorage.getItem('token')
 
   // Calculate total price
-  const totalPrice = quantity * product.priceUpdateDetails[0].price_new
+  const totalPrice = quantity * price
 
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = () => setIsModalOpen(false)
@@ -92,7 +93,7 @@ const OrderBuyNow = () => {
           body: JSON.stringify({
             product_id: product.product_id,
             quantity,
-            price: product.priceUpdateDetails[0].price_new,
+            price,
             address,
             recipient_name: recipientName,
             note,
@@ -107,6 +108,7 @@ const OrderBuyNow = () => {
 
       const data = await response.json()
       if (data.code === 201) {
+        navigate(`/orders-history`)
         setSuccess('Order placed successfully!')
       } else {
         setSuccess('Order placed failed!')
@@ -138,7 +140,7 @@ const OrderBuyNow = () => {
           body: JSON.stringify({
             product_id: product.product_id,
             quantity,
-            price: product.priceUpdateDetails[0].price_new,
+            price,
             address,
             recipient_name: recipientName,
             note,
@@ -228,9 +230,7 @@ const OrderBuyNow = () => {
             <span>{quantity}</span>
           </div>
           <div className="flex items-center border-b border-r border-gray-300 p-2 justify-center">
-            <span>
-              {product.priceUpdateDetails[0].price_new.toLocaleString('en')} VNĐ
-            </span>
+            <span>{price.toLocaleString('en')} VNĐ</span>
           </div>
           <div className="flex items-center border-b p-2 justify-center">
             <span>{totalPrice.toLocaleString('en')} VNĐ</span>

@@ -17,7 +17,6 @@ const ProductByCategory = () => {
   const productsCustomer = useSelector(
     (state) => state.productsCustomer.productsCustomer.data
   )
-
   useEffect(() => {
     dispatch(getAllCategoriesRequest())
     dispatch(getAllProductsCustomerRequest())

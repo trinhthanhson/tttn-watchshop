@@ -1,12 +1,18 @@
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
-import { addCartRequest } from '../../redux/actions/actions'
+import {
+  addCartRequest,
+  getAllCouponsRequest
+} from '../../redux/actions/actions'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 
 const CardProductItem = ({ product }) => {
   const navigate = useNavigate()
-
   const dispatch = useDispatch()
+  const coupons = useSelector((state) => state.coupons.coupons.data)
+  const [discountedPrice, setDiscountedPrice] = useState(null)
+  const [priceDiscount, setPriceDiscount] = useState(null)
   const {
     product_id,
     product_name,
@@ -15,22 +21,69 @@ const CardProductItem = ({ product }) => {
     category,
     status
   } = product
-  const formattedPrice =
-    priceUpdateDetails.length > 0
-      ? priceUpdateDetails[0].price_new.toLocaleString('en')
-      : ''
-  const price = priceUpdateDetails[0].price_new
+
+  const price = priceUpdateDetails[0]?.price_new || 0
+  const formattedPrice = price.toLocaleString('en')
+
+  useEffect(() => {
+    dispatch(getAllCouponsRequest())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (Array.isArray(coupons) && coupons.length > 0) {
+      const now = new Date()
+
+      // Find valid coupon
+      const validCoupon = coupons.find((coupon) => {
+        const startDate = new Date(coupon.start_date)
+        const endDate = new Date(coupon.end_date)
+        return now >= startDate && now <= endDate
+      })
+
+      if (validCoupon && validCoupon.couponDetails.length > 0) {
+        // Filter active coupon details for the current product
+        const activeCouponDetails = validCoupon.couponDetails.filter(
+          (detail) =>
+            detail.status === 'Active' && detail.product_id === product_id
+        )
+
+        if (activeCouponDetails.length > 0) {
+          // Assuming each detail has a percentage discount
+          const maxPercent = Math.max(
+            ...activeCouponDetails.map(
+              (detail) => parseFloat(detail.percent) || 0
+            )
+          )
+
+          // Calculate discount amount and apply it
+          const discountAmount = price * maxPercent
+          const newPrice = price - discountAmount
+          setDiscountedPrice(Math.ceil(newPrice).toLocaleString('en'))
+          setPriceDiscount(Math.ceil(newPrice))
+        }
+      }
+    }
+  }, [coupons, price, product_id])
+
   const handleAddToCart = () => {
-    dispatch(addCartRequest({ product_name: `${product_name}`, price }))
+    dispatch(
+      addCartRequest({
+        product_name: `${product_name}`,
+        price: priceDiscount || price
+      })
+    )
   }
+
   const handleBuyNow = () => {
     navigate('/buynow', {
       state: {
         product: product,
-        quantity: 1
+        quantity: 1,
+        price: priceDiscount || product.priceUpdateDetails[0]?.price_new
       }
     })
   }
+
   return (
     <div className="bg-white rounded-xl shadow-lg mb-10 relative justify-between col-span-1 w-full md:w-[48%] xl:w-[32%] hover:scale-105 transition duration-500 ease-in-out cursor-pointer">
       <div>
@@ -85,8 +138,15 @@ const CardProductItem = ({ product }) => {
                 Giá
               </p>
               <p className="text-base font-RobotoSemibold 3xl:text-lg text-main">
-                {formattedPrice}VNĐ
+                {discountedPrice
+                  ? `${discountedPrice} VNĐ`
+                  : `${formattedPrice} VNĐ`}
               </p>
+              {discountedPrice && (
+                <p className="text-sm text-red-500 line-through">
+                  {formattedPrice} VNĐ
+                </p>
+              )}
               <div className="absolute h-full border-l border-grayWhite top-0 left-[50%]"></div>
             </div>
           </div>

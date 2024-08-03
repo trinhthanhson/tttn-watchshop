@@ -65,7 +65,10 @@ import {
   GET_ALL_STAFFS_FAILURE,
   GET_ALL_REVIEW_CUSTOMER_REQUEST,
   GET_ALL_REVIEW_CUSTOMER_SUCCESS,
-  GET_ALL_REVIEW_CUSTOMER_FAILURE
+  GET_ALL_REVIEW_CUSTOMER_FAILURE,
+  GET_ALL_REVIEW_PRODUCT_REQUEST,
+  GET_ALL_REVIEW_PRODUCT_SUCCESS,
+  GET_ALL_REVIEW_PRODUCT_FAILURE
 } from './types'
 
 export const addCouponRequest = (formData) => ({
@@ -309,6 +312,20 @@ export const getAllProductsCustomerRequest = () => ({
   type: GET_ALL_PRODUCTS_CUSTOMER_REQUEST
 })
 
+export const getReviewProductRequest = (id) => ({
+  type: GET_ALL_REVIEW_PRODUCT_REQUEST,
+  payload: id
+})
+
+export const getReviewProductSuccess = (reviews) => ({
+  type: GET_ALL_REVIEW_PRODUCT_SUCCESS,
+  payload: reviews
+})
+
+export const getReviewProductFailure = (error) => ({
+  type: GET_ALL_REVIEW_PRODUCT_FAILURE,
+  payload: error
+})
 export const getAllProductsCustomerSuccess = (productsCustomer) => ({
   type: GET_ALL_PRODUCTS_CUSTOMER_SUCCESS,
   payload: productsCustomer

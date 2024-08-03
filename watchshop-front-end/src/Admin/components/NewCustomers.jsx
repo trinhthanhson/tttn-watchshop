@@ -22,7 +22,7 @@ const NewCustomers = () => {
       <div className="flex justify-between">
         <strong className="text-sub font-medium">Khách hàng mới</strong>
         <p
-          onClick={() => navigate('/admin/customers')}
+          onClick={() => navigate('/manager/customers')}
           className="text-sky-600 text-[14px] font-medium cursor-pointer hover:underline"
         >
           More

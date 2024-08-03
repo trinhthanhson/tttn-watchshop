@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './authStyle.css'
 import Helmet from '../../components/Helmet/Helmet'
@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { getUserProfileRequest } from '../../redux/actions/actions'
 import CoffeeCanvas from '../../components/Canvas/Coffee'
+import { encryptData } from '../../cryptoUtils/cryptoUtils'
+import debounce from 'lodash/debounce'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -16,20 +18,8 @@ const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  console.log(user)
-  useEffect(() => {
-    if (user) {
-      if (
-        user.user.role &&
-        (user?.user?.role.role_name === 'MANAGER' ||
-          user?.user?.role.role_name === 'STAFF')
-      ) {
-        navigate('/manager')
-      } else {
-        navigate('/home')
-      }
-    }
-  }, [user, navigate])
+  const userRole = user?.user?.role.role_name
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   const handleGoHome = () => {
     navigate('/')
@@ -43,31 +33,66 @@ const Login = () => {
     setPassword(event.target.value)
   }
 
-  const handleLogin = async () => {
-    try {
-      const response = await axios.post(
-        'http://localhost:9999/api/auth/sign-in',
-        {
-          username,
-          password
+  const handleLogin = useCallback(
+    debounce(async () => {
+      try {
+        if (typeof username !== 'string' || typeof password !== 'string') {
+          throw new Error('Invalid input data')
         }
-      )
-      const { token, status } = response.data
-      if (status && token) {
-        localStorage.setItem('token', token)
-        dispatch(getUserProfileRequest())
-        console.log('Đăng nhập thành công')
-      } else {
-        setMessage(
-          'Đăng nhập không thành công! Vui lòng kiểm tra lại username hoặc password'
-        )
-        console.log('Đăng nhập không thành công')
-      }
-    } catch (error) {
-      console.error('Error:', error)
-    }
-  }
 
+        setIsLoggingIn(true)
+
+        const response = await axios.post(
+          'http://localhost:9999/api/auth/sign-in',
+          {
+            username,
+            password
+          }
+        )
+
+        const { token, status } = response.data
+
+        if (status && token) {
+          const secretKey = import.meta.env.VITE_SECRET_KEY
+
+          if (!secretKey) {
+            throw new Error('Secret key is not defined')
+          }
+
+          localStorage.setItem('token', token)
+
+          // Dispatch action to fetch user profile
+          await dispatch(getUserProfileRequest())
+
+          console.log('Đăng nhập thành công')
+        } else {
+          setMessage(
+            'Đăng nhập không thành công! Vui lòng kiểm tra lại username hoặc password'
+          )
+          console.log('Đăng nhập không thành công')
+        }
+      } catch (error) {
+        setMessage('Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.')
+        console.error('Error:', error)
+      } finally {
+        setIsLoggingIn(false)
+      }
+    }, 300),
+    [username, password, dispatch]
+  )
+
+  // Điều hướng sau khi dữ liệu người dùng được cập nhật
+  useEffect(() => {
+    if (userRole) {
+      localStorage.setItem('role_name', encryptData(userRole))
+
+      if (userRole === 'MANAGER' || userRole === 'STAFF') {
+        navigate('/manager')
+      } else if (userRole === 'CUSTOMER') {
+        navigate('/home')
+      }
+    }
+  }, [userRole, navigate])
   const handleForgotPassword = () => {
     setShowForgotPassword(true)
   }
@@ -202,8 +227,9 @@ const Login = () => {
                     className="uppercase"
                     type="button"
                     onClick={handleLogin}
+                    disabled={isLoggingIn}
                   >
-                    Đăng nhập
+                    {isLoggingIn ? 'Đang đăng nhập...' : 'Đăng nhập'}
                   </button>
                 </div>
                 <div className="ml-[26%] text-white">

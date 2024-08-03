@@ -13,7 +13,7 @@ function* getAllCouponsSaga() {
 
     const response = yield call(
       axios.get,
-      'http://localhost:9999/api/staff/coupon/all',
+      'http://localhost:9999/api/user/coupon/all',
       {
         headers: {
           Authorization: `Bearer ${token}`

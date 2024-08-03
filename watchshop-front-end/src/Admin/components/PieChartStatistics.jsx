@@ -27,6 +27,7 @@ const PieChartStatistics = () => {
             }
           }
         )
+        console.log(response.data)
         setMostSoldProducts(response.data.data)
       } catch (error) {
         console.error('Error fetching most sold products:', error)

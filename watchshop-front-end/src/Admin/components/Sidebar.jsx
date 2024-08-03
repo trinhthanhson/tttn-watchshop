@@ -31,7 +31,6 @@ const Sidebar = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null)
   const isManager = user?.user?.role.role_name === 'MANAGER'
   const isAdmin = user?.user?.role.role_name === 'ADMIN'
-  console.log(isAdmin)
   return (
     <div
       className="fixed bg-primary w-60 h-full p-3 flex flex-col text-white font-RobotoMedium"

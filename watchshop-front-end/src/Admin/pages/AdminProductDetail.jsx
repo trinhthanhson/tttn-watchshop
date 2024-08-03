@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { getProductDetailRequest } from '../../redux/actions/actions'
+import {
+  getProductDetailRequest,
+  getReviewProductRequest
+} from '../../redux/actions/actions'
 import { getStatus } from '../../constants/Status'
 
 const AdminProductDetail = () => {
@@ -10,16 +13,22 @@ const AdminProductDetail = () => {
   const productDetail = useSelector(
     (state) => state.productDetail.productDetail?.data
   )
-
+  const reviews = useSelector((state) => state.reviewProduct?.reviews?.data)
+  let latestReviews = []
   useEffect(() => {
     try {
       dispatch(getProductDetailRequest(id))
+      dispatch(getReviewProductRequest(id))
     } catch (error) {
       console.error('Error dispatch', error)
     }
   }, [dispatch, id])
-
-  console.log(productDetail)
+  if (Array.isArray(reviews) && reviews.length > 0) {
+    // Sắp xếp đánh giá theo thời gian mới nhất và lấy 10 đánh giá gần nhất
+    latestReviews = [...reviews]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 8)
+  }
 
   return (
     <>
@@ -115,14 +124,25 @@ const AdminProductDetail = () => {
               <h5 className="text-left text-lg font-RobotoSemibold text-primary py-3">
                 Đánh Giá Sản Phẩm
               </h5>
-              <p className="p-5">
-                <span className="text-primary font-RobotoMedium mr-2">
-                  Trinh Son:
-                </span>
-                <span className="text-primary font-RobotoSemibold">
-                  Tuyệt cú mèo
-                </span>
-              </p>
+              {latestReviews.length > 0 ? (
+                latestReviews.map((review) => (
+                  <p key={review.review_id} className="p-5">
+                    <span className="text-primary font-RobotoMedium mr-2">
+                      {review.review_created.first_name +
+                        ' ' +
+                        review.review_created.last_name}
+                      :
+                    </span>
+                    <span className="text-primary font-RobotoSemibold">
+                      {review.content}
+                    </span>
+                  </p>
+                ))
+              ) : (
+                <p className="p-5 text-primary font-RobotoMedium">
+                  Không có đánh giá nào
+                </p>
+              )}
             </div>
           </div>
         </div>

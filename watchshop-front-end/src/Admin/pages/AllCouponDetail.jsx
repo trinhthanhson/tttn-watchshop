@@ -1,9 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  getAllCouponDetailRequest,
-  getAllCouponsRequest
-} from '../../redux/actions/actions'
+import { getAllCouponDetailRequest } from '../../redux/actions/actions'
 import { MdDelete } from 'react-icons/md'
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
@@ -13,7 +10,6 @@ const AllCouponDetail = () => {
   const dispatch = useDispatch()
   const coupondetail = useSelector((state) => state.coupondetail.coupondetail)
   const { id } = useParams() // Lấy id từ URL parameters
-  console.log(coupondetail)
   useEffect(() => {
     try {
       dispatch(getAllCouponDetailRequest(id)) // Truyền id vào action creator
@@ -21,22 +17,28 @@ const AllCouponDetail = () => {
       console.error('Error dispatch', error)
     }
   }, [dispatch, id]) // Thêm id vào dependency array
-  const handleDeleteCoupon = async (couponId) => {
+  const handleDeleteCoupon = async (couponId, status) => {
     const token = localStorage.getItem('token') // Lấy token từ localStorage
-
-    try {
-      await axios.delete(
-        `http://localhost:9999/api/staff/coupon/${couponId}/delete`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}` // Thêm header Authorization
+    const confirmDelete = window.confirm('Bạn muốn thay đổi trạng thái?')
+    if (confirmDelete) {
+      try {
+        await axios.put(
+          `http://localhost:9999/api/staff/coupon/${couponId}/delete`,
+          {
+            status: status
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json' // Đảm bảo định dạng JSON
+            }
           }
-        }
-      )
-      alert('Coupon deleted successfully.')
-      dispatch(getAllCouponsRequest()) // Refresh the coupon list after deletion
-    } catch (error) {
-      alert('Error deleting coupon. Please try again.')
+        )
+        alert('Thay đổi thành công')
+        dispatch(getAllCouponDetailRequest(id)) // Refresh the coupon list after deletion
+      } catch (error) {
+        alert('Error deleting coupon. Please try again.')
+      }
     }
   }
   return (
@@ -87,7 +89,10 @@ const AllCouponDetail = () => {
                         className="cursor-pointer text-primary"
                         fontSize={25}
                         onClick={() =>
-                          handleDeleteCoupon(coupondetail?.coupon_id)
+                          handleDeleteCoupon(
+                            coupondetail?.coupon_detail_id,
+                            coupondetail?.status
+                          )
                         }
                       />
                     </span>

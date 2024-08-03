@@ -45,13 +45,14 @@ const OrderDetail = () => {
       rating
     }))
   }
-
+  console.log(ratingData.order_detail_id)
   const handleSubmitRating = async () => {
     try {
       const token = localStorage.getItem('token')
       const response = await axios.post(
         'http://localhost:9999/api/customer/review/add',
         {
+          order_detail_id: ratingData.order_detail_id,
           product_id: ratingData.productId,
           content: ratingData.text,
           star: ratingData.rating
@@ -63,6 +64,8 @@ const OrderDetail = () => {
         }
       )
       console.log('Rating submitted:', response.data)
+      dispatch(getOrderDetailRequest(id))
+      dispatch(getAllReviewCustomerRequest())
       setShowModal(false)
     } catch (error) {
       console.error('Error submitting rating:', error)

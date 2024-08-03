@@ -4,18 +4,22 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import {
   addCartRequest,
-  getAllProductsCustomerRequest
+  getAllProductsCustomerRequest,
+  getAllCouponsRequest
 } from '../../redux/actions/actions'
 
 const ProductDetail = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
   const [quantity, setQuantity] = useState(1)
+  const [discountedPrice, setDiscountedPrice] = useState(null)
   const navigate = useNavigate()
-
+  const [priceDiscount, setPriceDiscount] = useState(null)
   const productsCustomer = useSelector(
     (state) => state.productsCustomer.productsCustomer.data
   )
+  const coupons = useSelector((state) => state.coupons.coupons.data)
+
   const selectedProduct = productsCustomer
     ? productsCustomer.find((item) => item.product_id === id)
     : null
@@ -25,13 +29,48 @@ const ProductDetail = () => {
 
   useEffect(() => {
     dispatch(getAllProductsCustomerRequest())
+    dispatch(getAllCouponsRequest())
   }, [dispatch])
+
+  useEffect(() => {
+    if (selectedProduct && Array.isArray(coupons) && coupons.length > 0) {
+      const now = new Date()
+
+      const validCoupon = coupons.find((coupon) => {
+        const startDate = new Date(coupon.start_date)
+        const endDate = new Date(coupon.end_date)
+        return now >= startDate && now <= endDate
+      })
+
+      if (validCoupon && validCoupon.couponDetails.length > 0) {
+        const activeCouponDetails = validCoupon.couponDetails.filter(
+          (detail) =>
+            detail.status === 'Active' &&
+            detail.product_id === selectedProduct.product_id
+        )
+
+        if (activeCouponDetails.length > 0) {
+          const maxPercent = Math.max(
+            ...activeCouponDetails.map(
+              (detail) => parseFloat(detail.percent) || 0
+            )
+          )
+
+          const price = selectedProduct.priceUpdateDetails[0]?.price_new || 0
+          const discountAmount = price * maxPercent
+          const newPrice = price - discountAmount
+          setDiscountedPrice(Math.ceil(newPrice).toLocaleString('en'))
+          setPriceDiscount(Math.ceil(newPrice))
+        }
+      }
+    }
+  }, [coupons, selectedProduct])
 
   const handleAddToCart = () => {
     dispatch(
       addCartRequest({
         product_name: `${selectedProduct?.product_name}`,
-        price: `${selectedProduct.priceUpdateDetails[0].price_new}`,
+        price: priceDiscount || selectedProduct.priceUpdateDetails[0].price_new,
         quantity: quantity
       })
     )
@@ -47,7 +86,8 @@ const ProductDetail = () => {
     navigate('/buynow', {
       state: {
         product: selectedProduct,
-        quantity: quantity
+        quantity: quantity,
+        price: priceDiscount || selectedProduct.priceUpdateDetails[0]?.price_new
       }
     })
   }
@@ -77,11 +117,18 @@ const ProductDetail = () => {
                     Giá
                   </p>
                   <p className="text-main font-RobotoMedium text-[18px] lg:text-[17px] 3xl:text-[20px]">
-                    {selectedProduct?.priceUpdateDetails[0]?.price_new.toLocaleString(
-                      'en'
-                    )}{' '}
-                    VNĐ
+                    {discountedPrice
+                      ? `${discountedPrice} VNĐ`
+                      : `${selectedProduct?.priceUpdateDetails[0]?.price_new.toLocaleString('en')} VNĐ`}
                   </p>
+                  {discountedPrice && (
+                    <p className="text-sm text-red-500 line-through">
+                      {selectedProduct?.priceUpdateDetails[0]?.price_new.toLocaleString(
+                        'en'
+                      )}{' '}
+                      VNĐ
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-12 sm:col-span-6 mb-2 sm:mb-0 pr-[10px] mr-[10px]">
                   <p className="font-serif text-sub text-[18px] 3xl:text-[17px]">

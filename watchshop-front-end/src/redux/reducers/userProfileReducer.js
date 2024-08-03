@@ -1,12 +1,12 @@
 import {
   GET_USER_PROFILE_SUCCESS,
   GET_USER_PROFILE_FAILURE
-} from '../actions/types';
+} from '../actions/types'
 
 const initialState = {
   user: [],
   error: null
-};
+}
 
 const userProfileReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -15,16 +15,16 @@ const userProfileReducer = (state = initialState, action) => {
         ...state,
         user: action.payload,
         error: null
-      };
+      }
     case GET_USER_PROFILE_FAILURE:
       return {
         ...state,
         user: [],
         error: action.payload
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-export default userProfileReducer;
+export default userProfileReducer
