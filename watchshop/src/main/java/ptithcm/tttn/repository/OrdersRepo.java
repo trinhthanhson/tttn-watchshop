@@ -15,7 +15,7 @@ public interface OrdersRepo extends JpaRepository<Orders, Long> {
 
     @Query("SELECT MONTH(o.created_at) AS month, SUM(o.total_price) AS totalAmount " +
             "FROM Orders o " +
-            "WHERE YEAR(o.created_at) = :year AND (o.status = 3 OR o.status = 4) " +
+            "WHERE YEAR(o.created_at) = :year AND (o.status = 4 OR o.status = 5) " +
             "GROUP BY MONTH(o.created_at)")
     List<Object[]> getTotalAmountByMonth(int year);
 
@@ -29,7 +29,7 @@ public interface OrdersRepo extends JpaRepository<Orders, Long> {
             "JOIN " +
             "    OrderDetail od ON p.product_id = od.product.product_id " +
             "JOIN " +
-            "    Orders o ON od.order.order_id = o.order_id AND (o.status = 3 OR o.status = 4) " +
+            "    Orders o ON od.order.order_id = o.order_id AND (o.status = 4 OR o.status = 5) " +
             "WHERE " +
             "    DATE(o.created_at) >= DATE(:startDate) " +
             "    AND DATE(o.updated_at) <= DATE(:endDate) " +

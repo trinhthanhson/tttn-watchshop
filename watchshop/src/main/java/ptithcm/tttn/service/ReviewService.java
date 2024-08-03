@@ -8,4 +8,5 @@ public interface ReviewService {
     Review createReview(Review review, String jwt) throws Exception;
     Review findById(Long id) throws Exception;
     List<Review> findAllReviewByCustomer(String jwt) throws Exception;
+    List<Review> findAllReviewByProduct(String product_id);
 }

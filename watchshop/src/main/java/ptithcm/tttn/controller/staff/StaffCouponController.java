@@ -11,6 +11,7 @@ import ptithcm.tttn.request.CouponRequest;
 import ptithcm.tttn.response.ApiResponse;
 import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
+import ptithcm.tttn.service.CouponDetailService;
 import ptithcm.tttn.service.CouponService;
 
 import java.util.List;
@@ -20,11 +21,12 @@ import java.util.List;
 public class StaffCouponController {
 
     private final CouponService couponService;
+    private final CouponDetailService couponDetailService;
 
-    public StaffCouponController(CouponService couponService) {
+    public StaffCouponController(CouponService couponService, CouponDetailService couponDetailService) {
         this.couponService = couponService;
+        this.couponDetailService = couponDetailService;
     }
-
 
     @GetMapping("/all")
     public ResponseEntity<ListEntityResponse> getAllCouponByStaff(@RequestHeader("Authorization") String jwt){
@@ -100,6 +102,22 @@ public class StaffCouponController {
             res.setCode(HttpStatus.CONFLICT.value());
             res.setStatus(HttpStatus.CONFLICT);
             res.setMessage("success");
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+
+    @PutMapping("/{id}/delete")
+    public ResponseEntity<ApiResponse> updateStatusCouponDetail(@RequestHeader("Authorization") String jwt,@PathVariable Long id, @RequestBody CouponDetail detail){
+        ApiResponse res = new ApiResponse();
+        try {
+            CouponDetail couponDetail = couponDetailService.updateStatusDetail(detail, id);
+            res.setStatus(HttpStatus.OK);
+            res.setMessage("success");
+            res.setCode(HttpStatus.OK.value());
+        }catch (Exception e){
+            res.setStatus(HttpStatus.CONFLICT);
+            res.setMessage("error " + e.getMessage());
+            res.setCode(HttpStatus.CONFLICT.value());
         }
         return new ResponseEntity<>(res,res.getStatus());
     }

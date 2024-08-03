@@ -35,7 +35,7 @@ public class AppConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .anyRequest().permitAll()
+                .antMatchers("/api/staff/**").hasAnyAuthority("STAFF","MANAGER")
                 .and()
                 .addFilterBefore(new JwtTokenValidator(), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()

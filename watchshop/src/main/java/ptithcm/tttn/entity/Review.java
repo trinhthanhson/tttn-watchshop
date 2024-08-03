@@ -52,7 +52,6 @@ public class Review {
     private Product product;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "created_by",insertable = false, updatable = false)
     private Customer review_created;
 

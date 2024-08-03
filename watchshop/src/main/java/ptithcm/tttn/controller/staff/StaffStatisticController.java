@@ -31,6 +31,9 @@ public class StaffStatisticController {
         ListEntityResponse res = new ListEntityResponse<>();
         try{
             List<ProductSaleRequest> get = productService.getProductSales();
+            for(ProductSaleRequest rq: get){
+                System.out.println(rq.getProduct_id());
+            }
             res.setData(get);
             res.setStatus(HttpStatus.OK);
             res.setCode(HttpStatus.OK.value());

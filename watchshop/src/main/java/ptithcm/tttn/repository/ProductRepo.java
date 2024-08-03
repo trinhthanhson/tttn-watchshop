@@ -38,7 +38,7 @@ public interface ProductRepo extends JpaRepository<Product, String> {
     @Query("SELECT p.product_id, p.product_name, SUM(od.quantity * od.price) as total_sold , SUM(od.quantity) AS total_quantity " +
             "FROM Product p " +
             "JOIN OrderDetail od ON p.product_id = od.product_id " +
-            "JOIN Orders o ON od.order_id = o.order_id AND o.status = 3 " +
+            "JOIN Orders o ON od.order_id = o.order_id AND o.status = 5 " +
             "GROUP BY p.product_id, p.product_name " +
             "ORDER BY total_sold DESC")
     List<Object[]> getProductSales();

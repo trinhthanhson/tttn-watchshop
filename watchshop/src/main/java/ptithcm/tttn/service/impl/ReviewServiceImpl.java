@@ -64,4 +64,9 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> findAllByCustomer = reviewRepo.findAllReviewByCustomer(customer.getCustomer_id());
         return findAllByCustomer;
     }
+
+    @Override
+    public List<Review> findAllReviewByProduct(String product_id) {
+        return reviewRepo.findAllReviewByProduct(product_id);
+    }
 }
