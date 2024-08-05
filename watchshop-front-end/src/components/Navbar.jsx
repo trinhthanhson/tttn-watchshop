@@ -12,41 +12,44 @@ const Navbar = () => {
   const cart = useSelector((state) => state.cart.cart.data)
   const cartQuantity = cart?.total_quantity
   const [showAboutMenu, setShowAboutMenu] = useState(false)
-  const [showMenu, setShowMenu] = useState(false)
+  const [showMenuCategory, setShowMenuCategory] = useState(false)
+  const [showMenuBrand, setShowMenuBrand] = useState(false)
+
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const [categories, setCategories] = useState([])
+
+  const [brands, setBrands] = useState([])
 
   useEffect(() => {
     dispatch(getAllCartRequest())
   }, [dispatch])
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchCategoriesAndBrands = async () => {
       try {
-        const response = await axios.get(
-          'http://localhost:9999/api/user/category/all'
-        )
-        // Giả sử response.data.categories là mảng danh mục
-        if (response.data && Array.isArray(response.data.data)) {
-          setCategories(response.data.data.slice(0, 12))
-        } else {
-          console.error('Unexpected response format:', response.data)
-        }
+        const [categoriesResponse, brandsResponse] = await Promise.all([
+          axios.get('http://localhost:9999/api/user/category/all'),
+          axios.get('http://localhost:9999/api/user/brand/all')
+        ])
+        setCategories(categoriesResponse.data.data)
+        setBrands(brandsResponse.data.data)
       } catch (error) {
-        console.error('Error fetching categories:', error)
+        console.error('Error fetching categories and brands:', error)
       }
     }
 
-    fetchCategories()
+    fetchCategoriesAndBrands()
   }, [])
   const toggleAboutMenu = () => {
     setShowAboutMenu(!showAboutMenu)
   }
 
-  const toggleMenu = () => {
-    setShowMenu(!showMenu)
+  const toggleMenuCategory = () => {
+    setShowMenuCategory(!showMenuCategory)
   }
-
+  const toggleMenuBrand = () => {
+    setShowMenuBrand(!showMenuBrand)
+  }
   const handleToggle = () => {
     setIsOpen(!isOpen)
   }
@@ -65,7 +68,7 @@ const Navbar = () => {
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center mx-auto md:px-5 md:pr-0 lg:px-14 lg:py-2 lg:pr-0">
           <a
             className="flex items-center py-[10px] px-[20px] md:py-0 md:px-0"
-            href="/"
+            href="/home"
           >
             <img
               className="object-cover w-[50px] sm:w-[71px] lg:w-[90px]"
@@ -193,7 +196,7 @@ const Navbar = () => {
                       Loại Sản phẩm
                     </a>
                     <svg
-                      onClick={toggleMenu}
+                      onClick={toggleMenuCategory}
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -209,7 +212,7 @@ const Navbar = () => {
                       ></path>
                     </svg>
                   </p>
-                  {showMenu && (
+                  {showMenuCategory && (
                     <div className="hidden sm:block w-[90%] left-[5%] absolute mx-auto bg-primary mt-[10px]">
                       <div className="flex">
                         <div
@@ -241,6 +244,68 @@ const Navbar = () => {
                               ))
                             ) : (
                               <p>No categories found</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </li>
+              <li className="hidden sm:block w-full text-left md:w-fit">
+                <div className="border-b-2 border-main hover:border-b-2 hover:border-white">
+                  <p className="font-RobotoMedium uppercase text-[20px] md:text-[17px] xl:text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 text-white border-none sm:border-b border-gray-100 hover:bg-transparent lg:hover:bg-transparent lg:border-0 lg:hover:text-white md:py-4 lg:py-6 flex justify-center items-center cursor-pointer">
+                    <a href="/menu" style={{ color: 'black' }}>
+                      Hãng sản phẩm
+                    </a>
+                    <svg
+                      onClick={toggleMenuBrand}
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-4 h-4 ml-3"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        fill="black"
+                        strokeLinejoin="round"
+                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                      ></path>
+                    </svg>
+                  </p>
+                  {showMenuBrand && (
+                    <div className="hidden sm:block w-[90%] left-[5%] absolute mx-auto bg-primary mt-[10px]">
+                      <div className="flex">
+                        <div
+                          className="w-[30%] text-white p-[60px]"
+                          style={{ backgroundColor: 'rgb(183, 183, 183)' }}
+                        >
+                          <img
+                            style={{ marginLeft: '60px' }}
+                            src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Fproducts%2Fmens-le-locle-leather-silver-dial-watch-tissot-tist0064071603300_1-removebg-preview.png?alt=media&token=f7b24148-ec6a-4cdb-9665-51a17419ba7d"
+                            alt="coffee"
+                          />
+                        </div>
+                        <div className="w-[70%] bg-white p-[60px]">
+                          <div className="flex flex-wrap">
+                            {Array.isArray(brands) && brands.length > 0 ? (
+                              brands.map((brand) => (
+                                <div
+                                  key={brand.brand_id}
+                                  className="w-[30%] mb-6"
+                                >
+                                  <a
+                                    className="font-RobotoMedium text-[30px] hover:text-red"
+                                    href={`/products/${brand.brand_id}/brand`}
+                                  >
+                                    {brand.brand_name}
+                                  </a>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No brand found</p>
                             )}
                           </div>
                         </div>
@@ -393,7 +458,7 @@ const Navbar = () => {
 
           {isOpen && (
             <div className="items-center justify-between relative h-[100vh] w-full md:flex md:w-auto md:order-1 bg-[#FFF] md:bg-transparent py-[10px] px-[30px] md:py-0 md:px-0">
-              {!showAboutMenu && !showMenu && (
+              {!showAboutMenu && !showMenuBrand && !showMenuCategory && (
                 <ul className="flex flex-col items-center mt-0 md:flex-row md:space-x-2 lg:space-x-8 md:mt-0">
                   <li className="w-full text-left md:w-fit">
                     <a
@@ -426,28 +491,6 @@ const Navbar = () => {
                     </button>
                   </li>
                   <li className="w-full text-left md:w-fit">
-                    <button
-                      onClick={toggleMenu}
-                      className="flex text-left items-center font-RobotoMedium uppercase text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 text-black w-full hover:text-red-600"
-                    >
-                      Thực Đơn
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        className="w-5 h-5 ml-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                        ></path>
-                      </svg>
-                    </button>
-                  </li>
-                  <li className="w-full text-left md:w-fit">
                     <a
                       href="/news"
                       className="flex text-left items-center font-RobotoMedium uppercase text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 text-black w-full hover:text-red-600"
@@ -461,58 +504,6 @@ const Navbar = () => {
                       className="flex text-left items-center font-RobotoMedium uppercase text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 text-black w-full hover:text-red-600"
                     >
                       Liên Hệ
-                    </a>
-                  </li>
-                </ul>
-              )}
-              {showMenu && (
-                <ul className="flex flex-col items-center mt-0 md:flex-row md:space-x-2 lg:space-x-8 md:mt-0">
-                  <li className="w-full text-left md:w-fit">
-                    <button
-                      onClick={toggleMenu}
-                      className="uppercase flex items-center font-RobotoMedium text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 text-black text-left w-full hover:text-red-600"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        className="w-5 h-5 mr-3"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                        ></path>
-                      </svg>
-                      Back
-                    </button>
-                  </li>
-                  <li className="w-full text-left md:w-fit">
-                    <a
-                      className="uppercase font-RobotoMedium text-black block text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 hover:text-red-600"
-                      href="#"
-                    >
-                      Cà Phê
-                    </a>
-                  </li>
-
-                  <li className="w-full text-left md:w-fit">
-                    <a
-                      className="uppercase font-RobotoMedium text-black block text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 hover:text-red-600"
-                      href="#"
-                    >
-                      Freeze
-                    </a>
-                  </li>
-
-                  <li className="w-full text-left md:w-fit">
-                    <a
-                      className="uppercase font-RobotoMedium text-black block text-[18px] py-[15px] px-0 sm:py-2 sm:pl-3 sm:pr-4 hover:text-red-600"
-                      href="#"
-                    >
-                      Trà
                     </a>
                   </li>
                 </ul>

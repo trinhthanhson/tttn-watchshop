@@ -11,7 +11,7 @@ const Footer = () => {
       <hr></hr>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
         <div className="lg:mr-4">
-          <a href="/" className="flex items-center ">
+          <a href="/home" className="flex items-center ">
             <img
               src="https://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=6780a5ae-e38c-4b0d-b290-67324a79513bhttps://firebasestorage.googleapis.com/v0/b/watch-shop-3a14f.appspot.com/o/images%2Flogo.png?alt=media&token=ff560732-bd5c-43d0-9271-7bcd3d9204ea"
               alt="logo"

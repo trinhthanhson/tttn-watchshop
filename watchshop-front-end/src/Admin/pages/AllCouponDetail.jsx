@@ -80,7 +80,7 @@ const AllCouponDetail = () => {
                       coupondetail?.product?.priceUpdateDetails[0].price_new -
                         coupondetail?.product?.priceUpdateDetails[0].price_new *
                           coupondetail?.percent
-                    )}
+                    ).toLocaleString('en')}
                   </td>
                   <td>{getStatus(coupondetail?.status)}</td>
                   <td>

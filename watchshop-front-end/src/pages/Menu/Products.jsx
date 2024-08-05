@@ -3,29 +3,66 @@ import CardProductItem from '../../components/Products/CardProductItem'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   getAllProductsCustomerRequest,
-  getAllCategoriesRequest
+  getAllCategoriesRequest,
+  getAllBrandRequest
 } from '../../redux/actions/actions'
+import axios from 'axios'
 
 const ProductByCategory = () => {
   const [categoryFilter, setCategoryFilter] = useState('')
+  const [brandFilter, setBrandFilter] = useState('')
   const [priceRangeFilter, setPriceRangeFilter] = useState('')
   const [sortOrder, setSortOrder] = useState('desc')
   const dispatch = useDispatch()
   const categories = useSelector((state) => state.categories.categories.data)
   const loadingCategories = useSelector((state) => state.categories.loading)
   const errorCategories = useSelector((state) => state.categories.error)
+
+  const [searchKeyword, setSearchKeyword] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+
+  const brands = useSelector((state) => state.brands.brands.data)
+  const loadingBrands = useSelector((state) => state.brands.loading)
+  const errorBrands = useSelector((state) => state.brands.error)
   const productsCustomer = useSelector(
     (state) => state.productsCustomer.productsCustomer.data
   )
   useEffect(() => {
     dispatch(getAllCategoriesRequest())
     dispatch(getAllProductsCustomerRequest())
+    dispatch(getAllBrandRequest())
   }, [dispatch])
+  useEffect(() => {
+    if (searchKeyword) {
+      const fetchSearchResults = async () => {
+        try {
+          const response = await axios.get(
+            'http://localhost:9999/api/user/product/find',
+            {
+              params: { keyword: searchKeyword }
+            }
+          )
+          setSearchResults(response.data?.data)
+        } catch (error) {
+          console.error('Error searching products:', error)
+        }
+      }
 
+      fetchSearchResults()
+    } else {
+      setSearchResults([])
+    }
+  }, [searchKeyword])
   const filterProducts = (productsCustomer) => {
     if (
       categoryFilter &&
       productsCustomer?.category?.category_id !== parseInt(categoryFilter)
+    ) {
+      return false
+    }
+    if (
+      brandFilter &&
+      productsCustomer?.brand?.brand_id !== parseInt(brandFilter)
     ) {
       return false
     }
@@ -43,7 +80,9 @@ const ProductByCategory = () => {
     }
     return true
   }
-
+  const handleSearch = (e) => {
+    setSearchKeyword(e.target.value)
+  }
   const sortProducts = (productsCustomer) => {
     return productsCustomer.sort((a, b) => {
       const priceA = parseInt(a.priceUpdateDetails[0]?.price_new)
@@ -59,6 +98,7 @@ const ProductByCategory = () => {
   const handleReset = () => {
     setCategoryFilter('')
     setPriceRangeFilter('')
+    setBrandFilter('')
   }
 
   return (
@@ -82,7 +122,7 @@ const ProductByCategory = () => {
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
               >
-                <option value="">Tất cả danh mục</option>
+                <option value="">Tất cả loại</option>
                 {loadingCategories ? (
                   <option>Đang tải...</option>
                 ) : errorCategories ? (
@@ -102,6 +142,28 @@ const ProductByCategory = () => {
               </select>
             </div>
           </div>
+          <div className="text-base px-2 w-full lg:w-[35%] relative border-b border-r border-solid border-borderGray flex items-center h-[50px] lg:h-full">
+            <div className="relative w-full">
+              <select
+                className="outline-none pl-[20px] relative w-full text-left font-RobotoMedium lg:text-[17px] 2xl:text-xl"
+                value={brandFilter}
+                onChange={(e) => setBrandFilter(e.target.value)}
+              >
+                <option value="">Tất cả hãng</option>
+                {loadingBrands ? (
+                  <option>Đang tải...</option>
+                ) : errorBrands ? (
+                  <option>Lỗi tải danh mục</option>
+                ) : (
+                  (Array.isArray(brands) ? brands : []).map((brand) => (
+                    <option key={brand.brand_id} value={brand.brand_id}>
+                      {brand.brand_name}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+          </div>
           <div className="text-base px-2 w-full lg:w-[35%] relative flex items-center h-[50px] border-r lg:h-full">
             <div className="relative w-full">
               <select
@@ -116,7 +178,15 @@ const ProductByCategory = () => {
               </select>
             </div>
           </div>
-
+          <div className="text-base px-2 w-full lg:w-[35%] relative flex items-center h-[50px] lg:h-full">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchKeyword}
+              onChange={handleSearch}
+              className="outline-none pl-[20px] relative w-full text-left font-RobotoMedium lg:text-[17px] 2xl:text-xl"
+            />
+          </div>
           <button
             onClick={handleReset}
             className="hover:bg-gray-200 bg-white text-black flex justify-center items-center w-full lg:w-[30%] py-2 lg:py-2.5 h-[50px] lg:h-full"
@@ -143,9 +213,11 @@ const ProductByCategory = () => {
               />
             </div>
             <div className="font-RobotoSemibold text-main">
-              {filteredAndSortedProducts?.length}{' '}
+              {searchKeyword
+                ? searchResults.length
+                : filteredAndSortedProducts.length}{' '}
               <span className="text-black font-RobotoMedium">
-                project found
+                {searchKeyword ? 'projects found' : 'Products Found'}
               </span>
             </div>
           </div>
@@ -162,9 +234,11 @@ const ProductByCategory = () => {
         </div>
 
         <div className="w-full lg:w-10/12 md:gap-6 flex flex-wrap justify-center m-auto">
-          {filteredAndSortedProducts.map((product) => (
-            <CardProductItem key={product.product_id} product={product} />
-          ))}
+          {(searchKeyword ? searchResults : filteredAndSortedProducts).map(
+            (product) => (
+              <CardProductItem key={product.product_id} product={product} />
+            )
+          )}
         </div>
       </section>
     </>

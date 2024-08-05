@@ -236,12 +236,7 @@ const OrderDetail = () => {
                       <p>{orderItem?.product.product_name}</p>
                     </td>
                     <td>{orderItem?.quantity}</td>
-                    <td>
-                      {orderItem.product.priceUpdateDetails[0].price_new.toLocaleString(
-                        'en'
-                      )}{' '}
-                      VNĐ
-                    </td>
+                    <td>{orderItem.price.toLocaleString('en')} VNĐ</td>
                     <td>
                       {new Date(orderDetail.created_at).toLocaleDateString()}
                     </td>
@@ -271,46 +266,50 @@ const OrderDetail = () => {
 
           {showModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-6 rounded-md shadow-md w-[300px] relative">
+              <div className="bg-white p-6 rounded-md shadow-md w-[600px] relative">
                 <button
                   className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                   onClick={() => setShowModal(false)}
                 >
                   &times;
                 </button>
-                <h2 className="text-xl mb-4">Rate Product</h2>
+                <h2 className="text-xl mb-4" style={{ marginLeft: '200px' }}>
+                  Đánh giá sản phẩm
+                </h2>
                 <div className="mb-4">
-                  <label>Order detail ID:</label>
                   <input
                     type="text"
                     name="productId"
                     value={ratingData.order_detail_id}
                     readOnly
+                    disabled
+                    hidden
                     className="border rounded p-2 w-full"
                   />
                 </div>
                 <div className="mb-4">
-                  <label>Product ID:</label>
                   <input
                     type="text"
                     name="productId"
                     value={ratingData.productId}
                     readOnly
+                    disabled
+                    hidden
                     className="border rounded p-2 w-full"
                   />
                 </div>
                 <div className="mb-4">
-                  <label>Review:</label>
-                  <input
-                    type="text"
+                  <label>Nội dung đánh giá:</label>
+                  <textarea
                     name="text"
                     value={ratingData.text}
                     onChange={handleInputChange}
                     className="border rounded p-2 w-full"
+                    rows="4" // Optional: adjust the number of rows to your preference
                   />
                 </div>
                 <div className="mb-4">
-                  <label>Rating:</label>
+                  <label>Sao:</label>
                   <div className="flex">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <FontAwesomeIcon
@@ -337,7 +336,7 @@ const OrderDetail = () => {
                     className="bg-blue-500 text-white px-4 py-2 rounded-md"
                     onClick={handleSubmitRating}
                   >
-                    Submit
+                    Đánh giá
                   </button>
                 </div>
               </div>

@@ -89,7 +89,7 @@ const AdminUserCustomerDetail = () => {
         {/* Your sidebar content here */}
       </aside>
       <main className="flex-1 p-5 ml-[200px]">
-        <h2 className="text-2xl font-semibold mb-4">User Details</h2>
+        <h2 className="text-2xl font-semibold mb-4">Thông tin </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label>
             Fist Name:
@@ -159,7 +159,7 @@ const AdminUserCustomerDetail = () => {
             </select>
           </label>
           <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-            Update User
+            Cập nhật
           </button>
         </form>
       </main>

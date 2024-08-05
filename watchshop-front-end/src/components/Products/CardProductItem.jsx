@@ -19,6 +19,7 @@ const CardProductItem = ({ product }) => {
     priceUpdateDetails,
     image,
     category,
+    brand,
     status
   } = product
 
@@ -83,15 +84,23 @@ const CardProductItem = ({ product }) => {
       }
     })
   }
-
   return (
     <div className="bg-white rounded-xl shadow-lg mb-10 relative justify-between col-span-1 w-full md:w-[48%] xl:w-[32%] hover:scale-105 transition duration-500 ease-in-out cursor-pointer">
       <div>
+        <div
+          className="bg-primary rounded-bl-[35px] py-2 pl-8 pr-5 text-center absolute top-0 right-0 w-fit"
+          style={{ left: '8px' }}
+        >
+          <p className="text-white font-RobotoMedium text-sm 3xl:text-base">
+            {brand?.brand_name}
+          </p>
+        </div>
         <div className="bg-primary rounded-bl-[35px] py-2 pl-8 pr-5 text-center absolute top-0 right-0 w-fit">
           <p className="text-white font-RobotoMedium text-sm 3xl:text-base">
             {category?.category_name}
           </p>
         </div>
+
         <div className="mb-0 md:h-[200px] lg:h-[250px] xl:h-[35vh]">
           <a href={`/products/${product_id}`}>
             <img

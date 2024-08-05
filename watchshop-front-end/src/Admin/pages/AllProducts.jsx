@@ -107,8 +107,8 @@ const AllProducts = () => {
                       navigate(`/manager/product/${product?.product_id}`)
                     }
                   >
-                    {product?.description && product.description.length > 50
-                      ? `${product?.description.substring(0, 50)}...`
+                    {product?.detail && product.detail.length > 50
+                      ? `${product?.detail.substring(0, 10)}...`
                       : product.detail}
                   </td>
                   <td>{getStatus(product?.status)}</td>

@@ -14,7 +14,7 @@ const Checkout = () => {
   const navigate = useNavigate()
   const cart = useSelector((state) => state.cart.cart)
   // const user = useSelector((state) => state.user.user.data)
-
+  console.log(cart.data)
   const [address, setAddress] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [recipientName, setRecipientName] = useState('')
@@ -23,7 +23,12 @@ const Checkout = () => {
   const [note, setNote] = useState('')
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
-
+  const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState({
+    recipientName: '',
+    recipientPhone: '',
+    shippingAddress: ''
+  })
   useEffect(() => {
     dispatch(getUserProfileRequest())
   }, [dispatch])
@@ -49,13 +54,49 @@ const Checkout = () => {
   const handleCloseModal = () => setIsModalOpen(false)
 
   const handleAddressSave = () => {
-    if (recipientName && shippingAddress && recipientPhone) {
-      setAddress(`${recipientName}, ${recipientPhone}, ${shippingAddress}`)
-      handleCloseModal()
+    let hasError = false
+    const newErrors = {
+      recipientName: '',
+      recipientPhone: '',
+      shippingAddress: ''
     }
+
+    if (!recipientName) {
+      newErrors.recipientName = 'Recipient name is required.'
+      hasError = true
+    }
+
+    if (!shippingAddress) {
+      newErrors.shippingAddress = 'Shipping address is required.'
+      hasError = true
+    }
+
+    if (!recipientPhone) {
+      newErrors.recipientPhone = 'Recipient phone is required.'
+      hasError = true
+    }
+
+    if (hasError) {
+      setErrors(newErrors)
+      return
+    }
+    // Clear errors and set address
+    setErrors({
+      recipientName: '',
+      recipientPhone: '',
+      shippingAddress: ''
+    })
+    setAddress(`${recipientName}, ${recipientPhone}, ${shippingAddress}`)
+    setError(null)
+
+    handleCloseModal()
   }
 
   const handleOrder = async () => {
+    if (!address) {
+      setError('Please enter a shipping address.')
+      return
+    }
     //setLoading(true)
     setError(null)
     setSuccess(null)
@@ -99,7 +140,52 @@ const Checkout = () => {
       //setLoading(false)
     }
   }
+  const handlePayNow = async () => {
+    if (!address) {
+      setError('Please enter a shipping address.')
+      return
+    }
 
+    setLoading(true)
+    setError(null)
+    const total_price = cart?.data?.total_price + 20000
+    try {
+      const response = await fetch(
+        'http://localhost:9999/api/customer/payment/cart',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            total_price,
+            address,
+            recipient_name: recipientName,
+            note,
+            recipient_phone: recipientPhone
+          })
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to initiate payment')
+      }
+
+      const data = await response.json()
+      console.log(data.message)
+      if (data.message) {
+        // Chuyển hướng người dùng đến URL thanh toán
+        window.location.href = data.message
+      } else {
+        setError('Failed to retrieve payment URL')
+      }
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
     <>
       <section className="relative flex flex-col-reverse md:flex-row items-center bg-[url('https://www.highlandscoffee.com.vn/vnt_upload/cake/SPECIALTYCOFFEE/Untitled-1-01.png')]">
@@ -111,13 +197,12 @@ const Checkout = () => {
           </div>
         </div>
       </section>
-
       <section className="p-6">
         <div className="p-10 flex">
           <div className="flex items-center mt-5">
             <input
               type="text"
-              value={address}
+              value={address || error}
               readOnly
               placeholder="Enter shipping address"
               className="border border-gray-300 p-2 rounded mr-2 w-[1000px]"
@@ -129,8 +214,7 @@ const Checkout = () => {
               Enter Address
             </button>
           </div>
-          {error && <p className="text-red-500 mt-4">{error}</p>}
-          {success && <p className="text-green-500 mt-4">{success}</p>}
+          {success && <p className="text-green mt-4">{success}</p>}
           {isModalOpen && (
             <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50">
               <div
@@ -150,6 +234,9 @@ const Checkout = () => {
                     onChange={(e) => setRecipientName(e.target.value)}
                     className="border border-gray-300 p-2 rounded w-full"
                   />
+                  {errors.recipientName && (
+                    <p className="text-red mt-1">{errors.recipientName}</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">
@@ -161,6 +248,9 @@ const Checkout = () => {
                     onChange={(e) => setShippingAddress(e.target.value)}
                     className="border border-gray-300 p-2 rounded w-full"
                   />
+                  {errors.shippingAddress && (
+                    <p className="text-red mt-1">{errors.shippingAddress}</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">
@@ -172,6 +262,9 @@ const Checkout = () => {
                     onChange={(e) => setRecipientPhone(e.target.value)}
                     className="border border-gray-300 p-2 rounded w-full"
                   />
+                  {errors.recipientPhone && (
+                    <p className="text-red">{errors.recipientPhone}</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">Note</label>
@@ -182,7 +275,6 @@ const Checkout = () => {
                     className="border border-gray-300 p-2 rounded w-full"
                   />
                 </div>
-
                 <div className="flex justify-end">
                   <button
                     className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2 "
@@ -202,8 +294,11 @@ const Checkout = () => {
               </div>
             </div>
           )}
-          <div className="flex-[0.5]">
-            <div className="border p-5 bg-white shadow-lg rounded-md">
+          <div className="flex-[1.5]">
+            <div
+              className="border p-5 bg-white shadow-lg rounded-md"
+              style={{ marginLeft: '80px' }}
+            >
               <p className="font-bold  pb-4 uppercase">Chi Tiết Hóa Đơn</p>
               <hr />
 
@@ -239,10 +334,13 @@ const Checkout = () => {
                   onClick={handleOrder}
                   className="w-[50%] bg-green-500 bg-primary text-white p-2 rounded-md mt-5 shadow-md hover:bg-main transition duration-300 ease-in-out"
                 >
-                  Đặt Hàng
+                  {loading ? 'Placing order...' : 'Đặt hàng'}
                 </button>
-                <button className="w-[50%] bg-green-500 bg-primary text-white p-2 rounded-md mt-5 shadow-md hover:bg-main transition duration-300 ease-in-out">
-                  Thanh Toán
+                <button
+                  className="w-[50%] bg-green-500 bg-primary text-white p-2 rounded-md mt-5 shadow-md hover:bg-main transition duration-300 ease-in-out"
+                  onClick={handlePayNow}
+                >
+                  {loading ? 'Placing order...' : 'Thanh toán'}
                 </button>
               </div>
             </div>

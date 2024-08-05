@@ -8,10 +8,10 @@ import {
   getAllBrandRequest
 } from '../../redux/actions/actions'
 
-const ProductByCategory = () => {
-  const { category_id } = useParams() // Lấy category_id từ URL
-  const [categoryFilter, setCategoryFilter] = useState(category_id || '') // Sử dụng category_id nếu có
-  const [brandFilter, setBrandFilter] = useState('')
+const ProductByBrand = () => {
+  const { brand_id } = useParams() // Lấy category_id từ URL
+  const [categoryFilter, setCategoryFilter] = useState('') // Sử dụng category_id nếu có
+  const [brandFilter, setBrandFilter] = useState(brand_id || '') // Sử dụng category_id nếu có
 
   const [priceRangeFilter, setPriceRangeFilter] = useState('')
   const [sortOrder, setSortOrder] = useState('desc')
@@ -24,9 +24,11 @@ const ProductByCategory = () => {
   const productsCustomer = useSelector(
     (state) => state.productsCustomer.productsCustomer?.data || []
   )
+
   const brands = useSelector((state) => state.brands.brands?.data || [])
-  const loadingbrands = useSelector((state) => state.brands.loading)
-  const errorbrands = useSelector((state) => state.brands.error)
+  const loadingBrands = useSelector((state) => state.brands.loading)
+  const errorBrands = useSelector((state) => state.brands.error)
+  console.log(brands)
   useEffect(() => {
     dispatch(getAllCategoriesRequest())
     dispatch(getAllProductsCustomerRequest())
@@ -34,10 +36,10 @@ const ProductByCategory = () => {
   }, [dispatch])
 
   useEffect(() => {
-    if (category_id) {
-      setCategoryFilter(category_id)
+    if (brand_id) {
+      setBrandFilter(brand_id)
     }
-  }, [category_id])
+  }, [brand_id])
 
   const filterProducts = (product) => {
     if (
@@ -123,9 +125,9 @@ const ProductByCategory = () => {
                 onChange={(e) => setBrandFilter(e.target.value)}
               >
                 <option value="">Tất cả danh mục</option>
-                {loadingbrands ? (
+                {loadingBrands ? (
                   <option>Đang tải...</option>
-                ) : errorbrands ? (
+                ) : errorBrands ? (
                   <option>Lỗi tải danh mục</option>
                 ) : (
                   brands.map((brand) => (
@@ -206,4 +208,4 @@ const ProductByCategory = () => {
   )
 }
 
-export default ProductByCategory
+export default ProductByBrand

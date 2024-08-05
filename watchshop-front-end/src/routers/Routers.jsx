@@ -41,6 +41,7 @@ import AllStaff from '../Admin/pages/AllStaff'
 import AdminUserStaffDetail from '../Admin/pages/AdminUserStaffDetail'
 import AllCouponDetail from '../Admin/pages/AllCouponDetail'
 import { decryptData } from '../cryptoUtils/cryptoUtils'
+import ProductByBrand from '../pages/Menu/ProductByBrand'
 
 const Routers = () => {
   const navigate = useNavigate()
@@ -97,6 +98,7 @@ const Routers = () => {
         path="/products/:category_id/category"
         element={<ProductDetailByCategory />}
       />
+      <Route path="/products/:brand_id/brand" element={<ProductByBrand />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/discover" element={<Discover />} />
       <Route path="/cart" element={<Cart />} />

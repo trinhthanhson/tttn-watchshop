@@ -76,10 +76,16 @@ const ProductDetail = () => {
     )
   }
 
-  const handleQuantityChange = (e) => {
-    const value = parseInt(e.target.value, 10)
-    if (value >= 1) {
+  const handleQuantityChange = (event) => {
+    let value = parseInt(event.target.value, 10)
+
+    // Kiểm tra nếu giá trị là số hợp lệ và trong phạm vi cho phép
+    if (!isNaN(value) && value >= 1 && value <= selectedProduct?.quantity) {
       setQuantity(value)
+    } else if (value > selectedProduct?.quantity) {
+      setQuantity(selectedProduct?.quantity) // Đặt giá trị tối đa nếu vượt quá giới hạn
+    } else {
+      setQuantity(1) // Đặt giá trị tối thiểu nếu nhỏ hơn 1
     }
   }
   const handleBuyNow = () => {
@@ -138,6 +144,14 @@ const ProductDetail = () => {
                     {selectedProduct?.category?.category_name}
                   </p>
                 </div>
+                <div className="col-span-12 sm:col-span-6 mb-2 sm:mb-0 pr-[10px] mr-[10px]  mt-[20px]">
+                  <p className="font-serif text-sub text-[18px] 3xl:text-[17px]">
+                    Hãng
+                  </p>
+                  <p className="text-main font-RobotoMedium text-[18px] lg:text-[17px] 3xl:text-[20px]">
+                    {selectedProduct?.brand?.brand_name}
+                  </p>
+                </div>
               </div>
               <hr className="mb-5 w-full" />
               {selectedProduct?.description && (
@@ -166,6 +180,7 @@ const ProductDetail = () => {
                   id="quantity"
                   name="quantity"
                   min="1"
+                  max={selectedProduct?.quantity}
                   value={quantity}
                   onChange={handleQuantityChange}
                   className="w-[10%] mt-2 p-2 border border-grey rounded-lg "
@@ -174,43 +189,56 @@ const ProductDetail = () => {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 items-center sm:justify-between w-full">
-                <div className="w-full">
-                  <div className="flex justify-center items-center p-3 text-center border border-grey text-primary hover:text-white hover:bg-primary hover:border-none rounded-lg">
-                    <button
-                      onClick={handleAddToCart}
-                      className="font-serif text-[16px] lg:text-[17px] sm:text-lg text-inherit 3xl:text-[20px]"
-                    >
-                      Thêm Vào Giỏ
-                    </button>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className={`ml-1 w-4 h-4 sm:ml-2 sm:w-5 sm:h-5`}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="w-full">
-                  <a className="block">
-                    <div
-                      onClick={handleBuyNow}
-                      className="font-serif rounded-lg p-3 text-center border border-grey bg-primary text-white hover:bg-[#271A15] hover:text-white"
-                    >
-                      <p className="text-[16px] lg:text-[17px] sm:text-lg text-inherit 3xl:text-[20px] hover:border-none">
-                        Mua Ngay
-                      </p>
+                {selectedProduct?.quantity > 0 ? (
+                  <>
+                    <div className="w-full">
+                      <div className="flex justify-center items-center p-3 text-center border border-grey text-primary hover:text-white hover:bg-primary hover:border-none rounded-lg">
+                        <button
+                          onClick={handleAddToCart}
+                          className="font-serif text-[16px] lg:text-[17px] sm:text-lg text-inherit 3xl:text-[20px]"
+                        >
+                          Thêm Vào Giỏ
+                        </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className={`ml-1 w-4 h-4 sm:ml-2 sm:w-5 sm:h-5`}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+                          />
+                        </svg>
+                      </div>
                     </div>
-                  </a>
-                </div>
+
+                    <div className="w-full">
+                      <a className="block">
+                        <div
+                          onClick={handleBuyNow}
+                          className="font-serif rounded-lg p-3 text-center border border-grey bg-primary text-white hover:bg-[#271A15] hover:text-white"
+                        >
+                          <p className="text-[16px] lg:text-[17px] sm:text-lg text-inherit 3xl:text-[20px] hover:border-none">
+                            Mua Ngay
+                          </p>
+                        </div>
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <div
+                    className="w-full p-3 text-center text-red-500 bg-red-100 border border-red-500 rounded-lg"
+                    style={{ marginLeft: '180px', backgroundColor: '#ecaaaa' }}
+                  >
+                    <p className="text-[16px] lg:text-[17px] sm:text-lg 3xl:text-[20px]">
+                      Đã hết hàng
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
