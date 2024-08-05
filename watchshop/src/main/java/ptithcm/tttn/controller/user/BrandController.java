@@ -2,11 +2,10 @@ package ptithcm.tttn.controller.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.Brand;
+import ptithcm.tttn.entity.Category;
+import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
 import ptithcm.tttn.service.BrandService;
 
@@ -22,7 +21,7 @@ public class BrandController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ListEntityResponse> findAllBrand(@RequestHeader("Authorization") String jwt){
+    public ResponseEntity<ListEntityResponse> findAllBrand(){
         ListEntityResponse res = new ListEntityResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
         try{
@@ -38,6 +37,19 @@ public class BrandController {
             res.setMessage("erorr " + e.getMessage());
             res.setData(null);
         }
+        return new ResponseEntity<>(res,httpStatus);
+    }
+
+    @GetMapping("/find")
+    public ResponseEntity<EntityResponse> findCategoryByName(@RequestParam String name) throws Exception {
+        EntityResponse res = new EntityResponse();
+        Brand brand = brandService.findByBrandName(name);
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+        res.setData(brand);
+        res.setMessage("Success");
+        res.setStatus(HttpStatus.OK);
+        res.setCode(HttpStatus.OK.value());
+        httpStatus = HttpStatus.OK;
         return new ResponseEntity<>(res,httpStatus);
     }
 }

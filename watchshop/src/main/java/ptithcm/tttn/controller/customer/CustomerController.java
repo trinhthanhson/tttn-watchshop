@@ -19,7 +19,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @PutMapping("/{id}/update-info")
+    @PutMapping("/update-info")
     public ResponseEntity<ApiResponse> updateInfoByCustomer(@RequestHeader("Authorization") String jwt, @RequestBody Customer customer){
         ApiResponse res = new ApiResponse();
         HttpStatus httpStatus = HttpStatus.CONFLICT;

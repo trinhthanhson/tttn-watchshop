@@ -46,7 +46,7 @@ public class BrandServiceImpl implements BrandService {
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Brand saveBrand = new Brand();
-        Brand checkExist = findByBrandName(brand.getBrand_name());
+        Brand checkExist = brandRepo.findByBrandName(brand.getBrand_name());
         if(checkExist == null) {
             try {
                 create.setCreated_at(LocalDateTime.now());

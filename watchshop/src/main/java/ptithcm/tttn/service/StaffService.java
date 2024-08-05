@@ -10,4 +10,5 @@ public interface StaffService {
 
     boolean checkEmailExist(String email);
 
+    Staff updateProfileStaff(String jwt, Staff staff) throws Exception;
 }

@@ -33,6 +33,9 @@ public class Staff {
     private Date birthday;
 
     @Column
+    private String address;
+
+    @Column
     private String gender;
 
     @Column

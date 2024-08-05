@@ -43,6 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
                 find.setBirthday(customer.getBirthday());
                 find.setGender(customer.getGender());
                 find.setTax_id(customer.getTax_id());
+                find.setAddress(customer.getAddress());
                 find.setCitizen_id(customer.getCitizen_id());
                 return customerRepo.save(find);
             }catch (Exception e){

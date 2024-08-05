@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Category saveCategory = new Category();
-        Category checkExist = findCategoryByName(category_name);
+        Category checkExist = categoryRepo.findCategoryByName(category_name);
         if(checkExist == null){
             try {
                 create.setCreated_at(LocalDateTime.now());

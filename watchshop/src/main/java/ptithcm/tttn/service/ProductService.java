@@ -29,4 +29,5 @@ public interface ProductService {
     Product deleteProduct(String product_id, String jwt) throws Exception;
 
     List<ProductSaleRequest> getProductSales();
+
 }

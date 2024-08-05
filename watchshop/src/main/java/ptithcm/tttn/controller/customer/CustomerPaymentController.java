@@ -38,7 +38,32 @@ public class CustomerPaymentController {
             // Construct base URL
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
             // Generate VNPay URL
-            String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
+            String vnpayUrl = vnPayService.createOrder(orderTotal, orders.getOrder_id(), orderInfo, baseUrl);
+            res.setMessage(vnpayUrl);
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
+            return new ResponseEntity<>(res,res.getStatus());
+
+        }
+        return ResponseEntity.status(302).header("Location", null).build();
+
+        // Redirect the client to the VNPay URL
+    }
+
+    @PostMapping("/cart")
+    public ResponseEntity<ApiResponse> submitOrderCart(
+            @RequestBody OrderRequest orderRequest,
+            HttpServletRequest request, @RequestHeader("Authorization") String jwt) throws Exception {
+        // Extract details from the request body
+        ApiResponse res = new ApiResponse();
+        Orders orders = ordersService.orderPaymentBuyCart(orderRequest,jwt);
+        if(orders != null){
+            int orderTotal = orders.getTotal_price();
+            String orderInfo = orders.getAddress();
+            // Construct base URL
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            // Generate VNPay URL
+            String vnpayUrl = vnPayService.createOrder(orderTotal,orders.getOrder_id(), orderInfo, baseUrl);
             res.setMessage(vnpayUrl);
             res.setStatus(HttpStatus.OK);
             res.setCode(HttpStatus.OK.value());
@@ -51,16 +76,18 @@ public class CustomerPaymentController {
     }
 
     @GetMapping("/vnpay-payment")
-    public ResponseEntity<?> handlePaymentReturn(HttpServletRequest request) {
+    public ResponseEntity<?> handlePaymentReturn(HttpServletRequest request) throws Exception {
         int paymentStatus = vnPayService.orderReturn(request);
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String paymentTime = request.getParameter("vnp_PayDate");
         String transactionId = request.getParameter("vnp_TransactionNo");
         String totalPrice = request.getParameter("vnp_Amount");
-
+        String order_id = request.getParameter("vnp_TxnRef");
+        Long orderId = Long.parseLong(order_id);
         // Return a response based on payment status
         if (paymentStatus == 1) {
+            Orders orders = ordersService.updateStatusPayment("5",orderId);
             return ResponseEntity.ok().body(new PaymentResponse("Success", orderInfo, totalPrice, paymentTime, transactionId));
         } else {
             return ResponseEntity.status(400).body(new PaymentResponse("Failure", orderInfo, totalPrice, paymentTime, transactionId));
