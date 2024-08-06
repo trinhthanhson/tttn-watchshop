@@ -11,6 +11,7 @@ const CustomerProfile = () => {
   const user = useSelector((state) => state.user.user.data)
 
   const [isEditing, setIsEditing] = useState(false)
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [formData, setFormData] = useState({
     address: '',
     birthday: '',
@@ -21,12 +22,15 @@ const CustomerProfile = () => {
     last_name: '',
     tax_id: ''
   })
+  const [passwordData, setPasswordData] = useState({
+    password: '',
+    newPassword: '',
+    rePassword: ''
+  })
 
   useEffect(() => {
     dispatch(getUserProfileRequest())
   }, [dispatch])
-
-  console.log('user', user)
 
   useEffect(() => {
     if (user) {
@@ -53,6 +57,14 @@ const CustomerProfile = () => {
     })
   }
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target
+    setPasswordData({
+      ...passwordData,
+      [name]: value
+    })
+  }
+
   const handleSave = async () => {
     try {
       const response = await axios.put(
@@ -69,6 +81,34 @@ const CustomerProfile = () => {
       dispatch(getUserProfileRequest())
     } catch (error) {
       console.error('Error updating profile:', error)
+    }
+  }
+
+  const handleChangePassword = async () => {
+    if (passwordData.newPassword !== passwordData.rePassword) {
+      alert('Mật khẩu mới không khớp.')
+      return
+    }
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const response = await axios.put(
+        `http://localhost:9999/api/user/change-password`,
+        passwordData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      alert('Đổi mật khẩu thành công')
+      setIsChangingPassword(false)
+      setPasswordData({
+        password: '',
+        newPassword: '',
+        rePassword: ''
+      })
+    } catch (error) {
+      alert(error.response.data.message)
     }
   }
 
@@ -140,6 +180,47 @@ const CustomerProfile = () => {
               </button>
             )}
           </div>
+          {!isChangingPassword ? (
+            <button
+              className="items-center justify-center w-[200px] rounded-md text-primary border-primary border hover:bg-primary hover:text-white py-2.5 px-10 transition-colors ml-[115px]"
+              onClick={() => setIsChangingPassword(true)}
+            >
+              Đổi mật khẩu
+            </button>
+          ) : (
+            <div className="flex flex-col items-center">
+              <input
+                type="password"
+                name="password"
+                placeholder="Mật khẩu cũ"
+                value={passwordData.password}
+                onChange={handlePasswordChange}
+                className="mb-2 p-2 border border-grey rounded-lg w-[80%]"
+              />
+              <input
+                type="password"
+                name="newPassword"
+                placeholder="Mật khẩu mới"
+                value={passwordData.newPassword}
+                onChange={handlePasswordChange}
+                className="mb-2 p-2 border border-grey rounded-lg w-[80%]"
+              />
+              <input
+                type="password"
+                name="rePassword"
+                placeholder="Nhập lại mật khẩu mới"
+                value={passwordData.rePassword}
+                onChange={handlePasswordChange}
+                className="mb-2 p-2 border border-grey rounded-lg w-[80%]"
+              />
+              <button
+                className="items-center justify-center w-[200px] rounded-md text-primary border-primary border hover:bg-primary hover:text-white py-2.5 px-10 transition-colors"
+                onClick={handleChangePassword}
+              >
+                Xác nhận
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="mb-5 relative md:w-[70%] border-primary border-[1px] shadow-lg rounded-xl p-5">
@@ -147,156 +228,177 @@ const CustomerProfile = () => {
             {isEditing ? (
               <>
                 <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Họ</div>
-                    <div className="flex-1 text-right">
-                      <input
-                        type="text"
-                        name="first_name"
-                        value={formData.first_name}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="first_name" className="w-[30%]">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      id="first_name"
+                      name="first_name"
+                      value={formData.first_name}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Tên</div>
-                    <div className="flex-1 text-right">
-                      <input
-                        type="text"
-                        name="last_name"
-                        value={formData.last_name}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="last_name" className="w-[30%]">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      id="last_name"
+                      name="last_name"
+                      value={formData.last_name}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Email</div>
-                    <div className="flex-1 text-right">
-                      <input
-                        type="text"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="email" className="w-[30%]">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Phone</div>
-                    <div className="flex-1 text-right">
-                      <input
-                        type="text"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="phone" className="w-[30%]">
+                      Phone
+                    </label>
+                    <input
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Birthday</div>
-                    <div className="flex-1 text-center ml-10">
-                      <input
-                        type="date"
-                        name="birthday"
-                        value={formData.birthday}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="birthday" className="w-[30%]">
+                      Birthday
+                    </label>
+                    <input
+                      type="date"
+                      id="birthday"
+                      name="birthday"
+                      value={formData.birthday}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Address</div>
-                    <div className="flex-1 text-right">
-                      <input
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="address" className="w-[30%]">
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">CCCD</div>
-                    <div className="flex-1 text-right">
-                      <input
-                        type="text"
-                        name="citizen_id"
-                        value={formData.citizen_id}
-                        onChange={handleInputChange}
-                      />
-                    </div>
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="citizen_id" className="w-[30%]">
+                      Citizen ID
+                    </label>
+                    <input
+                      type="text"
+                      id="citizen_id"
+                      name="citizen_id"
+                      value={formData.citizen_id}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-center mt-5">
+                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium text-primary text-[14px] pb-1">
+                    <label htmlFor="tax_id" className="w-[30%]">
+                      Tax ID
+                    </label>
+                    <input
+                      type="text"
+                      id="tax_id"
+                      name="tax_id"
+                      value={formData.tax_id}
+                      onChange={handleInputChange}
+                      className="w-[70%] border-0 text-[14px] outline-none"
+                    />
                   </div>
                 </div>
               </>
             ) : (
-              <>
-                <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Họ và Tên</div>
-                    <div className="flex-1 text-right">
-                      {user?.first_name} {user?.last_name}
-                    </div>
-                  </div>
+              <div className="flex flex-col gap-4 mt-4">
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="first_name" className="w-[30%]">
+                    First Name
+                  </label>
+                  <span>{formData.first_name}</span>
                 </div>
-                <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Email</div>
-                    <div className="flex-1 text-right">{user?.email}</div>
-                  </div>
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="last_name" className="w-[30%]">
+                    Last Name
+                  </label>
+                  <span>{formData.last_name}</span>
                 </div>
-                <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Phone</div>
-                    <div className="flex-1 text-right">{user?.phone}</div>
-                  </div>
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="email" className="w-[30%]">
+                    Email
+                  </label>
+                  <span>{formData.email}</span>
                 </div>
-                <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Birthday</div>
-                    <div className="flex-1 text-right">
-                      {new Date(user?.birthday).toLocaleDateString()}
-                    </div>
-                  </div>
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="phone" className="w-[30%]">
+                    Phone
+                  </label>
+                  <span>{formData.phone}</span>
                 </div>
-                <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Address</div>
-                    <div className="flex-1 text-right">{user?.address}</div>
-                  </div>
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="birthday" className="w-[30%]">
+                    Birthday
+                  </label>
+                  <span>{formData.birthday}</span>
                 </div>
-                <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">CCCD</div>
-                    <div className="flex-1 text-right">{user?.citizen_id}</div>
-                  </div>
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="address" className="w-[30%]">
+                    Address
+                  </label>
+                  <span>{formData.address}</span>
                 </div>
-                <div className="flex justify-center mt-5">
-                  <div className="flex w-full justify-between border-b-[1px] font-RobotoMedium">
-                    <div className="flex-1 text-left">Ngày tham gia</div>
-                    <div className="flex-1 text-right">
-                      {new Date(user?.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="citizen_id" className="w-[30%]">
+                    Citizen ID
+                  </label>
+                  <span>{formData.citizen_id}</span>
                 </div>
-                <div className="flex justify-center items-center mt-5">
-                  <div className="flex w-full justify-between items-center border-b-[1px] font-RobotoMedium">
-                    <div className="text-left">Thành viên hạng</div>
-                    <div className="text-right">
-                      {getRank(user?.user?.points)}
-                    </div>
-                  </div>
+                <div className="flex justify-between border-b-[1px] border-primary pb-1">
+                  <label htmlFor="tax_id" className="w-[30%]">
+                    Tax ID
+                  </label>
+                  <span>{formData.tax_id}</span>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
