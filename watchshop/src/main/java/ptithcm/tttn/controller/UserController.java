@@ -4,12 +4,11 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.*;
 import ptithcm.tttn.repository.ProductRepo;
+import ptithcm.tttn.request.ChangePasswordRequest;
+import ptithcm.tttn.response.ApiResponse;
 import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
 import ptithcm.tttn.service.*;
@@ -89,6 +88,23 @@ public class UserController {
         }
 
         return new ResponseEntity<>(res,res.getStatus());
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<ApiResponse> changePasswordByUser(@RequestHeader("Authorization") String jwt,@RequestBody ChangePasswordRequest user){
+        ApiResponse res = new ApiResponse();
+        try{
+            User update = userService.changePassword(jwt, user);
+            res.setCode(HttpStatus.OK.value());
+            res.setMessage("success");
+            res.setStatus(HttpStatus.OK);
+        }catch (Exception e){
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setMessage("Error: " +e.getMessage());
+            res.setStatus(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+
     }
 
 
