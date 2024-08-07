@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.Review;
 import ptithcm.tttn.response.ApiResponse;
+import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
 import ptithcm.tttn.service.ReviewService;
 
@@ -49,6 +50,41 @@ public class CustomerReviewController {
             res.setMessage("error " + e.getMessage());
             res.setStatus(HttpStatus.CONFLICT);
             res.setCode(HttpStatus.CONFLICT.value());
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<EntityResponse> getAllReviewByOrderDetail(@PathVariable Long id, @RequestHeader("Authorization") String jwt){
+        EntityResponse res = new EntityResponse<>();
+        try{
+            Review allReviewProduct = reviewService.findByOrderDetail(id);
+            res.setMessage("success");
+            res.setCode(HttpStatus.OK.value());
+            res.setData(allReviewProduct);
+            res.setStatus(HttpStatus.OK);
+        }catch (Exception e){
+            res.setMessage("error " + e.getMessage());
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setData(null);
+            res.setStatus(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<EntityResponse> updateReviewByOrderDetail(@PathVariable Long id,@RequestHeader("Authorization") String jwt, @RequestBody Review review){
+        EntityResponse res = new EntityResponse<>();
+        try{
+            Review allReviewProduct = reviewService.updateReview(id,jwt,review);
+            res.setMessage("success");
+            res.setCode(HttpStatus.OK.value());
+            res.setData(allReviewProduct);
+            res.setStatus(HttpStatus.OK);
+        }catch (Exception e){
+            res.setMessage("error " + e.getMessage());
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setData(null);
+            res.setStatus(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(res,res.getStatus());
     }

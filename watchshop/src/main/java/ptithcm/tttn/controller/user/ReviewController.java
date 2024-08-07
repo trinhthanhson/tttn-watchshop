@@ -2,11 +2,9 @@ package ptithcm.tttn.controller.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.Review;
+import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
 import ptithcm.tttn.service.ReviewService;
 
@@ -39,4 +37,6 @@ public class ReviewController {
         }
         return new ResponseEntity<>(res,res.getStatus());
     }
+
+
 }

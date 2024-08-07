@@ -186,6 +186,7 @@ public class UserServiceImpl implements UserService
         User find = findUserByJwt(jwt);
         if(passwordEncoder.matches(rq.getPassword(), find.getPassword())) {
             find.setPassword(passwordEncoder.encode(rq.getNewPassword()));
+            find.setUpdated_at(LocalDateTime.now());
             return userRepo.save(find);
         }
         throw new Exception("Password is incorrect");

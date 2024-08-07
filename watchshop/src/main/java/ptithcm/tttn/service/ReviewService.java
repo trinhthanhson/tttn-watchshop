@@ -9,4 +9,6 @@ public interface ReviewService {
     Review findById(Long id) throws Exception;
     List<Review> findAllReviewByCustomer(String jwt) throws Exception;
     List<Review> findAllReviewByProduct(String product_id);
+    Review findByOrderDetail(Long id);
+    Review updateReview(Long id, String jwt, Review review) throws Exception;
 }

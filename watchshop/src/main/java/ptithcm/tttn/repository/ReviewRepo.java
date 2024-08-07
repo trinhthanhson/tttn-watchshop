@@ -15,4 +15,7 @@ public interface ReviewRepo extends JpaRepository<Review, Long> {
 
     @Query(value = "SELECT * FROM review WHERE product_id = ?1  ", nativeQuery = true)
     List<Review> findAllReviewByProduct(String product_id);
+
+    @Query(value = "SELECT * FROM review WHERE order_detail_id = ?1  ", nativeQuery = true)
+    Review findReviewByOrderDetail(Long order_detail_id);
 }

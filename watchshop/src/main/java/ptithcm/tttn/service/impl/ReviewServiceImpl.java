@@ -69,4 +69,22 @@ public class ReviewServiceImpl implements ReviewService {
     public List<Review> findAllReviewByProduct(String product_id) {
         return reviewRepo.findAllReviewByProduct(product_id);
     }
+
+    @Override
+    public Review findByOrderDetail(Long id) {
+        return reviewRepo.findReviewByOrderDetail(id);
+    }
+
+    @Override
+    @Transactional
+    public Review updateReview(Long id, String jwt, Review review) throws Exception {
+        Review find = findByOrderDetail(id);
+        User user = userService.findUserByJwt(jwt);
+        Customer customer = customerService.findByUserId(user.getUser_id());
+        find.setStar(review.getStar());
+        find.setContent(review.getContent());
+        find.setUpdated_by(customer.getCustomer_id());
+        find.setUpdated_at(LocalDateTime.now());
+        return reviewRepo.save(find);
+    }
 }

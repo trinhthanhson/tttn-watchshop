@@ -24,11 +24,13 @@ public class UserController {
     private final UserService userService;
     private final CustomerService customerService;
     private final StaffService staffService;
+    private final ReviewService reviewServicep;
 
-    public UserController(UserService userService, CustomerService customerService, StaffService staffService) {
+    public UserController(UserService userService, CustomerService customerService, StaffService staffService, ReviewService reviewServicep) {
         this.userService = userService;
         this.customerService = customerService;
         this.staffService = staffService;
+        this.reviewServicep = reviewServicep;
     }
 
     @GetMapping("/customer/all")
@@ -106,7 +108,4 @@ public class UserController {
         return new ResponseEntity<>(res,res.getStatus());
 
     }
-
-
-
 }
