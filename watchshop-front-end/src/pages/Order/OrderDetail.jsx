@@ -18,7 +18,7 @@ const OrderDetail = () => {
   const [ratingData, setRatingData] = useState({
     productId: '',
     order_detail_id: '',
-    text: '',
+    content: '',
     rating: 1
   })
 
@@ -28,6 +28,7 @@ const OrderDetail = () => {
       productId,
       order_detail_id
     }))
+    fetchCurrentReview(order_detail_id) // Fetch the current review
     setShowModal(true)
   }
 
@@ -45,24 +46,43 @@ const OrderDetail = () => {
       rating
     }))
   }
-  console.log(ratingData.order_detail_id)
   const handleSubmitRating = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.post(
-        'http://localhost:9999/api/customer/review/add',
-        {
-          order_detail_id: ratingData.order_detail_id,
-          product_id: ratingData.productId,
-          content: ratingData.text,
-          star: ratingData.rating
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+      let response
+
+      if (ratingData.isReviewed) {
+        // Update the existing review
+        response = await axios.put(
+          `http://localhost:9999/api/customer/review/${ratingData.order_detail_id}/update`,
+          {
+            content: ratingData.content,
+            star: ratingData.rating
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        }
-      )
+        )
+      } else {
+        // Add a new review
+        response = await axios.post(
+          'http://localhost:9999/api/customer/review/add',
+          {
+            order_detail_id: ratingData.order_detail_id,
+            product_id: ratingData.productId,
+            content: ratingData.text,
+            star: ratingData.rating
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+      }
+
       console.log('Rating submitted:', response.data)
       dispatch(getOrderDetailRequest(id))
       dispatch(getAllReviewCustomerRequest())
@@ -101,6 +121,40 @@ const OrderDetail = () => {
       console.error('Error change order status', error)
     }
   }
+
+  const fetchCurrentReview = async (order_detail_id) => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await axios.get(
+        `http://localhost:9999/api/customer/review/${order_detail_id}/detail`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      const review = response.data.data
+      console.log(review)
+      if (review) {
+        setRatingData({
+          ...ratingData,
+          content: review.content,
+          rating: review.star,
+          productId: review.product_id,
+          order_detail_id: review.order_detail_id,
+          isReviewed: true // Add a flag to indicate if already reviewed
+        })
+      } else {
+        setRatingData((prevData) => ({
+          ...prevData,
+          isReviewed: false // No review found
+        }))
+      }
+    } catch (error) {
+      console.error('Error fetching review:', error)
+    }
+  }
+
   const isReviewed = (orderDetailId) => {
     const reviewsArray = reviews.data // Access the reviews array correctly
     return (
@@ -243,7 +297,17 @@ const OrderDetail = () => {
                     {orderDetail?.status === '5' && (
                       <td>
                         {isReviewed(orderItem.order_detail_id) ? (
-                          <span>Đã đánh giá</span>
+                          <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md border border-gray-300"
+                            onClick={() =>
+                              handleRateButtonClick(
+                                orderItem.product.product_id,
+                                orderItem.order_detail_id
+                              )
+                            }
+                          >
+                            Xem / Chỉnh sửa
+                          </button>
                         ) : (
                           <button
                             className="bg-blue-500 text-white px-4 py-2 rounded-md border border-gray-300"
@@ -279,7 +343,7 @@ const OrderDetail = () => {
                 <div className="mb-4">
                   <input
                     type="text"
-                    name="productId"
+                    name="order_detail_id"
                     value={ratingData.order_detail_id}
                     readOnly
                     disabled
@@ -301,8 +365,8 @@ const OrderDetail = () => {
                 <div className="mb-4">
                   <label>Nội dung đánh giá:</label>
                   <textarea
-                    name="text"
-                    value={ratingData.text}
+                    name="content"
+                    value={ratingData.content}
                     onChange={handleInputChange}
                     className="border rounded p-2 w-full"
                     rows="4" // Optional: adjust the number of rows to your preference

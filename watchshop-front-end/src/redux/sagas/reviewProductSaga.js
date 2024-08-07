@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { GET_PRODUCT_DETAIL_REQUEST } from '../actions/types'
+import { GET_ALL_REVIEW_PRODUCT_REQUEST } from '../actions/types'
 
 import {
   getReviewProductSuccess,
@@ -31,5 +31,5 @@ function* getReviewProductSaga(action) {
 }
 
 export default function* reviewProductSaga() {
-  yield takeLatest(GET_PRODUCT_DETAIL_REQUEST, getReviewProductSaga)
+  yield takeLatest(GET_ALL_REVIEW_PRODUCT_REQUEST, getReviewProductSaga)
 }

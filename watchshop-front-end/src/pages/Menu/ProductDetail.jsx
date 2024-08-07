@@ -5,8 +5,10 @@ import { useEffect, useState } from 'react'
 import {
   addCartRequest,
   getAllProductsCustomerRequest,
-  getAllCouponsRequest
+  getAllCouponsRequest,
+  getReviewProductRequest
 } from '../../redux/actions/actions'
+import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa'
 
 const ProductDetail = () => {
   const { id } = useParams()
@@ -19,7 +21,8 @@ const ProductDetail = () => {
     (state) => state.productsCustomer.productsCustomer.data
   )
   const coupons = useSelector((state) => state.coupons.coupons.data)
-
+  const reviews = useSelector((state) => state.reviewProduct?.reviews)
+  console.log(reviews)
   const selectedProduct = productsCustomer
     ? productsCustomer.find((item) => item.product_id === id)
     : null
@@ -30,7 +33,8 @@ const ProductDetail = () => {
   useEffect(() => {
     dispatch(getAllProductsCustomerRequest())
     dispatch(getAllCouponsRequest())
-  }, [dispatch])
+    dispatch(getReviewProductRequest(id)) // Thêm dòng này
+  }, [dispatch, id])
 
   useEffect(() => {
     if (selectedProduct && Array.isArray(coupons) && coupons.length > 0) {
@@ -97,7 +101,35 @@ const ProductDetail = () => {
       }
     })
   }
+  const calculateAverageRating = () => {
+    if (reviews?.data.length === 0) return 0
+    const totalRating = reviews?.data.reduce(
+      (sum, review) => sum + review.star,
+      0
+    )
+    return (totalRating / reviews?.data.length).toFixed(1)
+  }
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating)
+    const halfStar = rating % 1 !== 0
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0)
 
+    return (
+      <>
+        {Array(fullStars)
+          .fill()
+          .map((_, index) => (
+            <FaStar key={`full-${index}`} className="text-primary" />
+          ))}
+        {halfStar && <FaStarHalfAlt className="text-primary" />}
+        {Array(emptyStars)
+          .fill()
+          .map((_, index) => (
+            <FaRegStar key={`empty-${index}`} className="text-primary" />
+          ))}
+      </>
+    )
+  }
   return (
     <div className="pt-[120px]">
       <section className="pt-[0] pb-[30px] w-full">
@@ -244,7 +276,38 @@ const ProductDetail = () => {
           </div>
         </div>
       </section>
+      <section className="pt-[0] pb-[30px] w-full">
+        <div className="border border-grey mx-auto flex flex-wrap rounded-lg shadow-xl bg-white items-center relative max-w-[80%]">
+          <div className="w-full">
+            <div className="p-5">
+              <h2 className="text-primary text-2xl mb-5">
+                Reviews ({calculateAverageRating()} / 5)
+              </h2>
 
+              {reviews?.data?.length > 0 ? (
+                reviews?.data.slice(0, 10).map((review, index) => (
+                  <div
+                    key={index}
+                    className="mb-5 flex justify-between items-center border-b border-grey pb-3"
+                  >
+                    <p className="text-main text-lg font-medium">
+                      {review.review_created.first_name +
+                        ' ' +
+                        review.review_created.last_name}
+                    </p>
+                    <p className="text-sub text-md">{review.content}</p>
+                    <div className="text-primary text-sm flex items-center">
+                      {renderStars(review.star)}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-main text-lg">No reviews yet.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
       <section className="pt-[30px] pb-[50px] bg-gray-100 w-full">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-primary mb-6">
