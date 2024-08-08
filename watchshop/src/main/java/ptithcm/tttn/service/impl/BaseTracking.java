@@ -1,7 +1,7 @@
-package com.trackingmore.service.impl;
+package ptithcm.tttn.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trackingmore.request.RequestHelper;
+import ptithcm.tttn.request.RequestHelper;
 
 public class BaseTracking {
     protected RequestHelper requestHelper;

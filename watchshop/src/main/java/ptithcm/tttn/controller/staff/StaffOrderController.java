@@ -9,6 +9,7 @@ import ptithcm.tttn.response.ListEntityResponse;
 import ptithcm.tttn.response.ValueResponse;
 import ptithcm.tttn.service.OrdersService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -71,6 +72,25 @@ public class StaffOrderController {
             res.setMessage("success");
         }catch (Exception e){
             res.setValue(null);
+            res.setStatus(HttpStatus.CONFLICT);
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setMessage("error " + e.getMessage());
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+
+    @GetMapping("/all/shipper")
+    public ResponseEntity<ListEntityResponse> getAllOrderByStaffShipper(@RequestHeader("Authorization") String jwt){
+        ListEntityResponse res = new ListEntityResponse<>();
+        try{
+            List<Orders> getAllOrder = ordersService.allOrderReceiveByStaff(jwt);
+
+            res.setData(getAllOrder);
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
+            res.setMessage("success");
+        }catch (Exception e){
+            res.setData(null);
             res.setStatus(HttpStatus.CONFLICT);
             res.setCode(HttpStatus.CONFLICT.value());
             res.setMessage("error " + e.getMessage());

@@ -1,4 +1,4 @@
-package com.trackingmore.model.tracking;
+package ptithcm.tttn.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -62,5 +62,7 @@ public class UpdateTrackingParams {
 
     @JsonProperty("note")
     private String note;
+
+
 
 }

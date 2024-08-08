@@ -1,4 +1,4 @@
-package com.trackingmore.model.tracking;
+package ptithcm.tttn.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -37,5 +37,9 @@ public class TrackInfo {
 
     @JsonProperty("raw_status")
     private String rawStatus;
+
+    @JsonProperty("address")
+    private String address;
+
 
 }

@@ -34,4 +34,6 @@ public interface OrdersService {
 
     Orders orderPaymentBuyCart(OrderRequest rq, String jwt) throws Exception;
 
+    List<Orders> allOrderReceiveByStaff(String jwt) throws Exception;
+
 }

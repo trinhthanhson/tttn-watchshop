@@ -1,23 +1,20 @@
-package com.trackingmore;
+package ptithcm.tttn.bean;
 
-import com.trackingmore.exception.ErrorEnums;
-import com.trackingmore.exception.TrackingMoreException;
-import com.trackingmore.service.AirWaybills;
-import com.trackingmore.service.Couriers;
-import com.trackingmore.service.Trackings;
-import com.trackingmore.service.impl.AirWaybillImpl;
-import com.trackingmore.service.impl.CourierImpl;
-import com.trackingmore.service.impl.TrackingImpl;
+
+import ptithcm.tttn.exception.ErrorEnums;
+import ptithcm.tttn.exception.TrackingMoreException;
+import ptithcm.tttn.service.CouriersService;
+import ptithcm.tttn.service.TrackingService;
+import ptithcm.tttn.service.impl.CourierImpl;
+import ptithcm.tttn.service.impl.TrackingImpl;
 
 public class TrackingMore {
 
-    public static String apiKey;
+    public static String apiKey = "7zlv6djs-5hhh-euqh-e40g-mdbvp3bt4ogc";
 
-    public Couriers couriers;
+    public CouriersService couriers;
 
-    public AirWaybills airWaybills;
-
-    public Trackings trackings;
+    public TrackingService trackings;
 
     public TrackingMore(String apiKey) throws TrackingMoreException {
          if(apiKey == ""){
@@ -25,7 +22,6 @@ public class TrackingMore {
          }
          this.apiKey = apiKey;
          this.couriers = new CourierImpl();
-         this.airWaybills = new AirWaybillImpl();
          this.trackings = new TrackingImpl();
     }
 }

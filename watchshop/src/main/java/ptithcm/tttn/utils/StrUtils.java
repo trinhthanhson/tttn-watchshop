@@ -1,4 +1,4 @@
-package com.trackingmore.utils;
+package ptithcm.tttn.utils;
 
 public class StrUtils {
     public static boolean isEmpty(Object obj) {

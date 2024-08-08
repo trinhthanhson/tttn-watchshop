@@ -1,4 +1,4 @@
-package com.trackingmore.model.tracking;
+package ptithcm.tttn.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,6 +39,7 @@ public class DestinationInfo {
 
     @JsonProperty("arrived_destination_date")
     private String arrivedDestinationDate;
+
 
     @JsonProperty("trackinfo")
     private List<TrackInfo> trackinfo;

@@ -1,4 +1,4 @@
-package com.trackingmore.exception;
+package ptithcm.tttn.exception;
 
 public class TrackingMoreException extends  Exception{
 

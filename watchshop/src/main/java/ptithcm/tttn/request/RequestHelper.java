@@ -1,15 +1,13 @@
-package com.trackingmore.request;
+package ptithcm.tttn.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trackingmore.TrackingMore;
-import com.trackingmore.model.TrackingMoreResponse;
-import com.trackingmore.model.courier.Courier;
-import com.trackingmore.utils.JsonUtils;
-import com.trackingmore.utils.StrUtils;
+import ptithcm.tttn.bean.TrackingMore;
+import ptithcm.tttn.utils.JsonUtils;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;

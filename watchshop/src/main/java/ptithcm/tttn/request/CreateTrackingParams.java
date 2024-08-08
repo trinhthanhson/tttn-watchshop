@@ -1,4 +1,4 @@
-package com.trackingmore.model.tracking;
+package ptithcm.tttn.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -51,6 +51,7 @@ public class CreateTrackingParams {
     @JsonProperty("tracking_origin_country")
     private String trackingOriginCountry;
 
+
     @JsonProperty("tracking_destination_country")
     private String trackingDestinationCountry;
 
@@ -69,4 +70,9 @@ public class CreateTrackingParams {
     @JsonProperty("auto_correct")
     private String autoCorrect;
 
+    @JsonProperty("label")
+    private String label;
+
+    @JsonProperty("origin_info")
+    private String origin_info;
 }

@@ -1,4 +1,4 @@
-package com.trackingmore.exception;
+package ptithcm.tttn.exception;
 
 public class ErrorEnums {
     public static final String ErrEmptyAPIKey = "API Key is missing";

@@ -1,4 +1,4 @@
-package com.trackingmore.model;
+package ptithcm.tttn.response;
 
 import lombok.Data;
 

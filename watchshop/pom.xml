@@ -156,7 +156,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+
     </dependencies>
+
+    <developers>
+        <developer>
+            <name>trackingmore</name>
+            <email>manage@trackingmore.org</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:trackingmore-api/trackingmore-sdk-java.git</connection>
+        <developerConnection>scm:git:git@github.com:trackingmore-api/trackingmore-sdk-java.git</developerConnection>
+        <url>git@github.com:trackingmore-api/trackingmore-sdk-java.git</url>
+    </scm>
     <build>
         <plugins>
             <plugin>

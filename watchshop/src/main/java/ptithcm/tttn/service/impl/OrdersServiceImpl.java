@@ -14,10 +14,7 @@ import ptithcm.tttn.service.*;
 import javax.transaction.Transactional;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -291,6 +288,20 @@ private final ProductRepo productRepo;
         cartDetailService.deleteCartDetail(cart.getCart_id());
         cartService.autoUpdateCart(cart.getCart_id());
         return createdOrders;
+    }
+
+    @Override
+    public List<Orders> allOrderReceiveByStaff(String jwt) throws Exception {
+        User user = userService.findUserByJwt(jwt);
+        Staff staff = staffService.findByUserId(user.getUser_id());
+        List<Orders> all = findAll();
+        List<Orders> allReceive = new ArrayList<>();
+        for(Orders od : all){
+            if(Objects.equals(od.getUpdated_staff(), staff.getStaff_id())){
+                allReceive.add(od);
+            }
+        }
+        return allReceive;
     }
 
     private ProductSaleRequest mapToProductSaleRequest(Object[] result) {
