@@ -97,7 +97,7 @@ const Checkout = () => {
       setError('Please enter a shipping address.')
       return
     }
-    //setLoading(true)
+    setLoading(true)
     setError(null)
     setSuccess(null)
     const total_price = cart?.data?.total_price + 20000
@@ -137,7 +137,7 @@ const Checkout = () => {
       setError(error.message)
       console.log(success)
     } finally {
-      //setLoading(false)
+      setLoading(false)
     }
   }
   const handlePayNow = async () => {

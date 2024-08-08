@@ -18,6 +18,9 @@ const UpdateProduct = () => {
   )
   const categories = useSelector((state) => state.categories.categories)
   const brands = useSelector((state) => state.brands.brands)
+  const [loading, setLoading] = useState(false) // State to manage loading
+  const [errorMessage, setErrorMessage] = useState('') // State for error messages
+
   const [formData, setFormData] = useState({
     data: {
       product_name: '',
@@ -115,7 +118,14 @@ const UpdateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoading(true) // Start loading
+    setErrorMessage('') // Clear any existing error message
 
+    if (!formData.data.file && !formData.data.image) {
+      setErrorMessage('Vui lòng chọn hình ảnh.')
+      setLoading(false) // Stop loading
+      return
+    }
     let imageUrl = formData.data.image // Giữ URL hình ảnh hiện tại nếu không có hình ảnh mới
 
     if (formData.data.file) {
@@ -124,7 +134,8 @@ const UpdateProduct = () => {
         imageUrl = await uploadImageToFirebase(formData.data.file)
       } catch (error) {
         console.error('Error uploading image:', error)
-        // Xử lý lỗi với thông báo thân thiện với người dùng (nếu cần)
+        setErrorMessage('Đã xảy ra lỗi khi tải lên hình ảnh.')
+        setLoading(false) // Stop loading
         return
       }
     }
@@ -144,7 +155,7 @@ const UpdateProduct = () => {
 
   useEffect(() => {
     if (message.code === 200) {
-      console.log('Thành công')
+      setLoading(false) // Stop loading
       navigate('/manager/products')
     }
   }, [message, navigate])
@@ -158,6 +169,14 @@ const UpdateProduct = () => {
           </h2>
         </div>
         <div className="w-[50%] p-2 rounded-md shadow-md bg-white text-primary mt-5">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70">
+              <div className="loader"></div> {/* Add your loader CSS here */}
+            </div>
+          )}
+          {errorMessage && (
+            <div className="text-red-500 text-center mt-4">{errorMessage}</div>
+          )}
           <form
             className="flex flex-col p-5 text-primary gap-5"
             onSubmit={handleSubmit}
@@ -441,6 +460,7 @@ const UpdateProduct = () => {
               <button
                 className="w-[40%] bg-primary text-white rounded-md shadow-md py-3 uppercase font-RobotoMedium"
                 type="submit"
+                disabled={loading} // Disable button when loading
               >
                 Cập Nhật
               </button>

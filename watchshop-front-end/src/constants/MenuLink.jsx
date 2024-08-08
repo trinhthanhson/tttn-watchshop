@@ -54,6 +54,20 @@ export const DASHBOARD_SIDEBAR_TOP_LINKS = [
   }
 ]
 
+export const DASHBOARD_SIDEBAR_TOP_LINKS_SHIPPER = [
+  {
+    key: 'orders',
+    label: 'Orders',
+    path: '/manager/shipper',
+    icon: <HiOutlineShoppingCart />
+  },
+  {
+    key: 'ordership',
+    label: 'Order received ',
+    path: '/manager/shipper/receive',
+    icon: <HiOutlineShoppingCart />
+  }
+]
 export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [
   {
     key: 'settings',

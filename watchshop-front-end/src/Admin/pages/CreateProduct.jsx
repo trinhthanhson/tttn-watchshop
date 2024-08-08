@@ -13,6 +13,8 @@ const CreateProduct = () => {
   const message = useSelector((state) => state.addProduct)
   const categories = useSelector((state) => state.categories.categories)
   const brands = useSelector((state) => state.brands.brands)
+  const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false) // Loading state
 
   const [formData, setFormData] = useState({
     file: '',
@@ -55,9 +57,29 @@ const CreateProduct = () => {
       })
     }
   }
+  const validate = () => {
+    const errors = {}
+    const { data, file } = formData
 
+    if (!data.product_name) errors.product_name = 'Vui lòng nhập têm sản phẩm'
+    if (!data.price || data.price <= 0) errors.price = 'Giá > 0'
+    if (!file) errors.file = 'Vui lòng nhập hình ảnh'
+    if (!data.category_name)
+      errors.category_name = 'Vui lòng chọn loại sản phẩm'
+    if (!data.brand_name) errors.brand_name = 'Vui lòng chọn hãng sản phẩm'
+
+    // Add more validations as needed
+
+    return errors
+  }
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const validationErrors = validate()
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+    setLoading(true) // Set loading to true when starting submission
 
     let imageUrl = '' // Giữ URL hình ảnh hiện tại nếu không có hình ảnh mới
 
@@ -66,8 +88,7 @@ const CreateProduct = () => {
         // Tải lên hình ảnh mới vào Firebase và lấy URL
         imageUrl = await uploadImageToFirebase(formData.file)
       } catch (error) {
-        console.error('Error uploading image:', error)
-        // Xử lý lỗi với thông báo thân thiện với người dùng (nếu cần)
+        setLoading(false) // Set loading to false if there's an error
         return
       }
     }
@@ -110,6 +131,7 @@ const CreateProduct = () => {
           category_name: ''
         }
       })
+      setLoading(false)
       navigate('/manager/products')
     }
   }, [message, navigate])
@@ -168,6 +190,7 @@ const CreateProduct = () => {
                 className="w-full h-[280px] object-contain"
               />
             )}
+            {errors.file && <p className="text-red text-sm">{errors.file}</p>}
             <div className="flex justify-between">
               <div className="flex-1">
                 <label className="text-[14px] block font-bold">
@@ -179,6 +202,9 @@ const CreateProduct = () => {
                   onChange={handleChange}
                   style={{ marginTop: '20px' }}
                 />
+                {errors.product_name && (
+                  <p className="text-red text-sm">{errors.product_name}</p>
+                )}
               </div>
               <div className="flex-1">
                 <label className="text-[14px] block font-bold">Price:</label>
@@ -189,6 +215,9 @@ const CreateProduct = () => {
                   onChange={handleChange}
                   style={{ marginTop: '20px' }}
                 />
+                {errors.price && (
+                  <p className="text-red text-sm">{errors.price}</p>
+                )}
               </div>
             </div>
             <div className="flex justify-between">
@@ -338,6 +367,9 @@ const CreateProduct = () => {
                       </option>
                     ))}
                 </select>
+                {errors.category_name && (
+                  <p className="text-red text-sm">{errors.category_name}</p>
+                )}
               </div>
               <div className="flex-1">
                 <label className="text-[14px] block mb-5">Category:</label>
@@ -354,6 +386,9 @@ const CreateProduct = () => {
                       </option>
                     ))}
                 </select>
+                {errors.brand_name && (
+                  <p className="text-red text-sm">{errors.brand_name}</p>
+                )}
               </div>
             </div>
             <div className="flex-1">
@@ -372,8 +407,9 @@ const CreateProduct = () => {
               <button
                 className="w-[40%] bg-primary text-white rounded-md shadow-md py-3 uppercase font-RobotoMedium"
                 type="submit"
+                disabled={loading}
               >
-                Thêm sản phẩm
+                {loading ? 'Đang thêm...' : 'Thêm sản phẩm'}
               </button>
             </div>
           </form>

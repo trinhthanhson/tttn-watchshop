@@ -2,12 +2,12 @@ import PropTypes from 'prop-types'
 import { Stepper, Step, StepLabel } from '@mui/material'
 
 const steps = [
-  'Pending confirmation',
-  'Confirmed',
-  'Shipping',
-  'Pending payment',
-  'Paid',
-  'Delivered'
+  'Chờ xác nhận',
+  'Đã xác nhận',
+  'Đang vận chuyển',
+  'Chờ thanh toán',
+  'Đã thanh toán',
+  'Đã giao'
 ]
 
 const OrderTracker = ({ activeStep }) => {

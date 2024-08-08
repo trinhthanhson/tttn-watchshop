@@ -42,11 +42,15 @@ import AdminUserStaffDetail from '../Admin/pages/AdminUserStaffDetail'
 import AllCouponDetail from '../Admin/pages/AllCouponDetail'
 import { decryptData } from '../cryptoUtils/cryptoUtils'
 import ProductByBrand from '../pages/Menu/ProductByBrand'
+import OrderAcceptShipper from '../Admin/pages/OrderAcceptShipper'
+import OrderShipperDetail from '../Admin/pages/OrderShipperDetail'
+import OrderReceiveShipper from '../Admin/pages/OrderReceiveShipper'
 
 const Routers = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [role, setRole] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     // Lấy role từ localStorage và giải mã
@@ -55,26 +59,32 @@ const Routers = () => {
       try {
         const decryptedRole = decryptData(roleName)
         setRole(decryptedRole)
+        if (decryptedRole === 'MANAGER' || decryptedRole === 'STAFF') {
+          setIsLoggedIn(true)
+        }
       } catch (error) {
         console.error('Error decrypting role:', error)
       }
-    } else {
-      setRole('CUSTOMER') // Nếu không có role, mặc định là customer
     }
   }, [])
 
   useEffect(() => {
-    console.log('role ' + role)
-    if (role === 'MANAGER' || role === 'STAFF') {
-      if (location.pathname === '/buynow' || location.pathname === '/') {
-        navigate('/manager')
-      }
-    } else if (role === 'CUSTOMER') {
-      if (location.pathname.startsWith('/manager')) {
-        navigate('/home')
+    if (isLoggedIn) {
+      if (role === 'MANAGER' || role === 'STAFF') {
+        // Redirect to /manager if the user is a manager or staff and is on /buynow or /
+        if (location.pathname === '/buynow' || location.pathname === '/') {
+          navigate('/manager')
+        }
+      } else if (role === 'CUSTOMER') {
+        // Redirect to /home if the user is a customer and is on any /manager route
+        if (location.pathname.startsWith('/manager')) {
+          navigate('/home')
+        }
       }
     }
-  }, [role, location.pathname, navigate])
+  }, [role, location.pathname, navigate, isLoggedIn])
+
+  // Your component code here
 
   return (
     <Routes>
@@ -105,6 +115,13 @@ const Routers = () => {
       <Route path="/orders-history" element={<OrdersHistory />} />
       <Route path="/order/:id" element={<OrderDetail />} />
       <Route path="/checkout" element={<Checkout />} />
+      <Route path="/manager/shipper" element={<OrderAcceptShipper />} />
+      <Route path="/manager/shipper/:id" element={<OrderShipperDetail />} />
+
+      <Route
+        path="/manager/shipper/receive"
+        element={<OrderReceiveShipper />}
+      />
 
       <Route path="/manager" element={<Layout />}>
         <Route index element={<Dashboard />} />

@@ -280,10 +280,15 @@ const ProductDetail = () => {
         <div className="border border-grey mx-auto flex flex-wrap rounded-lg shadow-xl bg-white items-center relative max-w-[80%]">
           <div className="w-full">
             <div className="p-5">
-              <h2 className="text-primary text-2xl mb-5">
-                Reviews ({calculateAverageRating()} / 5)
-              </h2>
-
+              <div className="flex items-center mb-5">
+                <h2 className="text-primary text-2xl flex items-center">
+                  Reviews ({calculateAverageRating()} / 5)
+                </h2>
+                <FaStar
+                  className="ml-1 text-yellow-500"
+                  style={{ marginTop: '0.1em' }}
+                />
+              </div>
               {reviews?.data?.length > 0 ? (
                 reviews?.data.slice(0, 10).map((review, index) => (
                   <div

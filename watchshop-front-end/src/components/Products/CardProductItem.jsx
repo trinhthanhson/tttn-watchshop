@@ -20,12 +20,12 @@ const CardProductItem = ({ product }) => {
     image,
     category,
     brand,
-    status
+    status,
+    quantity
   } = product
 
   const price = priceUpdateDetails[0]?.price_new || 0
   const formattedPrice = price.toLocaleString('en')
-
   useEffect(() => {
     dispatch(getAllCouponsRequest())
   }, [dispatch])
@@ -84,6 +84,7 @@ const CardProductItem = ({ product }) => {
       }
     })
   }
+
   return (
     <div className="bg-white rounded-xl shadow-lg mb-10 relative justify-between col-span-1 w-full md:w-[48%] xl:w-[32%] hover:scale-105 transition duration-500 ease-in-out cursor-pointer">
       <div>
@@ -116,15 +117,15 @@ const CardProductItem = ({ product }) => {
           </h3>
           <hr className="mt-5" />
           <div className="flex py-3 relative">
-            {status === 'Active' ? (
+            {status === 'Active' && quantity > 0 ? (
               <div className="w-1/2 px-5">
                 <p className="text-base font-RobotoMedium 3xl:text-lg text-primary">
-                  Có Mặt Tại
+                  Sản phẩm còn hàng
                 </p>
                 <div className="">
                   <span className="relative">
                     <p className="text-base font-RobotoSemibold 3xl:text-lg text-main">
-                      Tất cả chi nhánh
+                      Mua sắm ngay
                     </p>
                   </span>
                 </div>
@@ -134,8 +135,8 @@ const CardProductItem = ({ product }) => {
                 <p className="text-base font-RobotoMedium 3xl:text-lg text-primary"></p>
                 <div className="">
                   <span className="relative">
-                    <p className="text-center text-base font-RobotoSemibold 3xl:text-lg text-main">
-                      Ngừng Kinh Doanh
+                    <p className="text-center text-base font-RobotoSemibold 3xl:text-lg text-red-500">
+                      Sản phẩm hết hàng
                     </p>
                   </span>
                 </div>
@@ -162,23 +163,47 @@ const CardProductItem = ({ product }) => {
           <>
             <hr className="" />
             <div className="w-full flex items-center justify-center relative gap-5 transition-opacity duration-300 ease-in-out">
-              <div className="w-full m-5">
-                <button
-                  className="font-RobotoMedium w-full bg-white text-primary border-primary hover:bg-primary border-[1px]  p-2 rounded-md shadow-md  hover:text-white transition duration-300 ease-in-out"
-                  onClick={() => handleAddToCart()}
-                >
-                  Thêm Vào Giỏ
-                </button>
-              </div>
+              {quantity > 0 ? (
+                <>
+                  <div className="w-full m-5">
+                    <button
+                      className="font-RobotoMedium w-full bg-white text-primary border-primary hover:bg-primary border-[1px] p-2 rounded-md shadow-md hover:text-white transition duration-300 ease-in-out"
+                      onClick={() => handleAddToCart()}
+                    >
+                      Thêm Vào Giỏ
+                    </button>
+                  </div>
 
-              <div className="w-full m-5">
-                <button
-                  onClick={handleBuyNow}
-                  className="font-RobotoMedium w-full bg-white text-main border-main hover:bg-main border-[1px] p-2 rounded-md shadow-md  hover:text-white transition duration-300 ease-in-out"
-                >
-                  Mua Ngay
-                </button>
-              </div>
+                  <div className="w-full m-5">
+                    <button
+                      onClick={handleBuyNow}
+                      className="font-RobotoMedium w-full bg-white text-main border-main hover:bg-main border-[1px] p-2 rounded-md shadow-md hover:text-white transition duration-300 ease-in-out"
+                    >
+                      Mua Ngay
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full m-5">
+                    <button
+                      className="font-RobotoMedium w-full bg-gray-200 text-gray-500 border-gray-300 p-2 rounded-md shadow-md cursor-not-allowed"
+                      disabled
+                    >
+                      Thêm Vào Giỏ
+                    </button>
+                  </div>
+
+                  <div className="w-full m-5">
+                    <button
+                      className="font-RobotoMedium w-full bg-gray-200 text-gray-500 border-gray-300 p-2 rounded-md shadow-md cursor-not-allowed"
+                      disabled
+                    >
+                      Mua Ngay
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </>
         </div>
