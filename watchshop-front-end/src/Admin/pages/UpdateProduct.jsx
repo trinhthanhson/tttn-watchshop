@@ -99,7 +99,7 @@ const UpdateProduct = () => {
         }
       })
     } else if (e.target.name === 'status') {
-      const newStatus = e.target.checked ? 'Active' : 'Unactive'
+      const newStatus = e.target.checked ? 'Active' : 'Inactive'
       setFormData({
         data: {
           ...formData.data,

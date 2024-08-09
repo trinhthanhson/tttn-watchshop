@@ -120,8 +120,12 @@ public class BrandServiceImpl implements BrandService {
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Brand find = findBrandById(id);
-        if(find != null){
+        if(find.getStatus().equals("Active")){
             find.setStatus("Inactive");
+            find.setUpdated_by(staff.getStaff_id());
+            return brandRepo.save(find);
+        }else if(find.getStatus().equals("Inactive")){
+            find.setStatus("Active");
             find.setUpdated_by(staff.getStaff_id());
             return brandRepo.save(find);
         }

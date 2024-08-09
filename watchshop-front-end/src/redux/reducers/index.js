@@ -21,6 +21,7 @@ import staffsReducer from './staffsReducer'
 import reviewCustomerReducer from './reviewCustomerReducer'
 import couponDetailReducer from './coupondetailReducer'
 import reviewProductReducer from './reviewProductReducer'
+import roleReducer from './roleReducer'
 
 const rootReducer = combineReducers({
   news: newsReducer,
@@ -44,7 +45,8 @@ const rootReducer = combineReducers({
   coupondetail: couponDetailReducer,
   addCoupon: addCouponReducer,
   addCart: addCartReducer,
-  reviewProduct: reviewProductReducer
+  reviewProduct: reviewProductReducer,
+  roles: roleReducer
 })
 
 export default rootReducer

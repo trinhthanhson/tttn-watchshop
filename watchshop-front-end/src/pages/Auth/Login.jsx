@@ -20,7 +20,7 @@ const Login = () => {
   const [message, setMessage] = useState('')
   const userRole = user?.user?.role.role_name
   const [isLoggingIn, setIsLoggingIn] = useState(false)
-
+  const [loading, setLoading] = useState(false)
   const handleGoHome = () => {
     navigate('/')
   }
@@ -63,7 +63,6 @@ const Login = () => {
 
           // Dispatch action to fetch user profile
           await dispatch(getUserProfileRequest())
-
           console.log('Đăng nhập thành công')
         } else {
           setMessage(
@@ -85,11 +84,12 @@ const Login = () => {
   useEffect(() => {
     if (userRole) {
       localStorage.setItem('role_name', encryptData(userRole))
-
       if (userRole === 'MANAGER' || userRole === 'STAFF') {
         navigate('/manager')
       } else if (userRole === 'CUSTOMER') {
         navigate('/home')
+      } else if (userRole === 'SHIPPER') {
+        navigate('/manager/shipper')
       }
     }
   }, [userRole, navigate])
@@ -99,6 +99,7 @@ const Login = () => {
 
   const handleCloseForgotPassword = () => {
     setShowForgotPassword(false)
+    setMessage('')
   }
 
   const handleEmailChange = (event) => {
@@ -106,13 +107,17 @@ const Login = () => {
   }
 
   const handleForgotPasswordSubmit = async () => {
+    if (!email) {
+      setMessage('Vui lòng nhập email')
+    }
+    setLoading(true)
     try {
       const response = await axios.post(
         'http://localhost:9999/api/auth/forgot-password',
         { email }
       )
-      const { code } = response.data
-      if (code === 200) {
+      const { code, message } = response.data
+      if (code === 200 && message === 'success') {
         setMessage(
           'The password reset password has been sent to your email. Please go to your email to get the password to log in'
         )
@@ -122,6 +127,8 @@ const Login = () => {
     } catch (error) {
       console.error('Error:', error)
       setMessage('Failed to send reset password. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -170,8 +177,9 @@ const Login = () => {
                     className="uppercase"
                     type="button"
                     onClick={handleForgotPasswordSubmit}
+                    disabled={loading}
                   >
-                    Send Reset Link
+                    {loading ? 'Đang gửi...' : 'Gửi'}
                   </button>
                 </div>
                 {message && <p className="text-white mt-4">{message}</p>}

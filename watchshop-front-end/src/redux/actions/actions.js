@@ -68,7 +68,10 @@ import {
   GET_ALL_REVIEW_CUSTOMER_FAILURE,
   GET_ALL_REVIEW_PRODUCT_REQUEST,
   GET_ALL_REVIEW_PRODUCT_SUCCESS,
-  GET_ALL_REVIEW_PRODUCT_FAILURE
+  GET_ALL_REVIEW_PRODUCT_FAILURE,
+  GET_ALL_ROLE_REQUEST,
+  GET_ALL_ROLE_SUCCESS,
+  GET_ALL_ROLE_FAILURE,
 } from './types'
 
 export const addCouponRequest = (formData) => ({
@@ -291,6 +294,20 @@ export const getAllProductsSuccess = (products) => ({
 
 export const getAllProductsFailure = (error) => ({
   type: GET_ALL_PRODUCTS_FAILURE,
+  payload: error
+})
+
+export const getAllRoleRequest = () => ({
+  type: GET_ALL_ROLE_REQUEST
+})
+
+export const getAllRoleSuccess = (roles) => ({
+  type: GET_ALL_ROLE_SUCCESS,
+  payload: roles
+})
+
+export const getAllRoleFailure = (error) => ({
+  type: GET_ALL_ROLE_FAILURE,
   payload: error
 })
 

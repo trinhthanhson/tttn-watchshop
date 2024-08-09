@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.entity.Role;
 import ptithcm.tttn.repository.RoleRepo;
+import ptithcm.tttn.response.ListEntityResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +31,12 @@ public class ManagerRoleController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Role>> findAllRole(){
-        return new ResponseEntity<>(roleRepo.findAll(),HttpStatus.OK);
+    public ResponseEntity<ListEntityResponse> findAllRole(@RequestHeader("Authorization") String jwt){
+        ListEntityResponse res = new ListEntityResponse();
+        res.setData(roleRepo.findAll());
+        res.setStatus(HttpStatus.OK);
+        res.setCode(HttpStatus.OK.value());
+        res.setMessage("success");
+        return new ResponseEntity<>(res,HttpStatus.OK);
     }
 }

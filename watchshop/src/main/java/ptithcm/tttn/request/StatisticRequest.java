@@ -12,4 +12,7 @@ import lombok.Setter;
 public class StatisticRequest {
     private int moth;
     private long total_price;
+    public StatisticRequest(long total_price) {
+        this.total_price = total_price;
+    }
 }

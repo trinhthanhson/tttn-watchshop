@@ -16,6 +16,7 @@ const Signup = () => {
   const [errors, setErrors] = useState({})
   const [isOtpSent, setIsOtpSent] = useState(false)
   const [otpError, setOtpError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleGoBack = () => {
     navigate('/login')
@@ -69,6 +70,7 @@ const Signup = () => {
       setErrors(newErrors)
       return
     }
+    setLoading(true) // Bắt đầu trạng thái loading
 
     try {
       const otpResponse = await axios.post(
@@ -84,6 +86,8 @@ const Signup = () => {
       }
     } catch (error) {
       console.error('Error:', error)
+    } finally {
+      setLoading(false) // Kết thúc trạng thái loading
     }
   }
 
@@ -277,8 +281,13 @@ const Signup = () => {
                 </p>
               )}
               <div className="btn_submit">
-                <button className="w-fit" type="submit" onClick={handleSentOtp}>
-                  Đăng Ký
+                <button
+                  className={`w-fit ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  type="submit"
+                  onClick={handleSentOtp}
+                  disabled={loading}
+                >
+                  {loading ? 'Đang gửi...' : 'Đăng Ký'}
                 </button>
               </div>
             </>

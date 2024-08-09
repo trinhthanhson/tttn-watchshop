@@ -10,12 +10,14 @@ import {
   getAllOrdersRequest,
   getAllCustomersRequest
 } from '../../redux/actions/actions'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const DashboardStatisGrid = () => {
   const dispatch = useDispatch()
   const orders = useSelector((state) => state.orders.orders)
   const customers = useSelector((state) => state.customers.customers)
+  const [doanhthu, setDoanhThu] = useState(null)
 
   useEffect(() => {
     try {
@@ -25,6 +27,39 @@ const DashboardStatisGrid = () => {
       console.error('Error dispatch', error)
     }
   }, [dispatch])
+
+  useEffect(() => {
+    const fetchTotalPrice = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(
+          'http://localhost:9999/api/staff/statistic/sales',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+
+        // Assuming you want the total price from the first object in the data array
+        if (
+          response.data &&
+          response.data.data &&
+          response.data.data.length > 0
+        ) {
+          setDoanhThu(response.data.data[0].total_price)
+          console.log('price: ' + response.data.data[0].total_price)
+        } else {
+          console.error('Unexpected response format:', response.data)
+        }
+      } catch (error) {
+        console.error('Error fetching total price:', error)
+      }
+    }
+
+    fetchTotalPrice()
+  }, [])
   // Calculate the total price of all orders
   const totalPrice =
     orders?.data?.reduce((total, order) => {
@@ -63,7 +98,8 @@ const DashboardStatisGrid = () => {
           <span className="text-sm text-gray-400 font-medium">Doanh thu</span>
           <div className="flex items-center">
             <strong className="text-xl font-semibold text-red">
-              {(6868000).toLocaleString('en')} VNĐ
+              {' '}
+              {doanhthu.toLocaleString('en')} VNĐ
             </strong>
           </div>
         </div>

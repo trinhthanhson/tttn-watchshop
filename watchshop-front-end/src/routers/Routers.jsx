@@ -59,7 +59,11 @@ const Routers = () => {
       try {
         const decryptedRole = decryptData(roleName)
         setRole(decryptedRole)
-        if (decryptedRole === 'MANAGER' || decryptedRole === 'STAFF') {
+        if (
+          decryptedRole === 'MANAGER' ||
+          decryptedRole === 'STAFF' ||
+          decryptedRole === 'SHIPPER'
+        ) {
           setIsLoggedIn(true)
         }
       } catch (error) {
@@ -79,6 +83,10 @@ const Routers = () => {
         // Redirect to /home if the user is a customer and is on any /manager route
         if (location.pathname.startsWith('/manager')) {
           navigate('/home')
+        }
+      } else if (role === 'SHIPPER') {
+        if (location.pathname === '/buynow' || location.pathname === '/') {
+          navigate('/manager/shipper')
         }
       }
     }

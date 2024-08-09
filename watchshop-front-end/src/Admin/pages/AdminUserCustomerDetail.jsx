@@ -70,7 +70,7 @@ const AdminUserCustomerDetail = () => {
         }
       )
       alert('User updated successfully!')
-      navigate('/admin/customers')
+      navigate('/manager/customers')
     } catch (error) {
       setError('Failed to update user: ' + error.message)
     }

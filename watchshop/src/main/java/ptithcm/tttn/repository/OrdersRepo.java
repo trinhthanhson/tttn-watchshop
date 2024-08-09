@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ptithcm.tttn.entity.Orders;
+import ptithcm.tttn.request.StatisticRequest;
 
 import java.util.Date;
 import java.util.List;
@@ -39,5 +40,7 @@ public interface OrdersRepo extends JpaRepository<Orders, Long> {
             "    total_sold DESC")
     List<Object[]> getTotalAmountByDate(Date startDate, Date endDate);
 
+    @Query("select sum(o.total_price) as total_price from Orders o where o.status = '5'")
+    List<Object[]> findTotalPriceByStatus();
 
 }

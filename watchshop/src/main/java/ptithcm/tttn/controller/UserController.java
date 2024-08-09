@@ -70,7 +70,7 @@ public class UserController {
                 res.setMessage("find customer success");
                 res.setStatus(HttpStatus.OK);
                 res.setCode(HttpStatus.OK.value());
-            }else if(user.getRole().getRole_name().equals("ADMIN") || user.getRole().getRole_name().equals("MANAGER") || user.getRole().getRole_name().equals("STAFF")) {
+            }else if(user.getRole().getRole_name().equals("ADMIN") || user.getRole().getRole_name().equals("MANAGER") || user.getRole().getRole_name().equals("STAFF") || user.getRole().getRole_name().equals("SHIPPER")) {
                 Staff staff = staffService.findByUserId(user.getUser_id());
                 res.setData(staff);
                 res.setMessage("find staff success");

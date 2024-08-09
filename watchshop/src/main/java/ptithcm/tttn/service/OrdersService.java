@@ -36,4 +36,6 @@ public interface OrdersService {
 
     List<Orders> allOrderReceiveByStaff(String jwt) throws Exception;
 
+    List<StatisticRequest>  getTotalPriceByStatus();
+
 }

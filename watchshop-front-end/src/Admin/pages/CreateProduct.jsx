@@ -372,7 +372,7 @@ const CreateProduct = () => {
                 )}
               </div>
               <div className="flex-1">
-                <label className="text-[14px] block mb-5">Category:</label>
+                <label className="text-[14px] block mb-5">Brand:</label>
                 <select
                   className="p-2 rounded-md border-none"
                   name="brand_name"

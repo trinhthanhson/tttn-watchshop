@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllStaffsRequest } from '../../redux/actions/actions'
+import {
+  getAllRoleRequest,
+  getAllStaffsRequest
+} from '../../redux/actions/actions'
 import { getStatus } from '../../constants/Status'
 import { MdModeEditOutline } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
@@ -12,13 +15,14 @@ const AllStaff = () => {
   const staffs = useSelector((state) => state.staffs.staffs)
   const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
-
+  const roles = useSelector((state) => state.roles?.roles?.data) || []
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
   const [email, setEmail] = useState('')
   const [role_name, setRole] = useState('')
+  const filteredRoles = roles.filter((role) => role.role_name !== 'ADMIN')
 
   const handleUsernameChange = (event) => setUsername(event.target.value)
   const handlePasswordChange = (event) => setPassword(event.target.value)
@@ -26,20 +30,31 @@ const AllStaff = () => {
   const handleLastnameChange = (event) => setLastname(event.target.value)
   const handleEmailChange = (event) => setEmail(event.target.value)
   const handleRoleChange = (event) => setRole(event.target.value)
+  const [loading, setLoading] = useState(false) // Trạng thái loading
 
   useEffect(() => {
     try {
       dispatch(getAllStaffsRequest())
+      dispatch(getAllRoleRequest())
     } catch (error) {
       console.error('Error dispatch', error)
     }
   }, [dispatch])
 
   const showModal = () => setIsModalVisible(true)
-  const handleCancel = () => setIsModalVisible(false)
+  const handleCancel = () => {
+    setIsModalVisible(false)
+    setUsername('')
+    setPassword('')
+    setFirstname('')
+    setLastname('')
+    setEmail('')
+    setRole('')
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    setLoading(true) // Bắt đầu loading
 
     const newStaff = {
       username,
@@ -50,21 +65,33 @@ const AllStaff = () => {
       role_name
     }
 
+    // Lấy token từ localStorage, sessionStorage, hoặc một nguồn khác
+    const token = localStorage.getItem('token') // Thay đổi tùy theo cách lưu token của bạn
+
     try {
       const response = await axios.post(
         'http://localhost:9999/api/manager/staff/add',
-        newStaff
+        newStaff,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Thêm token vào tiêu đề Authorization
+            'Content-Type': 'application/json' // Đặt Content-Type nếu cần thiết
+          }
+        }
       )
       console.log(response)
       if (response.data.status === 201) {
         alert('Thêm nhân viên thành công')
-        setIsModalVisible(false)
+        handleCancel() // Reset dữ liệu và đóng modal
       } else {
         alert(response.data.message)
+        handleCancel()
       }
     } catch (error) {
       console.error('Error adding staff', error)
       alert('Có lỗi xảy ra, vui lòng thử lại')
+    } finally {
+      setLoading(false) // Kết thúc loading
     }
   }
 
@@ -188,8 +215,11 @@ const AllStaff = () => {
                   required
                 >
                   <option value="">Select Role</option>
-                  <option value="ADMIN">Admin</option>
-                  <option value="STAFF">Staff</option>
+                  {filteredRoles.map((role) => (
+                    <option key={role.role_name} value={role.role_name}>
+                      {role.role_name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex justify-end">
@@ -198,13 +228,14 @@ const AllStaff = () => {
                   onClick={handleCancel}
                   className="px-4 py-2 mr-2 bg-gray-300 rounded-md"
                 >
-                  Cancel
+                  Huỷ
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                  className={`px-4 py-2 bg-blue-500 text-white rounded-md ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={loading} // Disable nút khi loading
                 >
-                  Add
+                  {loading ? 'Đang thêm...' : 'Thêm'}
                 </button>
               </div>
             </form>

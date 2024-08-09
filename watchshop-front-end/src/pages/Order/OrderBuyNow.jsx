@@ -181,22 +181,23 @@ const OrderBuyNow = () => {
             {error}
           </p>
         )}
+        <h1 className="text-2xl font-bold mb-4">MUA NGAY</h1>
+
         <div className="flex items-center mt-5">
           <input
             type="text"
             value={address}
             readOnly
-            placeholder="Enter shipping address"
+            placeholder="Nhập thông tin giao hàng"
             className="border border-gray-300 p-2 rounded mr-2 w-[1000px]"
           />
           <button
             className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             onClick={handleOpenModal}
           >
-            Enter Address
+            Nhập thông tin giao hàng
           </button>
         </div>
-        <h1 className="text-2xl font-bold mb-4">Buy Now</h1>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 border-t border-gray-300">
           {/* Headers Row */}
           <div className="flex justify-center items-center border-b border-gray-300 p-2 font-semibold">
@@ -264,10 +265,12 @@ const OrderBuyNow = () => {
               className="bg-white border border-gray-200 p-5 rounded-lg shadow-lg w-80"
               style={{ width: 600 }}
             >
-              <h2 className="text-xl font-bold mb-4">Enter Shipping Address</h2>
+              <h2 className="text-xl font-bold mb-4">
+                Nhập thông tin giao hàng
+              </h2>
               <div className="mb-4">
                 <label className="block mb-2 font-semibold">
-                  Recipient Name
+                  Tên người nhận
                 </label>
                 <input
                   type="text"
@@ -280,9 +283,7 @@ const OrderBuyNow = () => {
                 )}
               </div>
               <div className="mb-4">
-                <label className="block mb-2 font-semibold">
-                  Shipping Address
-                </label>
+                <label className="block mb-2 font-semibold">Địa chỉ</label>
                 <input
                   type="text"
                   value={shippingAddress}
@@ -295,7 +296,7 @@ const OrderBuyNow = () => {
               </div>
               <div className="mb-4">
                 <label className="block mb-2 font-semibold">
-                  Recipient Phone
+                  Số điện thoại người nhận
                 </label>
                 <input
                   type="number"

@@ -3,6 +3,7 @@ package ptithcm.tttn.controller.customer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 import ptithcm.tttn.entity.Orders;
 import ptithcm.tttn.request.OrderRequest;
 import ptithcm.tttn.response.ApiResponse;
@@ -76,7 +77,7 @@ public class CustomerPaymentController {
     }
 
     @GetMapping("/vnpay-payment")
-    public ResponseEntity<?> handlePaymentReturn(HttpServletRequest request) throws Exception {
+    public RedirectView handlePaymentReturn(HttpServletRequest request) throws Exception {
         int paymentStatus = vnPayService.orderReturn(request);
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
@@ -85,12 +86,14 @@ public class CustomerPaymentController {
         String totalPrice = request.getParameter("vnp_Amount");
         String order_id = request.getParameter("vnp_TxnRef");
         Long orderId = Long.parseLong(order_id);
-        // Return a response based on payment status
+
+        // If payment is successful
         if (paymentStatus == 1) {
-            Orders orders = ordersService.updateStatusPayment("5",orderId);
-            return ResponseEntity.ok().body(new PaymentResponse("Success", orderInfo, totalPrice, paymentTime, transactionId));
+            Orders orders = ordersService.updateStatusPayment("4", orderId);
+            return new RedirectView("http://localhost:5173/orders-history");
         } else {
-            return ResponseEntity.status(400).body(new PaymentResponse("Failure", orderInfo, totalPrice, paymentTime, transactionId));
+            // Handle failure case, possibly redirect to a failure page
+            return new RedirectView("http://localhost:5173/payment-failure");
         }
     }
 

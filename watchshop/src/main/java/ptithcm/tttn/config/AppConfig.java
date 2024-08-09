@@ -36,7 +36,7 @@ public class AppConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/user/**").permitAll()
-                .antMatchers("/api/staff/**").hasAnyAuthority("STAFF","MANAGER")
+                .antMatchers("/api/staff/**").hasAnyAuthority("STAFF","MANAGER","SHIPPER")
                 .antMatchers("/api/manager/**").hasAnyAuthority("MANAGER","STAFF")
                 .and()
                 .addFilterBefore(new JwtTokenValidator(), UsernamePasswordAuthenticationFilter.class)

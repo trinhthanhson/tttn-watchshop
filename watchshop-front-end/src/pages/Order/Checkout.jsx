@@ -204,14 +204,14 @@ const Checkout = () => {
               type="text"
               value={address || error}
               readOnly
-              placeholder="Enter shipping address"
+              placeholder="Nhập thông tin giao hàng"
               className="border border-gray-300 p-2 rounded mr-2 w-[1000px]"
             />
             <button
               className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               onClick={handleOpenModal}
             >
-              Enter Address
+              Nhập thông tin giao hàng
             </button>
           </div>
           {success && <p className="text-green mt-4">{success}</p>}
@@ -222,11 +222,11 @@ const Checkout = () => {
                 style={{ width: 600 }}
               >
                 <h2 className="text-xl font-bold mb-4">
-                  Enter Shipping Address
+                  Nhập thông tin giao hàng
                 </h2>
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">
-                    Recipient Name
+                    Tên người nhận
                   </label>
                   <input
                     type="text"
@@ -240,7 +240,7 @@ const Checkout = () => {
                 </div>
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">
-                    Shipping Address
+                    Địa chỉ nhận hàng
                   </label>
                   <input
                     type="text"
@@ -254,7 +254,7 @@ const Checkout = () => {
                 </div>
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">
-                    Recipient Phone{' '}
+                    Số điện thoại người nhận
                   </label>
                   <input
                     type="number"

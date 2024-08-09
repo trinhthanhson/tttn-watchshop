@@ -100,7 +100,7 @@ const AllBrand = () => {
 
   const handleDeleteBrand = async (brandId) => {
     const confirmDelete = window.confirm(
-      'Bạn có chắc chắn muốn xóa loại này không?'
+      'Bạn có chắc chắn muốn đổi trạng thái hãng này không?'
     )
 
     // Retrieve the token from localStorage
@@ -201,13 +201,13 @@ const AllBrand = () => {
       {showDialog && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-md shadow-md">
-            <h2 className="text-xl font-bold mb-4">Thêm Loại</h2>
+            <h2 className="text-xl font-bold mb-4">Thêm Hãng</h2>
             <input
               type="text"
               value={newBrandName}
               onChange={(e) => setnewBrandName(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full"
-              placeholder="Nhập tên loại"
+              placeholder="Nhập tên hãng"
             />
             <div className="flex justify-end">
               <button
@@ -230,13 +230,13 @@ const AllBrand = () => {
       {showUpdateDialog && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-md shadow-md">
-            <h2 className="text-xl font-bold mb-4">Cập Nhật Loại</h2>
+            <h2 className="text-xl font-bold mb-4">Cập Nhật Hãng</h2>
             <input
               type="text"
               value={newBrandName}
               onChange={(e) => setnewBrandName(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full"
-              placeholder="Nhập tên loại"
+              placeholder="Nhập tên hãng"
             />
             <div className="flex justify-end">
               <button

@@ -79,6 +79,7 @@ public class StaffOrderController {
         return new ResponseEntity<>(res,res.getStatus());
     }
 
+
     @GetMapping("/all/shipper")
     public ResponseEntity<ListEntityResponse> getAllOrderByStaffShipper(@RequestHeader("Authorization") String jwt){
         ListEntityResponse res = new ListEntityResponse<>();
@@ -97,6 +98,5 @@ public class StaffOrderController {
         }
         return new ResponseEntity<>(res,res.getStatus());
     }
-
 
 }

@@ -1,5 +1,6 @@
 package ptithcm.tttn.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ptithcm.tttn.entity.*;
 import ptithcm.tttn.repository.BillRepo;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {
+    @Autowired
     private final OrdersRepo ordersRepo;
     private final UserService userService;
     private final CustomerService   customerService;
@@ -112,7 +114,7 @@ private final ProductRepo productRepo;
     @Override
     public Orders updateStatusPayment(String status, Long id) throws Exception {
         Orders findOrder = findById(id);
-        if(status.equals("5")){
+        if(status.equals("4")){
             findOrder.setStatus(status);
             Bill bill = new Bill();
             bill.setOrder_id(findOrder.getOrder_id());
@@ -216,7 +218,7 @@ private final ProductRepo productRepo;
         Product getProduct = product.get();
         Orders orders = new Orders();
         orders.setAddress(rq.getAddress());
-        orders.setStatus("4");
+        orders.setStatus("3");
         orders.setCreated_at(LocalDateTime.now());
         orders.setRecipient_name(rq.getRecipient_name());
         orders.setUpdated_at(LocalDateTime.now());
@@ -240,10 +242,7 @@ private final ProductRepo productRepo;
                 createOrders.setTotal_price(totalPrice);
                 ordersRepo.save(createOrders);
             }
-            Bill bill = new Bill();
-            bill.setOrder_id(createOrders.getOrder_id());
-            bill.setCreated_at(LocalDateTime.now());
-            billRepo.save(bill);
+
         }
         return createOrders;
     }
@@ -277,7 +276,7 @@ private final ProductRepo productRepo;
         orders.setRecipient_phone(rq.getRecipient_phone());
         orders.setUpdated_at(LocalDateTime.now());
         orders.setCreated_by(customer.getCustomer_id());
-        orders.setStatus("4");
+        orders.setStatus("3");
         orders.setTotal_price(rq.getTotal_price());
         orders.setTotal_quantity(totalQuantity);
         Orders createdOrders = ordersRepo.save(orders);
@@ -304,6 +303,14 @@ private final ProductRepo productRepo;
         return allReceive;
     }
 
+    @Override
+    public List<StatisticRequest> getTotalPriceByStatus() {
+        List<Object[]> results = ordersRepo.findTotalPriceByStatus();
+        return results.stream()
+                .map(this::mapToStatisticRequestSale)
+                .collect(Collectors.toList());
+    }
+
     private ProductSaleRequest mapToProductSaleRequest(Object[] result) {
         String productId = (String) result[0];
         String productName = (String) result[1];
@@ -316,5 +323,10 @@ private final ProductRepo productRepo;
         int month = (int) result[0];
         long price = (long) result[1];
         return new StatisticRequest(month,price);
+    }
+
+    private StatisticRequest mapToStatisticRequestSale(Object[] result) {
+        long price = (long) result[0];
+        return new StatisticRequest(price);
     }
 }

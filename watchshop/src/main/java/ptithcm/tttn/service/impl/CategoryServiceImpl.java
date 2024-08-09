@@ -110,11 +110,16 @@ public class CategoryServiceImpl implements CategoryService
         User user = userService.findUserByJwt(jwt);
         Staff staff = staffRepo.findByUserId(user.getUser_id());
         Category find = findById(id);
-        if(find != null){
+        if(find.getStatus().equals("Active")){
             find.setStatus("Inactive");
             find.setUpdated_by(staff.getStaff_id());
             return categoryRepo.save(find);
+        } else if (find.getStatus().equals("Inactive")) {
+            find.setStatus("Active");
+            find.setUpdated_by(staff.getStaff_id());
+            return categoryRepo.save(find);
         }
+
         throw new Exception("Not found category by id " + id);
     }
 

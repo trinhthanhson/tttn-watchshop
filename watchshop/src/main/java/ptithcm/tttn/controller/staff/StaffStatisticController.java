@@ -1,10 +1,12 @@
 package ptithcm.tttn.controller.staff;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ptithcm.tttn.request.ProductSaleRequest;
 import ptithcm.tttn.request.StatisticRequest;
+import ptithcm.tttn.response.EntityResponse;
 import ptithcm.tttn.response.ListEntityResponse;
 import ptithcm.tttn.service.OrdersService;
 import ptithcm.tttn.service.ProductService;
@@ -25,6 +27,24 @@ public class StaffStatisticController {
         this.productService = productService;
         this.orderService = orderService;
     }
+    @GetMapping("/sales")
+    public ResponseEntity<EntityResponse> getStatisticSaleOrder(@RequestHeader("Authorization") String jwt){
+        EntityResponse res = new EntityResponse<>();
+        try{
+            List<StatisticRequest> rq = orderService.getTotalPriceByStatus();
+            res.setData(rq);
+            res.setStatus(HttpStatus.OK);
+            res.setCode(HttpStatus.OK.value());
+            res.setMessage("success");
+        }catch (Exception e) {
+            res.setData(null);
+            res.setStatus(HttpStatus.CONFLICT);
+            res.setCode(HttpStatus.CONFLICT.value());
+            res.setMessage("error " + e.getMessage());
+        }
+        return new ResponseEntity<>(res,res.getStatus());
+    }
+
 
     @GetMapping("/product")
     public ResponseEntity<ListEntityResponse> getStatisticProduct(@RequestHeader("Authorization") String jwt){
