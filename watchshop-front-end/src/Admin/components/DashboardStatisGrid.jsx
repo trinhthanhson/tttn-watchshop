@@ -48,7 +48,7 @@ const DashboardStatisGrid = () => {
           response.data.data &&
           response.data.data.length > 0
         ) {
-          setDoanhThu(response.data.data[0].total_price)
+          setDoanhThu(response.data?.data[0].total_price)
           console.log('price: ' + response.data.data[0].total_price)
         } else {
           console.error('Unexpected response format:', response.data)
@@ -98,8 +98,7 @@ const DashboardStatisGrid = () => {
           <span className="text-sm text-gray-400 font-medium">Doanh thu</span>
           <div className="flex items-center">
             <strong className="text-xl font-semibold text-red">
-              {' '}
-              {doanhthu.toLocaleString('en')} VNĐ
+              {(doanhthu || 0).toLocaleString('en')} VNĐ
             </strong>
           </div>
         </div>

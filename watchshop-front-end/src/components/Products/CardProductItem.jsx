@@ -26,6 +26,7 @@ const CardProductItem = ({ product }) => {
 
   const price = priceUpdateDetails[0]?.price_new || 0
   const formattedPrice = price.toLocaleString('en')
+  console.log(status)
   useEffect(() => {
     dispatch(getAllCouponsRequest())
   }, [dispatch])
@@ -117,29 +118,37 @@ const CardProductItem = ({ product }) => {
           </h3>
           <hr className="mt-5" />
           <div className="flex py-3 relative">
-            {status === 'Active' && quantity > 0 ? (
-              <div className="w-1/2 px-5">
-                <p className="text-base font-RobotoMedium 3xl:text-lg text-primary">
-                  Sản phẩm còn hàng
-                </p>
-                <div className="">
-                  <span className="relative">
-                    <p className="text-base font-RobotoSemibold 3xl:text-lg text-main">
-                      Mua sắm ngay
-                    </p>
-                  </span>
+            {status === 'Active' ? (
+              quantity > 0 ? (
+                <div className="w-1/2 px-5">
+                  <p className="text-base font-RobotoMedium 3xl:text-lg text-primary">
+                    Sản phẩm còn hàng
+                  </p>
+                  <div className="">
+                    <span className="relative">
+                      <p className="text-base font-RobotoSemibold 3xl:text-lg text-main">
+                        Mua sắm ngay
+                      </p>
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="w-1/2 px-5">
+                  <p className="text-base font-RobotoMedium 3xl:text-lg text-primary"></p>
+                  <div className="">
+                    <span className="relative">
+                      <p className="text-center text-base font-RobotoSemibold 3xl:text-lg text-red-500">
+                        Sản phẩm hết hàng
+                      </p>
+                    </span>
+                  </div>
+                </div>
+              )
             ) : (
-              <div className="w-1/2 px-5">
-                <p className="text-base font-RobotoMedium 3xl:text-lg text-primary"></p>
-                <div className="">
-                  <span className="relative">
-                    <p className="text-center text-base font-RobotoSemibold 3xl:text-lg text-red-500">
-                      Sản phẩm hết hàng
-                    </p>
-                  </span>
-                </div>
+              <div className="w-full px-5">
+                <p className="text-center text-base font-RobotoSemibold 3xl:text-lg text-red-500">
+                  Ngừng bán
+                </p>
               </div>
             )}
 
@@ -163,7 +172,7 @@ const CardProductItem = ({ product }) => {
           <>
             <hr className="" />
             <div className="w-full flex items-center justify-center relative gap-5 transition-opacity duration-300 ease-in-out">
-              {quantity > 0 ? (
+              {status === 'Active' && quantity > 0 ? (
                 <>
                   <div className="w-full m-5">
                     <button

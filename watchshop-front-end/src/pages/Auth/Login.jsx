@@ -24,7 +24,6 @@ const Login = () => {
   const handleGoHome = () => {
     navigate('/')
   }
-
   const handleUsernameChange = (event) => {
     setUsername(event.target.value)
   }
@@ -60,9 +59,9 @@ const Login = () => {
           }
 
           localStorage.setItem('token', token)
-
           // Dispatch action to fetch user profile
           await dispatch(getUserProfileRequest())
+
           console.log('Đăng nhập thành công')
         } else {
           setMessage(
@@ -87,6 +86,9 @@ const Login = () => {
       if (userRole === 'MANAGER' || userRole === 'STAFF') {
         navigate('/manager')
       } else if (userRole === 'CUSTOMER') {
+        if (location.pathname.startsWith('/manager')) {
+          navigate('/home')
+        }
         navigate('/home')
       } else if (userRole === 'SHIPPER') {
         navigate('/manager/shipper')

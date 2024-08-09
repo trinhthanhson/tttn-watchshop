@@ -64,6 +64,14 @@ const AdminProductDetail = () => {
                     {productDetail?.category.category_name}
                   </span>
                 </p>
+                <p className="p-5">
+                  <span className="text-primary font-RobotoMedium mr-2">
+                    Brand:
+                  </span>
+                  <span className="text-primary font-RobotoSemibold">
+                    {productDetail?.brand.brand_name}
+                  </span>
+                </p>
                 {productDetail.priceUpdateDetails[0] && (
                   <p className="p-5">
                     <span className="text-primary font-RobotoMedium mr-2">

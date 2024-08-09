@@ -130,6 +130,7 @@ const ProductDetail = () => {
       </>
     )
   }
+
   return (
     <div className="pt-[120px]">
       <section className="pt-[0] pb-[30px] w-full">
@@ -221,7 +222,14 @@ const ProductDetail = () => {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 items-center sm:justify-between w-full">
-                {selectedProduct?.quantity > 0 ? (
+                {selectedProduct?.status === 'Inactive' ? (
+                  <button
+                    disabled
+                    className="w-full p-3 text-center bg-gray-300 text-gray-700 border border-gray-300 rounded-lg cursor-not-allowed"
+                  >
+                    Ngưng Bán
+                  </button>
+                ) : selectedProduct?.quantity > 0 ? (
                   <>
                     <div className="w-full">
                       <div className="flex justify-center items-center p-3 text-center border border-grey text-primary hover:text-white hover:bg-primary hover:border-none rounded-lg">

@@ -145,9 +145,9 @@ const ProductByCategory = () => {
                 onChange={(e) => setPriceRangeFilter(e.target.value)}
               >
                 <option value="">All Price</option>
-                <option value="0-30000">Less than 30K</option>
-                <option value="30000-50000">30K - 50K</option>
-                <option value="51000">More than 50K</option>
+                <option value="0-1000000">0 - 1tr</option>
+                <option value="1000000-5000000">3tr - 5tr</option>
+                <option value="5100000">Hơn 5tr</option>
               </select>
             </div>
           </div>

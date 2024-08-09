@@ -51,7 +51,6 @@ const Routers = () => {
   const location = useLocation()
   const [role, setRole] = useState(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-
   useEffect(() => {
     // Lấy role từ localStorage và giải mã
     const roleName = localStorage.getItem('role_name')
@@ -79,19 +78,18 @@ const Routers = () => {
         if (location.pathname === '/buynow' || location.pathname === '/') {
           navigate('/manager')
         }
-      } else if (role === 'CUSTOMER') {
-        // Redirect to /home if the user is a customer and is on any /manager route
-        if (location.pathname.startsWith('/manager')) {
-          navigate('/home')
-        }
       } else if (role === 'SHIPPER') {
         if (location.pathname === '/buynow' || location.pathname === '/') {
           navigate('/manager/shipper')
         }
       }
     }
+    if (role === 'CUSTOMER') {
+      if (location.pathname.startsWith('/manager')) {
+        navigate('/home')
+      }
+    }
   }, [role, location.pathname, navigate, isLoggedIn])
-
   // Your component code here
 
   return (
